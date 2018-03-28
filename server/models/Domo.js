@@ -54,6 +54,7 @@ DomoSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
   };
 
   return DomoModel.find(search).select('name age favFood').sort(sortBy)
+  .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
 

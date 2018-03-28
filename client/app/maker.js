@@ -1,5 +1,5 @@
-const loadDomosFromServer = () => {
-  sendAjax('GET', '/getDomos', null, (data) => {
+const loadDomosFromServer = (sort = '') => {
+  sendAjax('GET', `/getDomos?sort=${sort}`, null, (data) => {
     ReactDOM.render(
       <DomoList domos={data.domos} />, document.querySelector("#domos")
     );
@@ -17,10 +17,15 @@ const handleDomo = (e) => {
   }
 
   sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
-    loadDomosFromServer();
+    loadDomosFromServer($('#sortSelector').val());
   });
 
   return false;
+};
+
+const sortSelect = (e) => {
+  console.log(e.target.value);
+  loadDomosFromServer(e.target.value);
 };
 
 const DomoForm = (props) => {
@@ -65,6 +70,16 @@ const DomoList = function(props) {
 
   return (
     <div className="domoList">
+      <select id="sortSelector" onChange={sortSelect}>
+        <option value="dateAscending">Most Recent (Ascending)</option>
+        <option value="dateDescending">Most Recent (Desending)</option>
+        <option value="nameAscending">Name (A-Z)</option>
+        <option value="nameDescending">Name (Z-A)</option>
+        <option value="foodAscending">Favorite Food (A-Z)</option>
+        <option value="foodDescending">Favorite Food (Z-A)</option>
+        <option value="ageAscending">Age (Ascending)</option>
+        <option value="ageDescending">Age (Desending)</option>
+      </select>
       {domoNodes}
     </div>
   );

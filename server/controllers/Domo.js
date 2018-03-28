@@ -57,6 +57,10 @@ const getQuerySort = (req) => {
       return 'age';
     case 'ageDescending':
       return '-age';
+    case 'foodAscending':
+      return 'favFood';
+    case 'foodDescending':
+      return '-favFood';
     default:
       return 'createdData';
   }

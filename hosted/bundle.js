@@ -1,7 +1,9 @@
 'use strict';
 
 var loadDomosFromServer = function loadDomosFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
+  var sort = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+  sendAjax('GET', '/getDomos?sort=' + sort, null, function (data) {
     ReactDOM.render(React.createElement(DomoList, { domos: data.domos }), document.querySelector("#domos"));
   });
 };
@@ -17,10 +19,15 @@ var handleDomo = function handleDomo(e) {
   }
 
   sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+    loadDomosFromServer($('#sortSelector').val());
   });
 
   return false;
+};
+
+var sortSelect = function sortSelect(e) {
+  console.log(e.target.value);
+  loadDomosFromServer(e.target.value);
 };
 
 var DomoForm = function DomoForm(props) {
@@ -100,6 +107,50 @@ var DomoList = function DomoList(props) {
   return React.createElement(
     'div',
     { className: 'domoList' },
+    React.createElement(
+      'select',
+      { id: 'sortSelector', onChange: sortSelect },
+      React.createElement(
+        'option',
+        { value: 'dateAscending' },
+        'Most Recent (Ascending)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'dateDescending' },
+        'Most Recent (Desending)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'nameAscending' },
+        'Name (A-Z)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'nameDescending' },
+        'Name (Z-A)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'foodAscending' },
+        'Favorite Food (A-Z)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'foodDescending' },
+        'Favorite Food (Z-A)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'ageAscending' },
+        'Age (Ascending)'
+      ),
+      React.createElement(
+        'option',
+        { value: 'ageDescending' },
+        'Age (Desending)'
+      )
+    ),
     domoNodes
   );
 };
