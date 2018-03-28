@@ -48,12 +48,13 @@ DomoSchema.statics.toAPI = (doc) => ({
   favFood: doc.age.favFood,
 });
 
-DomoSchema.statics.findByOwner = (ownerId, callback) => {
+DomoSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => {
   const search = {
     owner: convertId(ownerId),
   };
 
-  return DomoModel.find(search).select('name age favFood').exec(callback);
+  return DomoModel.find(search).select('name age favFood').sort(sortBy)
+  .exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);

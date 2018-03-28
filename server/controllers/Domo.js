@@ -43,6 +43,25 @@ const makeDomo = (req, res) => {
   return domoPromise;
 };
 
+const getQuerySort = (req) => {
+  switch (req.query.sort) {
+    case 'dateAscending':
+      return 'createdData';
+    case 'dateDescending':
+      return '-createdData';
+    case 'nameAscending':
+      return 'name';
+    case 'nameDescending':
+      return '-name';
+    case 'ageAscending':
+      return 'age';
+    case 'ageDescending':
+      return '-age';
+    default:
+      return 'createdData';
+  }
+};
+
 const getDomos = (request, response) => {
   const req = request;
   const res = response;
@@ -54,7 +73,7 @@ const getDomos = (request, response) => {
     }
 
     return res.json({ domos: docs });
-  });
+  }, getQuerySort(req));
 };
 
 module.exports.makerPage = makerPage;
