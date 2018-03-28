@@ -6,6 +6,8 @@ let DomoModel = {};
 
 const convertId = mongoose.Types.ObjectId;
 const setName = (name) => _.escape(name).trim();
+const setFood = (name) => _.escape(name).trim();
+
 
 const DomoSchema = new mongoose.Schema({
   name: {
@@ -19,6 +21,13 @@ const DomoSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0,
+  },
+
+  favFood: {
+    type: String,
+    required: true,
+    trim: true,
+    set: setFood,
   },
 
   owner: {
@@ -36,6 +45,7 @@ const DomoSchema = new mongoose.Schema({
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
   age: doc.age,
+  favFood: doc.age.favFood,
 });
 
 DomoSchema.statics.findByOwner = (ownerId, callback) => {
@@ -43,7 +53,7 @@ DomoSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return DomoModel.find(search).select('name age').exec(callback);
+  return DomoModel.find(search).select('name age favFood').exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);
