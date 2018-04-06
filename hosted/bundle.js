@@ -3,8 +3,18 @@
 var loadDomosFromServer = function loadDomosFromServer() {
   var sort = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-  sendAjax('GET', '/getDomos?sort=' + sort, null, function (data) {
-    ReactDOM.render(React.createElement(DomoList, { domos: data.domos }), document.querySelector("#domos"));
+  sendAjax('GET', '/getProfileSpots', null, function (data) {
+    ReactDOM.render(React.createElement(DomoList, { spots: data.spots }), document.querySelector("#domos"));
+  });
+};
+
+var loadPublicSpots = function loadPublicSpots() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var location = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
+  sendAjax('GET', '/getSpots?location=' + location + '&name=' + name + '&description=' + description, null, function (data) {
+    ReactDOM.render(React.createElement(DomoList, { spots: data.spots, renderLocationInput: true }), document.querySelector("#domos"));
   });
 };
 
@@ -13,10 +23,10 @@ var handleDomo = function handleDomo(e) {
 
   $("#domoMessage").animate({ width: 'hide' }, 350);
 
-  if ($("domoName").val() == '' || $('#domoAge').val() == '' || $("domoFavFood").val()) {
-    handleError('RAWR! All fields are required');
-    return false;
-  }
+  // if($("domoName").val() == '' || $('#domoAge').val() == '' || $("domoFavFood").val()) {
+  //   handleError('RAWR! All fields are required');
+  //   return false;
+  // }
 
   sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
     loadDomosFromServer($('#sortSelector').val());
@@ -25,12 +35,20 @@ var handleDomo = function handleDomo(e) {
   return false;
 };
 
-var sortSelect = function sortSelect(e) {
-  console.log(e.target.value);
+var handleViewMenu = function handleViewMenu(e) {
+  e.preventDefault();
+  if (e.target.dataset.menuitem === "profile") {
+    loadDomosFromServer();
+  } else if (e.target.dataset.menuitem === "public") {
+    loadPublicSpots();
+  }
+};
+
+var sortSelect = function sortSelect(name, loc, desc) {
   loadDomosFromServer(e.target.value);
 };
 
-var DomoForm = function DomoForm(props) {
+var SpotForm = function SpotForm(props) {
   return React.createElement(
     'form',
     { id: 'domoForm',
@@ -47,118 +65,101 @@ var DomoForm = function DomoForm(props) {
     React.createElement('input', { id: 'domoName', type: 'text', name: 'name', placeholder: 'Domo Name' }),
     React.createElement(
       'label',
-      { htmlFor: 'age' },
-      'Age: '
+      { htmlFor: 'location' },
+      'Location: '
     ),
-    React.createElement('input', { id: 'domoAge', type: 'text', name: 'age', placeholder: 'Domo Age' }),
+    React.createElement('input', { id: 'spotLocation', type: 'text', name: 'location', placeholder: 'Location' }),
     React.createElement(
       'label',
-      { htmlFor: 'favFood', id: 'domoFoodLabel' },
-      'Favorite Food: '
+      { htmlFor: 'description', id: 'domoFoodLabel' },
+      'Description: '
     ),
-    React.createElement('input', { id: 'domoFavFood', type: 'text', name: 'favFood', placeholder: 'Favorite Food' }),
+    React.createElement('input', { id: 'spotDescription', type: 'text', name: 'description', placeholder: 'description' }),
     React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
     React.createElement('input', { className: 'makeDomoSubmit', type: 'submit', value: 'Make Domo' })
   );
 };
 
 var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return React.createElement(
-      'div',
-      { className: 'domoList' },
-      React.createElement(
-        'h3',
-        { className: 'emptyDomo' },
-        'No domos yet'
-      )
-    );
-  }
+  // if(props.spots.length === 0) {
+  //   return(
+  //     <div className="domoList">
+  //       <h3 className="emptyDomo">No domos yet</h3>
+  //     </div>
+  //   );
+  // }
 
-  var domoNodes = props.domos.map(function (domo) {
+  var domoNodes = props.spots.map(function (spot) {
     return React.createElement(
       'div',
-      { key: domo._id, className: 'domo' },
+      { key: spot._id, className: 'domo' },
       React.createElement('img', { src: '/assets/img/domoface.jpeg', alt: 'domo face', className: 'domoFace' }),
       React.createElement(
         'h3',
         { className: 'domoName' },
         'Name: ',
-        domo.name,
+        spot.name,
         ' '
       ),
       React.createElement(
         'h3',
         { className: 'domoAge' },
-        'Age: ',
-        domo.age,
+        'Location: ',
+        spot.location,
         ' '
       ),
       React.createElement(
         'h3',
         { className: 'domoFavFood' },
-        'Favorite Food: ',
-        domo.favFood,
+        'Description: ',
+        spot.description,
         ' '
       )
     );
   });
 
+  var updatePublicView = function updatePublicView() {
+    loadPublicSpots($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+  };
+
   return React.createElement(
     'div',
     { className: 'domoList' },
-    React.createElement(
-      'select',
-      { id: 'sortSelector', onChange: sortSelect },
-      React.createElement(
-        'option',
-        { value: 'dateAscending' },
-        'Most Recent (Ascending)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'dateDescending' },
-        'Most Recent (Desending)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'nameAscending' },
-        'Name (A-Z)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'nameDescending' },
-        'Name (Z-A)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'foodAscending' },
-        'Favorite Food (A-Z)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'foodDescending' },
-        'Favorite Food (Z-A)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'ageAscending' },
-        'Age (Ascending)'
-      ),
-      React.createElement(
-        'option',
-        { value: 'ageDescending' },
-        'Age (Desending)'
-      )
+    props.renderLocationInput && React.createElement(
+      'div',
+      null,
+      React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Spot Name', onChange: updatePublicView }),
+      React.createElement('input', { id: 'spotLoc', type: 'text', name: 'location', placeholder: 'Spot Location', onChange: updatePublicView }),
+      React.createElement('input', { id: 'spotDesc', type: 'text', name: 'description', placeholder: 'Spot Description', onChange: updatePublicView })
     ),
     domoNodes
   );
 };
 
-var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+var ViewMenu = function ViewMenu(props) {
+  return React.createElement(
+    'div',
+    { id: 'viewMenu' },
+    React.createElement(
+      'a',
+      { href: '#', 'data-menuitem': 'profile', onClick: handleViewMenu },
+      'Your Skate Spots'
+    ),
+    React.createElement('br', null),
+    React.createElement(
+      'a',
+      { href: '#', 'data-menuitem': 'public', onClick: handleViewMenu },
+      'Public Skate Spots'
+    )
+  );
+};
 
-  ReactDOM.render(React.createElement(DomoList, { domos: [] }), document.querySelector("#domos"));
+var setup = function setup(csrf) {
+  ReactDOM.render(React.createElement(SpotForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+
+  ReactDOM.render(React.createElement(ViewMenu, null), document.querySelector("#viewMenu"));
+
+  ReactDOM.render(React.createElement(DomoList, { spots: [], renderLocationInput: true }), document.querySelector("#domos"));
 
   loadDomosFromServer();
 };
