@@ -64,6 +64,58 @@ const SpotForm = (props) => {
   );
 };
 
+
+const openSpotView = (e) => {
+  console.log(e);
+  $('#reviewFormSpotID').val(e);
+}
+
+const ReviewForm = (props) => {
+  return(
+    <div>
+      <form action="/addReview" method="POST">
+        Review Text: <input type="text" name="reviewText" />
+        <br />
+        Rating: <input type="text" name="rating" />
+        <br />
+        Spot ID: <input id="reviewFormSpotID" type="text" name="spot" />
+        <input type="hidden" name="_csrf" value={props.csrf} />
+        <input type="submit" />
+      </form>
+    </div>
+  );
+}
+
+class ReviewList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      reviews: []
+    };
+  }
+
+  componentDidMount() {
+    sendAjax('GET', `/getReviews?spot=${this.props.spot}`, null, (data) => {
+      this.setState({reviews: data.reviews});
+    });
+  }
+
+  render() {
+    return(
+      <div>
+        <div>Reviews:</div>
+        {this.state.reviews.map(function(review) {
+          return(
+            <div>
+              <div>User: {review.author} | Rating:{review.rating} | Review:{review.reviewText}</div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+};
+
 const DomoList = function(props) {
   // if(props.spots.length === 0) {
   //   return(
@@ -75,12 +127,17 @@ const DomoList = function(props) {
 
   const domoNodes = props.spots.map(function(spot) {
     return(
-      <div key={spot._id} className="domo">
-        <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-        <h3 className="domoName">Name: {spot.name} </h3>
-        <h3 className="domoAge">Location: {spot.location} </h3>
-        <h3 className="domoFavFood">Description: {spot.description} </h3>
-      </div>
+      <span>
+        <div key={spot._id} className="domo" onClick={() => openSpotView(spot._id)}>
+          <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
+          <h3 className="domoName">Name: {spot.name} </h3>
+          <h3 className="domoAge">Location: {spot.location} </h3>
+          <h3 className="domoFavFood">Description: {spot.description} </h3>
+        </div>
+        <div>
+          <ReviewList spot={spot._id} />
+        </div>
+      </span>
     );
   });
 
@@ -123,6 +180,10 @@ const setup = (csrf) => {
 
   ReactDOM.render(
     <DomoList spots={[]} renderLocationInput />, document.querySelector("#domos")
+  );
+
+  ReactDOM.render(
+    <ReviewForm  csrf={csrf} />, document.querySelector("#reviewForm")
   );
 
   loadDomosFromServer();

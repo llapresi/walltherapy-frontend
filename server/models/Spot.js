@@ -48,7 +48,7 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
     owner: convertId(ownerId),
   };
 
-  return SpotModel.find(search).select('name location description').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
@@ -60,7 +60,7 @@ SpotSchema.statics.findQuery = (loc, name, description, callback, sortBy = 'crea
     description: new RegExp(description, 'i'),
   };
 
-  return SpotModel.find(search).select('name location description').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
@@ -70,7 +70,7 @@ SpotSchema.statics.findByID = (id, callback, sortBy = 'createdData') => {
     _id: id,
   };
 
-  return SpotModel.find(search).select('name location description').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };

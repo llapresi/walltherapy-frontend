@@ -1,5 +1,13 @@
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var loadDomosFromServer = function loadDomosFromServer() {
   var sort = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
@@ -80,6 +88,91 @@ var SpotForm = function SpotForm(props) {
   );
 };
 
+var openSpotView = function openSpotView(e) {
+  console.log(e);
+  $('#reviewFormSpotID').val(e);
+};
+
+var ReviewForm = function ReviewForm(props) {
+  return React.createElement(
+    'div',
+    null,
+    React.createElement(
+      'form',
+      { action: '/addReview', method: 'POST' },
+      'Review Text: ',
+      React.createElement('input', { type: 'text', name: 'reviewText' }),
+      React.createElement('br', null),
+      'Rating: ',
+      React.createElement('input', { type: 'text', name: 'rating' }),
+      React.createElement('br', null),
+      'Spot ID: ',
+      React.createElement('input', { id: 'reviewFormSpotID', type: 'text', name: 'spot' }),
+      React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
+      React.createElement('input', { type: 'submit' })
+    )
+  );
+};
+
+var ReviewList = function (_React$Component) {
+  _inherits(ReviewList, _React$Component);
+
+  function ReviewList(props) {
+    _classCallCheck(this, ReviewList);
+
+    var _this = _possibleConstructorReturn(this, (ReviewList.__proto__ || Object.getPrototypeOf(ReviewList)).call(this, props));
+
+    _this.state = {
+      reviews: []
+    };
+    return _this;
+  }
+
+  _createClass(ReviewList, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      sendAjax('GET', '/getReviews?spot=' + this.props.spot, null, function (data) {
+        _this2.setState({ reviews: data.reviews });
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'div',
+          null,
+          'Reviews:'
+        ),
+        this.state.reviews.map(function (review) {
+          return React.createElement(
+            'div',
+            null,
+            React.createElement(
+              'div',
+              null,
+              'User: ',
+              review.author,
+              ' | Rating:',
+              review.rating,
+              ' | Review:',
+              review.reviewText
+            )
+          );
+        })
+      );
+    }
+  }]);
+
+  return ReviewList;
+}(React.Component);
+
+;
+
 var DomoList = function DomoList(props) {
   // if(props.spots.length === 0) {
   //   return(
@@ -91,29 +184,40 @@ var DomoList = function DomoList(props) {
 
   var domoNodes = props.spots.map(function (spot) {
     return React.createElement(
-      'div',
-      { key: spot._id, className: 'domo' },
-      React.createElement('img', { src: '/assets/img/domoface.jpeg', alt: 'domo face', className: 'domoFace' }),
+      'span',
+      null,
       React.createElement(
-        'h3',
-        { className: 'domoName' },
-        'Name: ',
-        spot.name,
-        ' '
+        'div',
+        { key: spot._id, className: 'domo', onClick: function onClick() {
+            return openSpotView(spot._id);
+          } },
+        React.createElement('img', { src: '/assets/img/domoface.jpeg', alt: 'domo face', className: 'domoFace' }),
+        React.createElement(
+          'h3',
+          { className: 'domoName' },
+          'Name: ',
+          spot.name,
+          ' '
+        ),
+        React.createElement(
+          'h3',
+          { className: 'domoAge' },
+          'Location: ',
+          spot.location,
+          ' '
+        ),
+        React.createElement(
+          'h3',
+          { className: 'domoFavFood' },
+          'Description: ',
+          spot.description,
+          ' '
+        )
       ),
       React.createElement(
-        'h3',
-        { className: 'domoAge' },
-        'Location: ',
-        spot.location,
-        ' '
-      ),
-      React.createElement(
-        'h3',
-        { className: 'domoFavFood' },
-        'Description: ',
-        spot.description,
-        ' '
+        'div',
+        null,
+        React.createElement(ReviewList, { spot: spot._id })
       )
     );
   });
@@ -160,6 +264,8 @@ var setup = function setup(csrf) {
   ReactDOM.render(React.createElement(ViewMenu, null), document.querySelector("#viewMenu"));
 
   ReactDOM.render(React.createElement(DomoList, { spots: [], renderLocationInput: true }), document.querySelector("#domos"));
+
+  ReactDOM.render(React.createElement(ReviewForm, { csrf: csrf }), document.querySelector("#reviewForm"));
 
   loadDomosFromServer();
 };
