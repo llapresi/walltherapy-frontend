@@ -1,17 +1,15 @@
+let currentDomoList = '/getProfileSpots';
+
 const loadDomosFromServer = (sort = '') => {
-  sendAjax('GET', '/getProfileSpots', null, (data) => {
-    ReactDOM.render(
-      <DomoList spots={data.spots} />, document.querySelector("#domos")
-    );
-  });
+  currentDomoList = '/getProfileSpots';
 };
 
 const loadPublicSpots = (name = '', location = '', description = '') => {
-  sendAjax('GET', `/getSpots?location=${location}&name=${name}&description=${description}`, null, (data) => {
-    ReactDOM.render(
-      <DomoList spots={data.spots} renderLocationInput />, document.querySelector("#domos")
-    );
-  });
+  currentDomoList = `/getSpots?location=${location}&name=${name}&description=${description}`;
+};
+
+const makePublicSpotsURL = (name = '', location = '', description = '') => {
+  return `/getSpots?location=${location}&name=${name}&description=${description}`;
 };
 
 const handleDomo = (e) => {
@@ -37,6 +35,7 @@ const handleViewMenu = (e) => {
     loadDomosFromServer();
   } else if (e.target.dataset.menuitem === "public") {
     loadPublicSpots();
+    console.log("PUBLIC");
   } 
 }
 
@@ -95,7 +94,19 @@ class ReviewList extends React.Component {
   }
 
   componentDidMount() {
-    sendAjax('GET', `/getReviews?spot=${this.props.spot}`, null, (data) => {
+    $.ajax({
+      method: 'GET',
+      url: `/getReviews?spot=${this.props.spot._id}`
+    }).done((data) => {
+      this.setState({reviews: data.reviews});
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    $.ajax({
+      method: 'GET',
+      url: `/getReviews?spot=${nextProps.spot._id}`
+    }).done((data) => {
       this.setState({reviews: data.reviews});
     });
   }
@@ -103,6 +114,7 @@ class ReviewList extends React.Component {
   render() {
     return(
       <div>
+        <h3>{this.props.spot._id}</h3>
         <div>Reviews:</div>
         {this.state.reviews.map(function(review) {
           return(
@@ -116,48 +128,73 @@ class ReviewList extends React.Component {
   }
 };
 
-const DomoList = function(props) {
-  // if(props.spots.length === 0) {
-  //   return(
-  //     <div className="domoList">
-  //       <h3 className="emptyDomo">No domos yet</h3>
-  //     </div>
-  //   );
-  // }
-
-  const domoNodes = props.spots.map(function(spot) {
-    return(
-      <span>
-        <div key={spot._id} className="domo" onClick={() => openSpotView(spot._id)}>
-          <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-          <h3 className="domoName">Name: {spot.name} </h3>
-          <h3 className="domoAge">Location: {spot.location} </h3>
-          <h3 className="domoFavFood">Description: {spot.description} </h3>
-        </div>
-        <div>
-          <ReviewList spot={spot._id} />
-        </div>
-      </span>
-    );
-  });
-
-  const updatePublicView = () => {
-    loadPublicSpots($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+class DomoList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      spots: [],
+    };
+    this.updatePublicView = this.updatePublicView.bind(this);
   }
 
-  return (
+  componentDidMount() {
+    sendAjax('GET', this.props.url, null, (data) => {
+      this.setState({spots: data.spots});
+      console.log(this.state.spots);
+    });
+  }
+
+  updatePublicView() {
+    let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+    sendAjax('GET', toFetch, null, (data) => {
+      this.setState({spots: data.spots});
+      console.log(this.state.spots);
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    sendAjax('GET', nextProps.url, null, (data) => {
+      this.setState({spots: data.spots});
+      console.log(this.state.spots);
+    });
+  }
+
+  render() {
+    return (
       <div className="domoList">
-      {props.renderLocationInput && 
         <div>
-          <input id="spotName" type="text" name="name" placeholder="Spot Name" onChange={updatePublicView} />
-          <input id="spotLoc" type="text" name="location" placeholder="Spot Location" onChange={updatePublicView} />
-          <input id="spotDesc" type="text" name="description" placeholder="Spot Description" onChange={updatePublicView} />
+          <input id="spotName" type="text" name="name" placeholder="Spot Name" onChange={this.updatePublicView} />
+          <input id="spotLoc" type="text" name="location" placeholder="Spot Location" onChange={this.updatePublicView} />
+          <input id="spotDesc" type="text" name="description" placeholder="Spot Description" onChange={this.updatePublicView} />
         </div>
-      }
-      {domoNodes}
+        <DomoListDisplay spots={this.state.spots}/>
+      </div>
+    );
+  }
+};
+
+const DomoListDisplay = function(props) {
+  return(
+    <div>
+    {props.spots.map(function(spot) {
+      return (
+        <span>
+          <div key={spot._id} className="domo" onClick={() => openSpotView(spot._id)}>
+            <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
+            <h3 className="domoName">Name: {spot.name} </h3>
+            <h3 className="domoAge">Location: {spot.location} </h3>
+            <h3 className="domoFavFood">Description: {spot.description} </h3>
+            <h3>{spot._id}</h3>
+          </div>
+          <div>
+            <ReviewList spot={spot} />
+          </div>
+        </span>
+      );
+    })}
     </div>
   );
-};
+}
 
 const ViewMenu = function(props) {
   return(
@@ -179,14 +216,12 @@ const setup = (csrf) => {
   );
 
   ReactDOM.render(
-    <DomoList spots={[]} renderLocationInput />, document.querySelector("#domos")
+    <DomoList url={currentDomoList} />, document.querySelector("#domos")
   );
 
   ReactDOM.render(
     <ReviewForm  csrf={csrf} />, document.querySelector("#reviewForm")
   );
-
-  loadDomosFromServer();
 };
 
 const getToken = () => {
