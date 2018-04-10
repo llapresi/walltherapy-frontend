@@ -63,7 +63,6 @@ const SpotForm = (props) => {
   );
 };
 
-
 const openSpotView = (e) => {
   console.log(e);
   $('#reviewFormSpotID').val(e);
@@ -91,30 +90,30 @@ class ReviewList extends React.Component {
     this.state = {
       reviews: []
     };
+    this.updateReviews = this.updateReviews.bind(this);
   }
 
-  componentDidMount() {
+  updateReviews (id) {
     $.ajax({
       method: 'GET',
-      url: `/getReviews?spot=${this.props.spot._id}`
+      url: `/getReviews?spot=${id}`
     }).done((data) => {
       this.setState({reviews: data.reviews});
     });
+  }
+  
+  componentDidMount() {
+    this.updateReviews(this.props.spotId);
   }
 
   componentWillReceiveProps(nextProps) {
-    $.ajax({
-      method: 'GET',
-      url: `/getReviews?spot=${nextProps.spot._id}`
-    }).done((data) => {
-      this.setState({reviews: data.reviews});
-    });
+    this.updateReviews(nextProps.spotId);
   }
 
   render() {
     return(
       <div>
-        <h3>{this.props.spot._id}</h3>
+        <h3>{this.props.spotId}</h3>
         <div>Reviews:</div>
         {this.state.reviews.map(function(review) {
           return(
@@ -187,7 +186,7 @@ const DomoListDisplay = function(props) {
             <h3>{spot._id}</h3>
           </div>
           <div>
-            <ReviewList spot={spot} />
+            <ReviewList spotId={spot._id} />
           </div>
         </span>
       );

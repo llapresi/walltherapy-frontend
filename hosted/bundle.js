@@ -132,32 +132,31 @@ var ReviewList = function (_React$Component) {
     _this.state = {
       reviews: []
     };
+    _this.updateReviews = _this.updateReviews.bind(_this);
     return _this;
   }
 
   _createClass(ReviewList, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
+    key: 'updateReviews',
+    value: function updateReviews(id) {
       var _this2 = this;
 
       $.ajax({
         method: 'GET',
-        url: '/getReviews?spot=' + this.props.spot._id
+        url: '/getReviews?spot=' + id
       }).done(function (data) {
         _this2.setState({ reviews: data.reviews });
       });
     }
   }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.updateReviews(this.props.spotId);
+    }
+  }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var _this3 = this;
-
-      $.ajax({
-        method: 'GET',
-        url: '/getReviews?spot=' + nextProps.spot._id
-      }).done(function (data) {
-        _this3.setState({ reviews: data.reviews });
-      });
+      this.updateReviews(nextProps.spotId);
     }
   }, {
     key: 'render',
@@ -168,7 +167,7 @@ var ReviewList = function (_React$Component) {
         React.createElement(
           'h3',
           null,
-          this.props.spot._id
+          this.props.spotId
         ),
         React.createElement(
           'div',
@@ -206,44 +205,44 @@ var DomoList = function (_React$Component2) {
   function DomoList(props) {
     _classCallCheck(this, DomoList);
 
-    var _this4 = _possibleConstructorReturn(this, (DomoList.__proto__ || Object.getPrototypeOf(DomoList)).call(this, props));
+    var _this3 = _possibleConstructorReturn(this, (DomoList.__proto__ || Object.getPrototypeOf(DomoList)).call(this, props));
 
-    _this4.state = {
+    _this3.state = {
       spots: []
     };
-    _this4.updatePublicView = _this4.updatePublicView.bind(_this4);
-    return _this4;
+    _this3.updatePublicView = _this3.updatePublicView.bind(_this3);
+    return _this3;
   }
 
   _createClass(DomoList, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this5 = this;
+      var _this4 = this;
 
       sendAjax('GET', this.props.url, null, function (data) {
-        _this5.setState({ spots: data.spots });
-        console.log(_this5.state.spots);
+        _this4.setState({ spots: data.spots });
+        console.log(_this4.state.spots);
       });
     }
   }, {
     key: 'updatePublicView',
     value: function updatePublicView() {
-      var _this6 = this;
+      var _this5 = this;
 
       var toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
       sendAjax('GET', toFetch, null, function (data) {
-        _this6.setState({ spots: data.spots });
-        console.log(_this6.state.spots);
+        _this5.setState({ spots: data.spots });
+        console.log(_this5.state.spots);
       });
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var _this7 = this;
+      var _this6 = this;
 
       sendAjax('GET', nextProps.url, null, function (data) {
-        _this7.setState({ spots: data.spots });
-        console.log(_this7.state.spots);
+        _this6.setState({ spots: data.spots });
+        console.log(_this6.state.spots);
       });
     }
   }, {
@@ -313,7 +312,7 @@ var DomoListDisplay = function DomoListDisplay(props) {
         React.createElement(
           'div',
           null,
-          React.createElement(ReviewList, { spot: spot })
+          React.createElement(ReviewList, { spotId: spot._id })
         )
       );
     })
