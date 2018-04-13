@@ -8,21 +8,105 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var currentDomoList = '/getSpots';
+var SpotForm = function (_React$Component) {
+  _inherits(SpotForm, _React$Component);
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  var sort = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  function SpotForm(props) {
+    _classCallCheck(this, SpotForm);
 
-  currentDomoList = '/getSpots';
-};
+    var _this = _possibleConstructorReturn(this, (SpotForm.__proto__ || Object.getPrototypeOf(SpotForm)).call(this, props));
 
-var loadPublicSpots = function loadPublicSpots() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  var location = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-  var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    _this.state = {
+      errorMessage: ''
+    };
+    return _this;
+  }
 
-  currentDomoList = '/getSpots?location=' + location + '&name=' + name + '&description=' + description;
-};
+  _createClass(SpotForm, [{
+    key: 'createSpot',
+    value: function createSpot(e) {
+      var _this2 = this;
+
+      e.preventDefault();
+      $.ajax({
+        cache: false,
+        type: 'POST',
+        url: '/maker',
+        data: $(e.target).serialize(),
+        dataType: "json",
+        error: function (xhr, status, error) {
+          var messageObj = JSON.parse(xhr.responseText);
+          this.setState({ errorMessage: messageObj.error });
+        }.bind(this)
+      }).done(function () {
+        _this2.props.submitCallback();
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'form',
+          { id: 'spotForm',
+            onSubmit: this.createSpot.bind(this),
+            name: 'spotForm',
+            action: '/maker',
+            method: 'POST',
+            className: 'spotForm' },
+          React.createElement(
+            'label',
+            { htmlFor: 'name' },
+            'Name: '
+          ),
+          React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Domo Name' }),
+          React.createElement(
+            'label',
+            { htmlFor: 'longitude' },
+            'Longitude: '
+          ),
+          React.createElement('input', { id: 'spotLong', type: 'text', name: 'longitude', placeholder: 'Longitude:' }),
+          React.createElement(
+            'label',
+            { htmlFor: 'latitude' },
+            'Latitude: '
+          ),
+          React.createElement('input', { id: 'spotLat', type: 'text', name: 'latitude', placeholder: 'Latitude:' }),
+          React.createElement(
+            'label',
+            { htmlFor: 'description', id: 'domoFoodLabel' },
+            'Description: '
+          ),
+          React.createElement('input', { id: 'spotDescription', type: 'text', name: 'description', placeholder: 'description' }),
+          React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf }),
+          React.createElement('input', { className: 'addSpotSubmit', type: 'submit', value: 'Add New Spot' })
+        ),
+        React.createElement(
+          'div',
+          null,
+          this.state.errorMessage
+        )
+      );
+    }
+  }]);
+
+  return SpotForm;
+}(React.Component);
+
+;
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var defaultURL = '/getSpots';
 
 var makePublicSpotsURL = function makePublicSpotsURL() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -32,140 +116,28 @@ var makePublicSpotsURL = function makePublicSpotsURL() {
   return '/getSpots?location=' + location + '&name=' + name + '&description=' + description;
 };
 
-var handleDomo = function handleDomo(e) {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: 'hide' }, 350);
-
-  // if($("domoName").val() == '' || $('#domoAge').val() == '' || $("domoFavFood").val()) {
-  //   handleError('RAWR! All fields are required');
-  //   return false;
-  // }
-
-  sendAjax('POST', $("#spotForm").attr("action"), $("#spotForm").serialize(), function () {
-    loadDomosFromServer($('#sortSelector').val());
-  });
-
-  return false;
-};
-
-var handleViewMenu = function handleViewMenu(e) {
-  e.preventDefault();
-  if (e.target.dataset.menuitem === "profile") {
-    loadDomosFromServer();
-  } else if (e.target.dataset.menuitem === "public") {
-    loadPublicSpots();
-    console.log("PUBLIC");
-  }
-};
-
-var sortSelect = function sortSelect(name, loc, desc) {
-  loadDomosFromServer(e.target.value);
-};
-
-var SpotForm = function SpotForm(props) {
+var SkateSpotList = function SkateSpotList(props) {
   return React.createElement(
-    'form',
-    { id: 'spotForm',
-      onSubmit: handleDomo,
-      name: 'spotForm',
-      action: '/maker',
-      method: 'POST',
-      className: 'spotForm' },
+    'div',
+    null,
     React.createElement(
-      'label',
-      { htmlFor: 'name' },
-      'Name: '
+      'div',
+      null,
+      React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Spot Name', onChange: props.updatePublicView }),
+      React.createElement('input', { id: 'spotLoc', type: 'text', name: 'location', placeholder: 'Spot Location', onChange: props.updatePublicView }),
+      React.createElement('input', { id: 'spotDesc', type: 'text', name: 'description', placeholder: 'Spot Description', onChange: props.updatePublicView })
     ),
-    React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Domo Name' }),
-    React.createElement(
-      'label',
-      { htmlFor: 'longitude' },
-      'Longitude: '
-    ),
-    React.createElement('input', { id: 'spotLong', type: 'text', name: 'longitude', placeholder: 'Longitude:' }),
-    React.createElement(
-      'label',
-      { htmlFor: 'latitude' },
-      'Latitude: '
-    ),
-    React.createElement('input', { id: 'spotLat', type: 'text', name: 'latitude', placeholder: 'Latitude:' }),
-    React.createElement(
-      'label',
-      { htmlFor: 'description', id: 'domoFoodLabel' },
-      'Description: '
-    ),
-    React.createElement('input', { id: 'spotDescription', type: 'text', name: 'description', placeholder: 'description' }),
-    React.createElement('input', { type: 'hidden', name: '_csrf', value: props.csrf }),
-    React.createElement('input', { className: 'addSpotSubmit', type: 'submit', value: 'Make Domo' })
+    React.createElement(AddSkateSpotListItem, { csrf: props.csrf, submitCallback: props.updatePublicView }),
+    React.createElement(SkateSpotDisplay, { selectFunc: props.selectFunc, spots: props.spots })
   );
 };
-
-var openSpotView = function openSpotView(e) {
-  console.log(e);
-  $('#reviewFormSpotID').val(e);
-};
-
-var SkateSpotList = function (_React$Component) {
-  _inherits(SkateSpotList, _React$Component);
-
-  function SkateSpotList(props) {
-    _classCallCheck(this, SkateSpotList);
-
-    var _this = _possibleConstructorReturn(this, (SkateSpotList.__proto__ || Object.getPrototypeOf(SkateSpotList)).call(this, props));
-
-    _this.updatePublicView = _this.updatePublicView.bind(_this);
-    return _this;
-  }
-
-  _createClass(SkateSpotList, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      var _this2 = this;
-
-      sendAjax('GET', this.props.url, null, function (data) {
-        _this2.props.onFetchSpots(data.spots);
-      });
-    }
-  }, {
-    key: 'updatePublicView',
-    value: function updatePublicView() {
-      var _this3 = this;
-
-      var toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
-      sendAjax('GET', toFetch, null, function (data) {
-        _this3.props.onFetchSpots(data.spots);
-      });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return React.createElement(
-        'div',
-        { className: 'domoList' },
-        React.createElement(
-          'div',
-          null,
-          React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Spot Name', onChange: this.updatePublicView }),
-          React.createElement('input', { id: 'spotLoc', type: 'text', name: 'location', placeholder: 'Spot Location', onChange: this.updatePublicView }),
-          React.createElement('input', { id: 'spotDesc', type: 'text', name: 'description', placeholder: 'Spot Description', onChange: this.updatePublicView })
-        ),
-        React.createElement(SkateSpotDisplay, { selectFunc: this.props.selectFunc, spots: this.props.spots })
-      );
-    }
-  }]);
-
-  return SkateSpotList;
-}(React.Component);
-
-;
 
 var SkateSpotMapIcon = function SkateSpotMapIcon(_ref) {
   var text = _ref.text;
 
   return React.createElement(
     'div',
-    { 'class': 'mapMarker' },
+    { className: 'mapMarker' },
     text
   );
 };
@@ -173,56 +145,72 @@ var SkateSpotMapIcon = function SkateSpotMapIcon(_ref) {
 var SkateSpotDisplay = function SkateSpotDisplay(props) {
   return React.createElement(
     'div',
-    null,
+    { style: { height: '90%', overflowY: 'scroll' } },
     props.spots.map(function (spot) {
       return React.createElement(
         'div',
-        { key: spot._id, className: 'skatespot', onClick: function onClick() {
+        { key: spot._id, className: 'skatespot_list', onClick: function onClick() {
             return props.selectFunc(spot);
           } },
         React.createElement(
           'h3',
           { className: 'spotName' },
-          'Name: ',
-          spot.name,
-          ' '
+          spot.name
         ),
         React.createElement(
-          'h3',
-          { className: 'spotAge' },
-          'Location: ',
-          spot.location[0],
-          ' '
-        ),
-        React.createElement(
-          'h3',
+          'div',
           { className: 'spotDescription' },
-          'Description: ',
-          spot.description,
-          ' '
+          spot.description
         )
       );
     })
   );
 };
 
-var ViewMenu = function ViewMenu(props) {
-  return React.createElement(
-    'div',
-    { id: 'viewMenu' },
-    React.createElement(
-      'a',
-      { href: '#', 'data-menuitem': 'profile', onClick: handleViewMenu },
-      'Your Skate Spots'
-    ),
-    React.createElement('br', null),
-    React.createElement(
-      'a',
-      { href: '#', 'data-menuitem': 'public', onClick: handleViewMenu },
-      'Public Skate Spots'
-    )
-  );
-};
+var AddSkateSpotListItem = function (_React$Component) {
+  _inherits(AddSkateSpotListItem, _React$Component);
+
+  function AddSkateSpotListItem(props) {
+    _classCallCheck(this, AddSkateSpotListItem);
+
+    var _this = _possibleConstructorReturn(this, (AddSkateSpotListItem.__proto__ || Object.getPrototypeOf(AddSkateSpotListItem)).call(this, props));
+
+    _this.state = {
+      showForm: false
+    };
+    _this.onSubmit = _this.onSubmit.bind(_this);
+    return _this;
+  }
+
+  _createClass(AddSkateSpotListItem, [{
+    key: 'onSubmit',
+    value: function onSubmit() {
+      this.setState({ showForm: false });
+      this.props.submitCallback();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      return React.createElement(
+        'div',
+        { className: 'skatespot_list add-review' },
+        React.createElement(
+          'h3',
+          { className: 'spotName',
+            onClick: function onClick() {
+              return _this2.setState({ showForm: !_this2.state.showForm });
+            } },
+          this.state.showForm ? '- Add Skatespot' : '+ Add Skatespot'
+        ),
+        this.state.showForm === true && React.createElement(SpotForm, { csrf: this.props.csrf, submitCallback: this.onSubmit })
+      );
+    }
+  }]);
+
+  return AddSkateSpotListItem;
+}(React.Component);
 
 var SpotInfoBox = function SpotInfoBox(_ref2) {
   var spot = _ref2.spot,
@@ -230,43 +218,69 @@ var SpotInfoBox = function SpotInfoBox(_ref2) {
 
   return React.createElement(
     'div',
-    null,
+    { className: 'spot_infobox' },
     React.createElement(
-      'h2',
-      null,
+      'h3',
+      { className: 'spotName' },
       spot.name
     ),
     React.createElement(
       'div',
-      null,
+      { className: 'spotDescription' },
       spot.description
     ),
     React.createElement(ReviewList, { spotId: spot._id, csrf: csrf })
   );
 };
 
-var NewAppRoot = function (_React$Component2) {
-  _inherits(NewAppRoot, _React$Component2);
+var SkatespotRoot = function (_React$Component2) {
+  _inherits(SkatespotRoot, _React$Component2);
 
-  function NewAppRoot(props) {
-    _classCallCheck(this, NewAppRoot);
+  function SkatespotRoot(props) {
+    _classCallCheck(this, SkatespotRoot);
 
-    var _this4 = _possibleConstructorReturn(this, (NewAppRoot.__proto__ || Object.getPrototypeOf(NewAppRoot)).call(this, props));
+    var _this3 = _possibleConstructorReturn(this, (SkatespotRoot.__proto__ || Object.getPrototypeOf(SkatespotRoot)).call(this, props));
 
-    _this4.state = {
+    _this3.state = {
       center: { lat: 59.95, lng: 30.33 },
-      zoom: 11,
-      sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 2 = Make Spot Form, 3 = Profile menu
+      zoom: 17,
+      sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 3 = Profile menu
       currentSpot: {}, // data of spot we last selcted
       spots: [] // New main spot list, have skatespotlist send state to this
     };
-    return _this4;
+    _this3.onFetchSpots = _this3.onFetchSpots.bind(_this3);
+    _this3.setSidebarState = _this3.setSidebarState.bind(_this3);
+    return _this3;
   }
 
-  _createClass(NewAppRoot, [{
+  _createClass(SkatespotRoot, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this4 = this;
+
+      sendAjax('GET', '/getSpots', null, function (data) {
+        console.log("fetching ajax spots");
+        _this4.onFetchSpots(data.spots);
+      });
+    }
+  }, {
+    key: 'updatePublicView',
+    value: function updatePublicView() {
+      var _this5 = this;
+
+      var toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+      sendAjax('GET', toFetch, null, function (data) {
+        console.log("fetching ajax spots");
+        _this5.onFetchSpots(data.spots);
+      });
+    }
+  }, {
     key: 'setSidebarState',
     value: function setSidebarState(state) {
       this.setState({ sidebarState: state });
+      if (this.state.sidebarState === 0) {
+        this.updatePublicView();
+      }
     }
   }, {
     key: 'setSidebarInfo',
@@ -281,50 +295,53 @@ var NewAppRoot = function (_React$Component2) {
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       return React.createElement(
         'div',
         null,
         React.createElement(
-          'div',
-          { style: { height: '90%', width: '30%', float: 'left' } },
-          this.state.sidebarState == 0 && React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'div',
-              { onClick: function onClick() {
-                  return _this5.setSidebarState(2);
-                } },
-              'Add New Skatespot'
-            ),
-            React.createElement(SkateSpotList, { spots: this.state.spots, url: currentDomoList,
-              selectFunc: this.setSidebarInfo.bind(this), onFetchSpots: this.onFetchSpots.bind(this) })
+          'nav',
+          null,
+          React.createElement(
+            'a',
+            { href: '#', onClick: function onClick() {
+                return _this6.setSidebarState(3);
+              } },
+            'Profile'
           ),
+          React.createElement(
+            'div',
+            { className: 'navlink' },
+            React.createElement(
+              'a',
+              { href: '/logout' },
+              'Log out'
+            )
+          )
+        ),
+        React.createElement(
+          'div',
+          { style: { height: '100%', width: '30%', float: 'left' } },
+          this.state.sidebarState == 0 && React.createElement(SkateSpotList, {
+            spots: this.state.spots,
+            csrf: this.props.csrf,
+            url: defaultURL,
+            selectFunc: this.setSidebarInfo.bind(this),
+            onFetchSpots: this.onFetchSpots.bind(this),
+            updatePublicView: this.updatePublicView.bind(this)
+          }),
           this.state.sidebarState == 1 && React.createElement(
             'div',
             null,
             React.createElement(
               'div',
               { onClick: function onClick() {
-                  return _this5.setSidebarState(0);
+                  return _this6.setSidebarState(0);
                 } },
               'Back'
             ),
             React.createElement(SpotInfoBox, { spot: this.state.currentSpot, csrf: this.props.csrf })
-          ),
-          this.state.sidebarState == 2 && React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'div',
-              { onClick: function onClick() {
-                  return _this5.setSidebarState(0);
-                } },
-              'Back'
-            ),
-            React.createElement(SpotForm, { csrf: this.props.csrf })
           ),
           this.state.sidebarState == 3 && React.createElement(
             'div',
@@ -332,7 +349,7 @@ var NewAppRoot = function (_React$Component2) {
             React.createElement(
               'div',
               { onClick: function onClick() {
-                  return _this5.setSidebarState(0);
+                  return _this6.setSidebarState(0);
                 } },
               'Back'
             ),
@@ -341,7 +358,7 @@ var NewAppRoot = function (_React$Component2) {
         ),
         React.createElement(
           'div',
-          { style: { height: '90%', width: '70%', float: 'right' } },
+          { style: { height: '100%', width: '70%', float: 'right' } },
           React.createElement(
             GoogleMapReact,
             {
@@ -350,7 +367,6 @@ var NewAppRoot = function (_React$Component2) {
               zoom: this.state.zoom
             },
             this.state.spots.map(function (spot) {
-              console.log(spot);
               return React.createElement(SkateSpotMapIcon, { text: spot.name, lat: spot.location[1], lng: spot.location[0] });
             })
           )
@@ -359,11 +375,11 @@ var NewAppRoot = function (_React$Component2) {
     }
   }]);
 
-  return NewAppRoot;
+  return SkatespotRoot;
 }(React.Component);
 
 var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(NewAppRoot, { csrf: csrf }), document.querySelector("#main"));
+  ReactDOM.render(React.createElement(SkatespotRoot, { csrf: csrf }), document.querySelector("#main"));
 };
 
 var getToken = function getToken() {
@@ -450,7 +466,7 @@ var ChangePasswordForm = function (_React$Component) {
           { htmlFor: "oldPass" },
           "New Password (Re-Enter): "
         ),
-        React.createElement("input", { id: "pass", type: "password", name: "pass2", placeholder: "New Password (Re-Enter)" }),
+        React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "New Password (Re-Enter)" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: this.props.csrf }),
         React.createElement("input", { className: "changePassSubmit", type: "submit", value: "Change Password" })
       );
@@ -482,7 +498,6 @@ var AccountMenu = function (_React$Component2) {
   }, {
     key: "render",
     value: function render() {
-      console.log(this.props.csrf);
       return React.createElement(
         "div",
         null,
@@ -517,12 +532,19 @@ var ReviewForm = function ReviewForm(props) {
     React.createElement(
       "form",
       { id: "reviewForm ", action: "/addReview", method: "POST", onSubmit: props.submitAction },
-      "Review Text: ",
-      React.createElement("input", { type: "text", name: "reviewText" }),
-      React.createElement("br", null),
-      "Rating: ",
-      React.createElement("input", { type: "text", name: "rating" }),
-      React.createElement("br", null),
+      React.createElement(
+        "div",
+        { className: "review-text" },
+        "Rating: ",
+        React.createElement("input", { type: "number", placeholder: "3", step: "0.5", min: "1", max: "5", size: "1", name: "rating" })
+      ),
+      React.createElement(
+        "div",
+        { className: "review-text" },
+        "Review Text:",
+        React.createElement("br", null),
+        React.createElement("input", { type: "text", name: "reviewText" })
+      ),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { type: "hidden", id: "reviewFormSpotID", name: "spot", value: props.spotId }),
       React.createElement("input", { type: "submit" })
@@ -539,7 +561,9 @@ var ReviewList = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (ReviewList.__proto__ || Object.getPrototypeOf(ReviewList)).call(this, props));
 
     _this.state = {
-      reviews: []
+      reviews: [],
+      errorMsg: '',
+      showReviewForm: false
     };
     _this.updateReviews = _this.updateReviews.bind(_this);
     return _this;
@@ -574,38 +598,67 @@ var ReviewList = function (_React$Component) {
         url: '/addReview',
         data: $(e.target).serialize(),
         dataType: "json",
-        error: function error(xhr, status, _error) {
+        error: function (xhr, status, error) {
           var messageObj = JSON.parse(xhr.responseText);
-          console.log(messageObj);
-        }
+          this.setState({ errorMsg: messageObj.error });
+        }.bind(this)
       }).done(function () {
         _this3.updateReviews(_this3.props.spotId);
       });
     }
   }, {
+    key: "toggleReviewForm",
+    value: function toggleReviewForm() {
+      this.setState({ showReviewForm: !this.state.showReviewForm });
+    }
+  }, {
     key: "render",
     value: function render() {
+      var addReviewClasses = 'review-item add-review';
+      if (this.state.showReviewForm) {
+        addReviewClasses = addReviewClasses + " review-item-open";
+      }
       return React.createElement(
         "div",
-        null,
+        { className: "review_section" },
         React.createElement(
-          "div",
+          "span",
           null,
+          this.state.errorMsg
+        ),
+        React.createElement(
+          "h3",
+          { className: "reviews-header" },
           "Reviews:"
         ),
-        React.createElement(ReviewForm, { spotId: this.props.spotId, csrf: this.props.csrf, submitAction: this.submitReview.bind(this) }),
+        React.createElement(
+          "div",
+          { className: addReviewClasses },
+          React.createElement(
+            "div",
+            { className: "review-author", onClick: this.toggleReviewForm.bind(this) },
+            this.state.showReviewForm ? '- Add Review' : '+ Add Review'
+          ),
+          this.state.showReviewForm === true && React.createElement(ReviewForm, { spotId: this.props.spotId, csrf: this.props.csrf, submitAction: this.submitReview.bind(this) })
+        ),
         this.state.reviews.map(function (review) {
           return React.createElement(
             "div",
-            null,
+            { className: "review-item" },
             React.createElement(
               "div",
-              null,
-              "User: ",
-              review.author,
-              " | Rating:",
+              { className: "review-author" },
+              review.author
+            ),
+            React.createElement(
+              "div",
+              { className: "review-rating" },
               review.rating,
-              " | Review:",
+              " / 5"
+            ),
+            React.createElement(
+              "div",
+              { className: "review-text" },
               review.reviewText
             )
           );

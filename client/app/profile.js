@@ -34,7 +34,7 @@ class ChangePasswordForm extends React.Component {
         <input id="pass" type="password" name="pass" placeholder="New Password" />
 
         <label htmlFor="oldPass">New Password (Re-Enter): </label>
-        <input id="pass" type="password" name="pass2" placeholder="New Password (Re-Enter)" />
+        <input id="pass2" type="password" name="pass2" placeholder="New Password (Re-Enter)" />
 
         <input type="hidden" name="_csrf" value={this.props.csrf} />
         <input className="changePassSubmit" type="submit" value="Change Password" />
@@ -54,7 +54,6 @@ class AccountMenu extends React.Component {
   }
 
   render() {
-    console.log(this.props.csrf);
     return(
       <div>
         {this.state.passwordChanged == true &&

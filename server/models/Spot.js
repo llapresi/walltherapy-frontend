@@ -73,7 +73,7 @@ SpotSchema.statics.findByID = (id, callback, sortBy = 'createdData') => {
   .exec(callback);
 };
 
-SpotSchema.statics.query = (params, callback, sortBy = 'createdData') => {
+SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
   // TODO: Add finding near location
   const search = params;
   if (params.owner) {

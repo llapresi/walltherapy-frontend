@@ -1,124 +1,37 @@
-let currentDomoList = '/getSpots';
-
-const loadDomosFromServer = (sort = '') => {
-  currentDomoList = '/getSpots';
-};
-
-const loadPublicSpots = (name = '', location = '', description = '') => {
-  currentDomoList = `/getSpots?location=${location}&name=${name}&description=${description}`;
-};
+let defaultURL = '/getSpots';
 
 const makePublicSpotsURL = (name = '', location = '', description = '') => {
   return `/getSpots?location=${location}&name=${name}&description=${description}`;
 };
 
-const handleDomo = (e) => {
-  e.preventDefault();
-
-  $("#domoMessage").animate({width:'hide'},350);
-
-  // if($("domoName").val() == '' || $('#domoAge').val() == '' || $("domoFavFood").val()) {
-  //   handleError('RAWR! All fields are required');
-  //   return false;
-  // }
-
-  sendAjax('POST', $("#spotForm").attr("action"), $("#spotForm").serialize(), function() {
-    loadDomosFromServer($('#sortSelector').val());
-  });
-
-  return false;
-};
-
-const handleViewMenu = (e) => {
-  e.preventDefault();
-  if (e.target.dataset.menuitem === "profile") {
-    loadDomosFromServer();
-  } else if (e.target.dataset.menuitem === "public") {
-    loadPublicSpots();
-    console.log("PUBLIC");
-  } 
-}
-
-const sortSelect = (name, loc, desc) => {
-  loadDomosFromServer(e.target.value);
-};
-
-const SpotForm = (props) => {
-  return(
-    <form id="spotForm"
-    onSubmit={handleDomo}
-    name="spotForm"
-    action="/maker"
-    method="POST"
-    className="spotForm">
-      <label htmlFor="name">Name: </label>
-      <input id="spotName" type="text" name="name" placeholder="Domo Name" />
-      <label htmlFor="longitude">Longitude: </label> 
-      <input id="spotLong" type="text" name="longitude" placeholder="Longitude:" />
-      <label htmlFor="latitude">Latitude: </label> 
-      <input id="spotLat" type="text" name="latitude" placeholder="Latitude:" />
-
-      <label htmlFor="description" id="domoFoodLabel">Description: </label> 
-      <input id="spotDescription" type="text" name="description" placeholder="description" />
-      <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="addSpotSubmit" type="submit" value="Make Domo" />
-    </form>
-  );
-};
-
-const openSpotView = (e) => {
-  console.log(e);
-  $('#reviewFormSpotID').val(e);
-}
-
-class SkateSpotList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.updatePublicView = this.updatePublicView.bind(this);
-  }
-
-  componentDidMount() {
-    sendAjax('GET', this.props.url, null, (data) => {
-      this.props.onFetchSpots(data.spots);
-    });
-  }
-
-  updatePublicView() {
-    let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
-    sendAjax('GET', toFetch, null, (data) => {
-      this.props.onFetchSpots(data.spots);
-    });
-  }
-
-  render() {
-    return (
-      <div className="domoList">
-        <div>
-          <input id="spotName" type="text" name="name" placeholder="Spot Name" onChange={this.updatePublicView} />
-          <input id="spotLoc" type="text" name="location" placeholder="Spot Location" onChange={this.updatePublicView} />
-          <input id="spotDesc" type="text" name="description" placeholder="Spot Description" onChange={this.updatePublicView} />
-        </div>
-        <SkateSpotDisplay selectFunc={this.props.selectFunc} spots={this.props.spots}/>
+const SkateSpotList = (props) => {
+  return (
+    <div>
+      <div>
+        <input id="spotName" type="text" name="name" placeholder="Spot Name" onChange={props.updatePublicView} />
+        <input id="spotLoc" type="text" name="location" placeholder="Spot Location" onChange={props.updatePublicView} />
+        <input id="spotDesc" type="text" name="description" placeholder="Spot Description" onChange={props.updatePublicView} />
       </div>
-    );
-  }
+      <AddSkateSpotListItem csrf={props.csrf} submitCallback={props.updatePublicView}/>
+      <SkateSpotDisplay selectFunc={props.selectFunc} spots={props.spots}/>
+    </div>
+  );
 };
 
 const SkateSpotMapIcon = ({text}) => {
   return(
-    <div class="mapMarker">{text}</div>
+    <div className="mapMarker" >{text}</div>
   );
 }
 
-const SkateSpotDisplay = function(props) {
+const SkateSpotDisplay = (props) => {
   return(
-    <div>
+    <div style={{height: '90%', overflowY: 'scroll'}}>
     {props.spots.map(function(spot) {
       return (
-        <div key={spot._id} className="skatespot" onClick={() => props.selectFunc(spot)}>
-          <h3 className="spotName">Name: {spot.name} </h3>
-          <h3 className="spotAge">Location: {spot.location[0]} </h3>
-          <h3 className="spotDescription">Description: {spot.description} </h3>
+        <div key={spot._id} className="skatespot_list" onClick={() => props.selectFunc(spot)}>
+          <h3 className="spotName">{spot.name}</h3>
+          <div className="spotDescription">{spot.description}</div>
         </div>
       );
     })}
@@ -126,40 +39,79 @@ const SkateSpotDisplay = function(props) {
   );
 }
 
-const ViewMenu = function(props) {
-  return(
-    <div id="viewMenu">
-      <a href="#" data-menuitem="profile" onClick={handleViewMenu}>Your Skate Spots</a>
-      <br />
-      <a href="#" data-menuitem="public" onClick={handleViewMenu}>Public Skate Spots</a>
-    </div>
-  );
+class AddSkateSpotListItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showForm: false
+    };
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  onSubmit() {
+    this.setState({showForm: false});
+    this.props.submitCallback();
+  }
+
+  render() {
+    return (
+      <div className="skatespot_list add-review">
+        <h3 className="spotName"
+        onClick={() => this.setState({showForm: !this.state.showForm})}>
+          {this.state.showForm ? '- Add Skatespot' : '+ Add Skatespot'}
+        </h3>
+        {this.state.showForm === true &&
+          <SpotForm csrf={this.props.csrf} submitCallback={this.onSubmit}/>
+        }
+      </div>
+    );
+  }
 }
 
 const SpotInfoBox = ({spot, csrf}) => {
   return(
-    <div>
-      <h2>{spot.name}</h2>
-      <div>{spot.description}</div>
+    <div className='spot_infobox'>
+      <h3 className='spotName'>{spot.name}</h3>
+      <div className='spotDescription'>{spot.description}</div>
       <ReviewList spotId={spot._id} csrf={csrf} />
     </div>
   );
 }
 
-class NewAppRoot extends React.Component {
+class SkatespotRoot extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       center: {lat: 59.95, lng: 30.33},
-      zoom: 11,
-      sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 2 = Make Spot Form, 3 = Profile menu
+      zoom: 17,
+      sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 3 = Profile menu
       currentSpot: {}, // data of spot we last selcted
       spots: [], // New main spot list, have skatespotlist send state to this
     };
+    this.onFetchSpots = this.onFetchSpots.bind(this);
+    this.setSidebarState = this.setSidebarState.bind(this);
+  }
+
+  componentDidMount() {
+    sendAjax('GET', '/getSpots', null, (data) => {
+      console.log("fetching ajax spots");
+      this.onFetchSpots(data.spots);
+    });
+  }
+
+  updatePublicView() {
+    let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+    sendAjax('GET', toFetch, null, (data) => {
+      console.log("fetching ajax spots");
+      this.onFetchSpots(data.spots);
+    });
   }
 
   setSidebarState(state) {
     this.setState({sidebarState: state});
+    if(this.state.sidebarState === 0) {
+      this.updatePublicView();
+    }
   }
 
   setSidebarInfo(spot) {
@@ -173,24 +125,25 @@ class NewAppRoot extends React.Component {
   render() {
     return(
       <div>
-        <div style={{ height: '90%', width: '30%', float:'left' }}>
+        <nav>
+          <a href="#" onClick={() => this.setSidebarState(3)}>Profile</a>
+          <div className="navlink"><a href="/logout">Log out</a></div>
+        </nav>
+        <div style={{ height: '100%', width: '30%', float:'left' }}>
           {this.state.sidebarState == 0 && 
-            <div>
-              <div onClick={() => this.setSidebarState(2)}>Add New Skatespot</div>
-              <SkateSpotList spots={this.state.spots} url={currentDomoList} 
-              selectFunc={this.setSidebarInfo.bind(this)} onFetchSpots={this.onFetchSpots.bind(this)}/>
-            </div>
+              <SkateSpotList
+                spots={this.state.spots}
+                csrf={this.props.csrf } 
+                url={defaultURL} 
+                selectFunc={this.setSidebarInfo.bind(this)}
+                onFetchSpots={this.onFetchSpots.bind(this)} 
+                updatePublicView={this.updatePublicView.bind(this)}
+              />
           }
           {this.state.sidebarState == 1 && 
             <div>
               <div onClick={() => this.setSidebarState(0)}>Back</div>
               <SpotInfoBox spot={this.state.currentSpot} csrf={this.props.csrf}/>
-            </div>
-          }
-          {this.state.sidebarState == 2 && 
-            <div>
-              <div onClick={() => this.setSidebarState(0)}>Back</div>
-              <SpotForm csrf={this.props.csrf} />
             </div>
           }
           {this.state.sidebarState == 3 && 
@@ -200,7 +153,7 @@ class NewAppRoot extends React.Component {
             </div>
           }
         </div>
-        <div style={{ height: '90%', width: '70%', float:'right' }}>
+        <div style={{ height: '100%', width: '70%', float:'right' }}>
           <GoogleMapReact
             bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
             center={this.state.center}
@@ -208,7 +161,6 @@ class NewAppRoot extends React.Component {
           >
             {
               this.state.spots.map(function(spot) {
-                console.log(spot);
                 return <SkateSpotMapIcon text={spot.name} lat={spot.location[1]} lng={spot.location[0]}></SkateSpotMapIcon>
               })
             }
@@ -221,7 +173,7 @@ class NewAppRoot extends React.Component {
 
 const setup = (csrf) => {
   ReactDOM.render(
-    <NewAppRoot csrf={csrf} />, document.querySelector("#main")
+    <SkatespotRoot csrf={csrf} />, document.querySelector("#main")
   );
 };
 

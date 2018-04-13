@@ -103,7 +103,7 @@ const changePassword = (request, response) => {
       _id: req.session.account._id,
     };
 
-    Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err, doc) => {
+    Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err) => {
       if (err) {
         return res.send(400, { error: err });
       }
