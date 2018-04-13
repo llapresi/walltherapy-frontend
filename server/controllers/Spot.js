@@ -14,13 +14,13 @@ const makerPage = (req, res) => {
 };
 
 const makeSpot = (req, res) => {
-  if (!req.body.name || !req.body.location || !req.body.description) {
+  if (!req.body.name || !req.body.longitude || !req.body.latitude || !req.body.description) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const spotData = {
     name: req.body.name,
-    location: req.body.location,
+    location: [req.body.longitude, req.body.latitude],
     description: req.body.description,
     owner: req.session.account._id,
   };
@@ -29,7 +29,7 @@ const makeSpot = (req, res) => {
 
   const spotPromise = newSpot.save();
 
-  spotPromise.then(() => res.json({ redirect: '/maker' }));
+  spotPromise.then(() => res.status(201).json({ message: 'Skate spot created' }));
 
   spotPromise.catch((err) => {
     console.log(err);
@@ -47,22 +47,21 @@ const getSpots = (request, response) => {
   const req = request;
   const res = response;
 
-  return Spot.SpotModel.findQuery(req.query.location,
-    req.query.name, req.query.description, (err, docs) => {
-      if (err) {
-        console.log(err);
-        return res.status(400).json({ error: 'An error occured' });
-      }
+  const query = {};
+  if (req.query.owner) {
+    query.owner = req.query.owner;
+  }
+  if (req.query.name) {
+    query.name = req.query.name;
+  }
+  if (req.query.description) {
+    query.description = req.query.description;
+  }
+  if (req.query.profileSpots) {
+    query.owner = req.session.account._id;
+  }
 
-      return res.json({ spots: docs });
-    });
-};
-
-const getProfileSpots = (request, response) => {
-  const req = request;
-  const res = response;
-
-  return Spot.SpotModel.findByOwner(req.session.account._id, (err, docs) => {
+  return Spot.SpotModel.query(query, (err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
@@ -75,4 +74,3 @@ const getProfileSpots = (request, response) => {
 module.exports.makerPage = makerPage;
 module.exports.makeSpot = makeSpot;
 module.exports.getSpots = getSpots;
-module.exports.getProfileSpots = getProfileSpots;

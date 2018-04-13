@@ -14,10 +14,8 @@ const SpotSchema = new mongoose.Schema({
   },
 
   location: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
+    type: [Number], // [<longitude>, <latitude>]
+    index: '2d',
   },
 
   description: {
@@ -69,6 +67,24 @@ SpotSchema.statics.findByID = (id, callback, sortBy = 'createdData') => {
   const search = {
     _id: id,
   };
+
+  return SpotModel.find(search).select('name location description _id').sort(sortBy)
+  .collation({ locale: 'en', strength: 2 })
+  .exec(callback);
+};
+
+SpotSchema.statics.query = (params, callback, sortBy = 'createdData') => {
+  // TODO: Add finding near location
+  const search = params;
+  if (params.owner) {
+    search.owner = convertId(params.owner);
+  }
+  if (params.name) {
+    search.name = new RegExp(params.name, 'i');
+  }
+  if (params.description) {
+    search.description = new RegExp(params.description, 'i');
+  }
 
   return SpotModel.find(search).select('name location description _id').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })

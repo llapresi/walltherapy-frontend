@@ -18,7 +18,7 @@ const addReview = (req, res) => {
 
   const reviewPromise = newReview.save();
 
-  reviewPromise.then(() => res.json({ redirect: '/maker' }));
+  reviewPromise.then(() => res.status(201).json({ message: 'Review created successfully' }));
 
   reviewPromise.catch((err) => {
     console.log(err);

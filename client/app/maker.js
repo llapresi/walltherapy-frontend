@@ -1,7 +1,7 @@
-let currentDomoList = '/getProfileSpots';
+let currentDomoList = '/getSpots';
 
 const loadDomosFromServer = (sort = '') => {
-  currentDomoList = '/getProfileSpots';
+  currentDomoList = '/getSpots';
 };
 
 const loadPublicSpots = (name = '', location = '', description = '') => {
@@ -22,7 +22,7 @@ const handleDomo = (e) => {
   //   return false;
   // }
 
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
+  sendAjax('POST', $("#spotForm").attr("action"), $("#spotForm").serialize(), function() {
     loadDomosFromServer($('#sortSelector').val());
   });
 
@@ -45,20 +45,23 @@ const sortSelect = (name, loc, desc) => {
 
 const SpotForm = (props) => {
   return(
-    <form id="domoForm"
+    <form id="spotForm"
     onSubmit={handleDomo}
-    name="domoForm"
+    name="spotForm"
     action="/maker"
     method="POST"
-    className="domoForm">
+    className="spotForm">
       <label htmlFor="name">Name: </label>
-      <input id="domoName" type="text" name="name" placeholder="Domo Name" />
-      <label htmlFor="location">Location: </label> 
-      <input id="spotLocation" type="text" name="location" placeholder="Location" />
+      <input id="spotName" type="text" name="name" placeholder="Domo Name" />
+      <label htmlFor="longitude">Longitude: </label> 
+      <input id="spotLong" type="text" name="longitude" placeholder="Longitude:" />
+      <label htmlFor="latitude">Latitude: </label> 
+      <input id="spotLat" type="text" name="latitude" placeholder="Latitude:" />
+
       <label htmlFor="description" id="domoFoodLabel">Description: </label> 
       <input id="spotDescription" type="text" name="description" placeholder="description" />
       <input type="hidden" name="_csrf" value={props.csrf} />
-      <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+      <input className="addSpotSubmit" type="submit" value="Make Domo" />
     </form>
   );
 };
@@ -68,93 +71,22 @@ const openSpotView = (e) => {
   $('#reviewFormSpotID').val(e);
 }
 
-const ReviewForm = (props) => {
-  return(
-    <div>
-      <form action="/addReview" method="POST">
-        Review Text: <input type="text" name="reviewText" />
-        <br />
-        Rating: <input type="text" name="rating" />
-        <br />
-        Spot ID: <input id="reviewFormSpotID" type="text" name="spot" />
-        <input type="hidden" name="_csrf" value={props.csrf} />
-        <input type="submit" />
-      </form>
-    </div>
-  );
-}
-
-class ReviewList extends React.Component {
+class SkateSpotList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      reviews: []
-    };
-    this.updateReviews = this.updateReviews.bind(this);
-  }
-
-  updateReviews (id) {
-    $.ajax({
-      method: 'GET',
-      url: `/getReviews?spot=${id}`
-    }).done((data) => {
-      this.setState({reviews: data.reviews});
-    });
-  }
-  
-  componentDidMount() {
-    this.updateReviews(this.props.spotId);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.updateReviews(nextProps.spotId);
-  }
-
-  render() {
-    return(
-      <div>
-        <h3>{this.props.spotId}</h3>
-        <div>Reviews:</div>
-        {this.state.reviews.map(function(review) {
-          return(
-            <div>
-              <div>User: {review.author} | Rating:{review.rating} | Review:{review.reviewText}</div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-};
-
-class DomoList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      spots: [],
-    };
     this.updatePublicView = this.updatePublicView.bind(this);
   }
 
   componentDidMount() {
     sendAjax('GET', this.props.url, null, (data) => {
-      this.setState({spots: data.spots});
-      console.log(this.state.spots);
+      this.props.onFetchSpots(data.spots);
     });
   }
 
   updatePublicView() {
     let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
     sendAjax('GET', toFetch, null, (data) => {
-      this.setState({spots: data.spots});
-      console.log(this.state.spots);
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    sendAjax('GET', nextProps.url, null, (data) => {
-      this.setState({spots: data.spots});
-      console.log(this.state.spots);
+      this.props.onFetchSpots(data.spots);
     });
   }
 
@@ -166,29 +98,28 @@ class DomoList extends React.Component {
           <input id="spotLoc" type="text" name="location" placeholder="Spot Location" onChange={this.updatePublicView} />
           <input id="spotDesc" type="text" name="description" placeholder="Spot Description" onChange={this.updatePublicView} />
         </div>
-        <DomoListDisplay spots={this.state.spots}/>
+        <SkateSpotDisplay selectFunc={this.props.selectFunc} spots={this.props.spots}/>
       </div>
     );
   }
 };
 
-const DomoListDisplay = function(props) {
+const SkateSpotMapIcon = ({text}) => {
+  return(
+    <div class="mapMarker">{text}</div>
+  );
+}
+
+const SkateSpotDisplay = function(props) {
   return(
     <div>
     {props.spots.map(function(spot) {
       return (
-        <span>
-          <div key={spot._id} className="domo" onClick={() => openSpotView(spot._id)}>
-            <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-            <h3 className="domoName">Name: {spot.name} </h3>
-            <h3 className="domoAge">Location: {spot.location} </h3>
-            <h3 className="domoFavFood">Description: {spot.description} </h3>
-            <h3>{spot._id}</h3>
-          </div>
-          <div>
-            <ReviewList spotId={spot._id} />
-          </div>
-        </span>
+        <div key={spot._id} className="skatespot" onClick={() => props.selectFunc(spot)}>
+          <h3 className="spotName">Name: {spot.name} </h3>
+          <h3 className="spotAge">Location: {spot.location[0]} </h3>
+          <h3 className="spotDescription">Description: {spot.description} </h3>
+        </div>
       );
     })}
     </div>
@@ -205,26 +136,98 @@ const ViewMenu = function(props) {
   );
 }
 
+const SpotInfoBox = ({spot, csrf}) => {
+  return(
+    <div>
+      <h2>{spot.name}</h2>
+      <div>{spot.description}</div>
+      <ReviewList spotId={spot._id} csrf={csrf} />
+    </div>
+  );
+}
+
+class NewAppRoot extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      center: {lat: 59.95, lng: 30.33},
+      zoom: 11,
+      sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 2 = Make Spot Form, 3 = Profile menu
+      currentSpot: {}, // data of spot we last selcted
+      spots: [], // New main spot list, have skatespotlist send state to this
+    };
+  }
+
+  setSidebarState(state) {
+    this.setState({sidebarState: state});
+  }
+
+  setSidebarInfo(spot) {
+    this.setState({center: {lat: spot.location[1], lng: spot.location[0]}, sidebarState: 1, currentSpot: spot});
+  }
+
+  onFetchSpots(newSpots) {
+    this.setState({spots: newSpots})
+  }
+
+  render() {
+    return(
+      <div>
+        <div style={{ height: '90%', width: '30%', float:'left' }}>
+          {this.state.sidebarState == 0 && 
+            <div>
+              <div onClick={() => this.setSidebarState(2)}>Add New Skatespot</div>
+              <SkateSpotList spots={this.state.spots} url={currentDomoList} 
+              selectFunc={this.setSidebarInfo.bind(this)} onFetchSpots={this.onFetchSpots.bind(this)}/>
+            </div>
+          }
+          {this.state.sidebarState == 1 && 
+            <div>
+              <div onClick={() => this.setSidebarState(0)}>Back</div>
+              <SpotInfoBox spot={this.state.currentSpot} csrf={this.props.csrf}/>
+            </div>
+          }
+          {this.state.sidebarState == 2 && 
+            <div>
+              <div onClick={() => this.setSidebarState(0)}>Back</div>
+              <SpotForm csrf={this.props.csrf} />
+            </div>
+          }
+          {this.state.sidebarState == 3 && 
+            <div>
+              <div onClick={() => this.setSidebarState(0)}>Back</div>
+              <AccountMenu csrf={this.props.csrf} />
+            </div>
+          }
+        </div>
+        <div style={{ height: '90%', width: '70%', float:'right' }}>
+          <GoogleMapReact
+            bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
+            center={this.state.center}
+            zoom={this.state.zoom}
+          >
+            {
+              this.state.spots.map(function(spot) {
+                console.log(spot);
+                return <SkateSpotMapIcon text={spot.name} lat={spot.location[1]} lng={spot.location[0]}></SkateSpotMapIcon>
+              })
+            }
+          </GoogleMapReact>
+        </div>
+      </div>
+    )
+  }
+}
+
 const setup = (csrf) => {
   ReactDOM.render(
-    <SpotForm csrf={csrf} />, document.querySelector("#makeDomo")
-  );
-
-  ReactDOM.render(
-    <ViewMenu />, document.querySelector("#viewMenu")
-  );
-
-  ReactDOM.render(
-    <DomoList url={currentDomoList} />, document.querySelector("#domos")
-  );
-
-  ReactDOM.render(
-    <ReviewForm  csrf={csrf} />, document.querySelector("#reviewForm")
+    <NewAppRoot csrf={csrf} />, document.querySelector("#main")
   );
 };
 
 const getToken = () => {
   sendAjax("GET", "/getToken", null, (result) => {
+    console.log(result.csrfToken);
     setup(result.csrfToken);
   });
 };

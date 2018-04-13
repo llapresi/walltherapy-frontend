@@ -77,6 +77,41 @@ const signup = (request, response) => {
   });
 };
 
+const changePassword = (request, response) => {
+  const req = request;
+  const res = response;
+
+  req.body.oldPass = `${req.body.oldPass}`;
+  req.body.pass = `${req.body.pass}`;
+  req.body.pass2 = `${req.body.pass2}`;
+
+  if (!req.body.oldPass || !req.body.pass || !req.body.pass2) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  if (req.body.pass !== req.body.pass2) {
+    return res.status(400).json({ error: 'Passwords do not match' });
+  }
+
+  return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
+    const newData = {
+      salt,
+      password: hash,
+    };
+
+    const query = {
+      _id: req.session.account._id,
+    };
+
+    Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err, doc) => {
+      if (err) {
+        return res.send(400, { error: err });
+      }
+      return res.status(200).json({ message: 'succesfully changed password' });
+    });
+  });
+};
+
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -92,4 +127,5 @@ module.exports.loginPage = loginPage;
 module.exports.logout = logout;
 module.exports.login = login;
 module.exports.signup = signup;
+module.exports.changePassword = changePassword;
 module.exports.getToken = getToken;
