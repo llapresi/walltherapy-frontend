@@ -4,6 +4,9 @@ mongoose.Promise = global.Promise;
 
 let ReviewModel = {};
 
+const models = require('../models');
+const Account = models.Account;
+
 const convertId = mongoose.Types.ObjectId;
 
 const ReviewSchema = new mongoose.Schema({
@@ -57,10 +60,11 @@ ReviewSchema.statics.query = (params, callback, sortBy = 'createdData') => {
     search.rating = params.rating;
   }
 
-  return ReviewModel.find(search).select('spot author rating reviewText date').sort(sortBy)
+  return ReviewModel.find(search).select('spot author rating reviewText createdData').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
+
 
 ReviewModel = mongoose.model('Review', ReviewSchema);
 module.exports.ReviewModel = ReviewModel;

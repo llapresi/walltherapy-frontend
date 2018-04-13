@@ -1,30 +1,30 @@
 let defaultURL = '/getSpots';
 
-const makePublicSpotsURL = (name = '', location = '', description = '') => {
-  return `/getSpots?location=${location}&name=${name}&description=${description}`;
+const makePublicSpotsURL = (name = '', description = '') => {
+  return `/getSpots?name=${name}&description=${description}`;
 };
 
-const SkateSpotList = (props) => {
+const SkateSpotListParent = (props) => {
   return (
     <div>
+      <AddSkateSpotButton csrf={props.csrf} submitCallback={props.updatePublicView}
+      toggleCallback={props.toggleAddSpotCallback} loc={props.newSpotLatLog}/>
       <div>
-        <input id="spotName" type="text" name="name" placeholder="Spot Name" onChange={props.updatePublicView} />
-        <input id="spotLoc" type="text" name="location" placeholder="Spot Location" onChange={props.updatePublicView} />
-        <input id="spotDesc" type="text" name="description" placeholder="Spot Description" onChange={props.updatePublicView} />
+        <input id="spotName" type="text" name="name" placeholder="Filter by Spot Name" onChange={props.updatePublicView} />
+        <input id="spotDesc" type="text" name="description" placeholder="Filter by Spot Description" onChange={props.updatePublicView} />
       </div>
-      <AddSkateSpotListItem csrf={props.csrf} submitCallback={props.updatePublicView}/>
-      <SkateSpotDisplay selectFunc={props.selectFunc} spots={props.spots}/>
+      <SkateSpotList selectFunc={props.selectFunc} spots={props.spots} />
     </div>
   );
 };
 
-const SkateSpotMapIcon = ({text}) => {
+const SkateSpotMarker = ({text}) => {
   return(
     <div className="mapMarker" >{text}</div>
   );
 }
 
-const SkateSpotDisplay = (props) => {
+const SkateSpotList = (props) => {
   return(
     <div style={{height: '90%', overflowY: 'scroll'}}>
     {props.spots.map(function(spot) {
@@ -39,7 +39,7 @@ const SkateSpotDisplay = (props) => {
   );
 }
 
-class AddSkateSpotListItem extends React.Component {
+class AddSkateSpotButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,18 +50,28 @@ class AddSkateSpotListItem extends React.Component {
 
   onSubmit() {
     this.setState({showForm: false});
+    this.props.toggleCallback(!this.state.showForm);
     this.props.submitCallback();
   }
 
+  toggle() {
+    this.setState({showForm: !this.state.showForm})
+    this.props.toggleCallback(this.state.showForm);
+  }
+
   render() {
+    let addReviewClasses = 'skatespot_list add-review';
+    if(this.state.showForm) {
+      addReviewClasses = `${addReviewClasses} skatespot_list-open`;
+    }
     return (
-      <div className="skatespot_list add-review">
+      <div className={addReviewClasses}>
         <h3 className="spotName"
-        onClick={() => this.setState({showForm: !this.state.showForm})}>
+        onClick={() => this.toggle()}>
           {this.state.showForm ? '- Add Skatespot' : '+ Add Skatespot'}
         </h3>
         {this.state.showForm === true &&
-          <SpotForm csrf={this.props.csrf} submitCallback={this.onSubmit}/>
+          <SpotForm csrf={this.props.csrf} submitCallback={this.onSubmit} loc={this.props.loc}/>
         }
       </div>
     );
@@ -82,11 +92,13 @@ class SkatespotRoot extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: {lat: 59.95, lng: 30.33},
+      center: {lat: 43.084727, lng: -77.674423},
       zoom: 17,
       sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 3 = Profile menu
       currentSpot: {}, // data of spot we last selcted
       spots: [], // New main spot list, have skatespotlist send state to this
+      newSpotLatLog: [0.0, 0.0],
+      addingNewSpot: false,
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.setSidebarState = this.setSidebarState.bind(this);
@@ -100,7 +112,7 @@ class SkatespotRoot extends React.Component {
   }
 
   updatePublicView() {
-    let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+    let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotDesc').val());
     sendAjax('GET', toFetch, null, (data) => {
       console.log("fetching ajax spots");
       this.onFetchSpots(data.spots);
@@ -122,48 +134,66 @@ class SkatespotRoot extends React.Component {
     this.setState({spots: newSpots})
   }
 
+  setNewPointLatLong({x, y, lat, lng, event  }) {
+    if(this.state.addingNewSpot === true) {
+      this.setState({newSpotLatLog: [lat, lng]});
+    }
+  }
+
   render() {
+    const addingNewSpot = this.state.addingNewSpot;
+    const newSpotMarker = addingNewSpot ? (
+      <SkateSpotMarker text="New Spot" lat={this.state.newSpotLatLog[0]} lng={this.state.newSpotLatLog[1]} />
+    ) : (
+      <span></span>
+    );
     return(
       <div>
-        <nav>
-          <a href="#" onClick={() => this.setSidebarState(3)}>Profile</a>
-          <div className="navlink"><a href="/logout">Log out</a></div>
+        <nav style={{height: '5%'}}>
+          <a href="#" style={{float: 'left'}} onClick={() => this.setSidebarState(3)}
+            className="back-button">Profile</a>
         </nav>
-        <div style={{ height: '100%', width: '30%', float:'left' }}>
+        <div style={{ height: '94%', width: '30%', float:'left' }}>
           {this.state.sidebarState == 0 && 
-              <SkateSpotList
+              <SkateSpotListParent
                 spots={this.state.spots}
                 csrf={this.props.csrf } 
                 url={defaultURL} 
                 selectFunc={this.setSidebarInfo.bind(this)}
                 onFetchSpots={this.onFetchSpots.bind(this)} 
                 updatePublicView={this.updatePublicView.bind(this)}
+                toggleAddSpotCallback={(newState) => this.setState({addingNewSpot: !newState})}
+                newSpotLatLog={this.state.newSpotLatLog}
               />
           }
           {this.state.sidebarState == 1 && 
             <div>
-              <div onClick={() => this.setSidebarState(0)}>Back</div>
+              <div onClick={() => this.setSidebarState(0)} className="back-button">Back</div>
               <SpotInfoBox spot={this.state.currentSpot} csrf={this.props.csrf}/>
             </div>
           }
           {this.state.sidebarState == 3 && 
             <div>
-              <div onClick={() => this.setSidebarState(0)}>Back</div>
+              <div onClick={() => this.setSidebarState(0)} className="back-button">Back</div>
               <AccountMenu csrf={this.props.csrf} />
+              <br />
+              <a href="/logout" className="back-button" style={{width: '300px'}}>Log out</a>
             </div>
           }
         </div>
-        <div style={{ height: '100%', width: '70%', float:'right' }}>
+        <div style={{ height: '95%', width: '70%', float:'left' }}>
           <GoogleMapReact
             bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
             center={this.state.center}
             zoom={this.state.zoom}
+            onClick={this.setNewPointLatLong.bind(this)}
           >
             {
               this.state.spots.map(function(spot) {
-                return <SkateSpotMapIcon text={spot.name} lat={spot.location[1]} lng={spot.location[0]}></SkateSpotMapIcon>
+                return <SkateSpotMarker text={spot.name} lat={spot.location[1]} lng={spot.location[0]}></SkateSpotMarker>
               })
             }
+            {newSpotMarker}
           </GoogleMapReact>
         </div>
       </div>

@@ -11,7 +11,7 @@ const ReviewForm = (props) => {
         </div> 
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input type="hidden" id="reviewFormSpotID" name="spot" value={props.spotId} />
-        <input type="submit" />
+        <input type="submit" value="Add Review" />
       </form>
     </div>
   );
@@ -80,14 +80,41 @@ class ReviewList extends React.Component {
         </div>
         {this.state.reviews.map(function(review) {
           return(
-            <div className='review-item'>
-              <div className='review-author'>{review.author}</div>
-              <div className='review-rating'>{review.rating} / 5</div>
-              <div className='review-text'>{review.reviewText}</div>
-            </div>
+            <ReviewListItem
+              id={review.author}
+              rating={review.rating}
+              reviewText={review.reviewText} />
           );
         })}
       </div>
     );
   }
 };
+
+class ReviewListItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '(username)',
+    }
+  }
+
+  componentDidMount() {
+    $.ajax({
+      method: 'GET',
+      url: `/getUsernameForId?id=${this.props.id}`
+    }).done((data) => {
+      this.setState({username: data.username});
+    });
+  }
+  
+  render() {
+    return(
+      <div className='review-item'>
+        <div className='review-author'>{this.state.username}</div>
+        <div className='review-rating'>{this.props.rating} / 5</div>
+        <div className='review-text'>{this.props.reviewText}</div>
+      </div>
+    );
+  }
+}

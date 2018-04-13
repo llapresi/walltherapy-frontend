@@ -61,26 +61,24 @@ var SpotForm = function (_React$Component) {
             { htmlFor: 'name' },
             'Name: '
           ),
-          React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Domo Name' }),
-          React.createElement(
-            'label',
-            { htmlFor: 'longitude' },
-            'Longitude: '
-          ),
-          React.createElement('input', { id: 'spotLong', type: 'text', name: 'longitude', placeholder: 'Longitude:' }),
-          React.createElement(
-            'label',
-            { htmlFor: 'latitude' },
-            'Latitude: '
-          ),
-          React.createElement('input', { id: 'spotLat', type: 'text', name: 'latitude', placeholder: 'Latitude:' }),
+          React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Spot Name' }),
+          React.createElement('input', { id: 'spotLong', type: 'hidden', name: 'longitude', value: this.props.loc[1] }),
+          React.createElement('input', { id: 'spotLat', type: 'hidden', name: 'latitude', value: this.props.loc[0] }),
+          React.createElement('br', null),
           React.createElement(
             'label',
             { htmlFor: 'description', id: 'domoFoodLabel' },
             'Description: '
           ),
-          React.createElement('input', { id: 'spotDescription', type: 'text', name: 'description', placeholder: 'description' }),
+          React.createElement('br', null),
+          React.createElement('textarea', { id: 'spotDescription', name: 'description', cols: '35', rows: '10', placeholder: 'description' }),
+          React.createElement('br', null),
           React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf }),
+          React.createElement(
+            'div',
+            null,
+            'Click point on map to set new spot position'
+          ),
           React.createElement('input', { className: 'addSpotSubmit', type: 'submit', value: 'Add New Spot' })
         ),
         React.createElement(
@@ -110,29 +108,28 @@ var defaultURL = '/getSpots';
 
 var makePublicSpotsURL = function makePublicSpotsURL() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  var location = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-  var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+  var description = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
-  return '/getSpots?location=' + location + '&name=' + name + '&description=' + description;
+  return '/getSpots?name=' + name + '&description=' + description;
 };
 
-var SkateSpotList = function SkateSpotList(props) {
+var SkateSpotListParent = function SkateSpotListParent(props) {
   return React.createElement(
     'div',
     null,
+    React.createElement(AddSkateSpotButton, { csrf: props.csrf, submitCallback: props.updatePublicView,
+      toggleCallback: props.toggleAddSpotCallback, loc: props.newSpotLatLog }),
     React.createElement(
       'div',
       null,
-      React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Spot Name', onChange: props.updatePublicView }),
-      React.createElement('input', { id: 'spotLoc', type: 'text', name: 'location', placeholder: 'Spot Location', onChange: props.updatePublicView }),
-      React.createElement('input', { id: 'spotDesc', type: 'text', name: 'description', placeholder: 'Spot Description', onChange: props.updatePublicView })
+      React.createElement('input', { id: 'spotName', type: 'text', name: 'name', placeholder: 'Filter by Spot Name', onChange: props.updatePublicView }),
+      React.createElement('input', { id: 'spotDesc', type: 'text', name: 'description', placeholder: 'Filter by Spot Description', onChange: props.updatePublicView })
     ),
-    React.createElement(AddSkateSpotListItem, { csrf: props.csrf, submitCallback: props.updatePublicView }),
-    React.createElement(SkateSpotDisplay, { selectFunc: props.selectFunc, spots: props.spots })
+    React.createElement(SkateSpotList, { selectFunc: props.selectFunc, spots: props.spots })
   );
 };
 
-var SkateSpotMapIcon = function SkateSpotMapIcon(_ref) {
+var SkateSpotMarker = function SkateSpotMarker(_ref) {
   var text = _ref.text;
 
   return React.createElement(
@@ -142,7 +139,7 @@ var SkateSpotMapIcon = function SkateSpotMapIcon(_ref) {
   );
 };
 
-var SkateSpotDisplay = function SkateSpotDisplay(props) {
+var SkateSpotList = function SkateSpotList(props) {
   return React.createElement(
     'div',
     { style: { height: '90%', overflowY: 'scroll' } },
@@ -167,13 +164,13 @@ var SkateSpotDisplay = function SkateSpotDisplay(props) {
   );
 };
 
-var AddSkateSpotListItem = function (_React$Component) {
-  _inherits(AddSkateSpotListItem, _React$Component);
+var AddSkateSpotButton = function (_React$Component) {
+  _inherits(AddSkateSpotButton, _React$Component);
 
-  function AddSkateSpotListItem(props) {
-    _classCallCheck(this, AddSkateSpotListItem);
+  function AddSkateSpotButton(props) {
+    _classCallCheck(this, AddSkateSpotButton);
 
-    var _this = _possibleConstructorReturn(this, (AddSkateSpotListItem.__proto__ || Object.getPrototypeOf(AddSkateSpotListItem)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (AddSkateSpotButton.__proto__ || Object.getPrototypeOf(AddSkateSpotButton)).call(this, props));
 
     _this.state = {
       showForm: false
@@ -182,34 +179,45 @@ var AddSkateSpotListItem = function (_React$Component) {
     return _this;
   }
 
-  _createClass(AddSkateSpotListItem, [{
+  _createClass(AddSkateSpotButton, [{
     key: 'onSubmit',
     value: function onSubmit() {
       this.setState({ showForm: false });
+      this.props.toggleCallback(!this.state.showForm);
       this.props.submitCallback();
+    }
+  }, {
+    key: 'toggle',
+    value: function toggle() {
+      this.setState({ showForm: !this.state.showForm });
+      this.props.toggleCallback(this.state.showForm);
     }
   }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
 
+      var addReviewClasses = 'skatespot_list add-review';
+      if (this.state.showForm) {
+        addReviewClasses = addReviewClasses + ' skatespot_list-open';
+      }
       return React.createElement(
         'div',
-        { className: 'skatespot_list add-review' },
+        { className: addReviewClasses },
         React.createElement(
           'h3',
           { className: 'spotName',
             onClick: function onClick() {
-              return _this2.setState({ showForm: !_this2.state.showForm });
+              return _this2.toggle();
             } },
           this.state.showForm ? '- Add Skatespot' : '+ Add Skatespot'
         ),
-        this.state.showForm === true && React.createElement(SpotForm, { csrf: this.props.csrf, submitCallback: this.onSubmit })
+        this.state.showForm === true && React.createElement(SpotForm, { csrf: this.props.csrf, submitCallback: this.onSubmit, loc: this.props.loc })
       );
     }
   }]);
 
-  return AddSkateSpotListItem;
+  return AddSkateSpotButton;
 }(React.Component);
 
 var SpotInfoBox = function SpotInfoBox(_ref2) {
@@ -242,11 +250,13 @@ var SkatespotRoot = function (_React$Component2) {
     var _this3 = _possibleConstructorReturn(this, (SkatespotRoot.__proto__ || Object.getPrototypeOf(SkatespotRoot)).call(this, props));
 
     _this3.state = {
-      center: { lat: 59.95, lng: 30.33 },
+      center: { lat: 43.084727, lng: -77.674423 },
       zoom: 17,
       sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 3 = Profile menu
       currentSpot: {}, // data of spot we last selcted
-      spots: [] // New main spot list, have skatespotlist send state to this
+      spots: [], // New main spot list, have skatespotlist send state to this
+      newSpotLatLog: [0.0, 0.0],
+      addingNewSpot: false
     };
     _this3.onFetchSpots = _this3.onFetchSpots.bind(_this3);
     _this3.setSidebarState = _this3.setSidebarState.bind(_this3);
@@ -268,7 +278,7 @@ var SkatespotRoot = function (_React$Component2) {
     value: function updatePublicView() {
       var _this5 = this;
 
-      var toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotLoc').val(), $('#spotDesc').val());
+      var toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotDesc').val());
       sendAjax('GET', toFetch, null, function (data) {
         console.log("fetching ajax spots");
         _this5.onFetchSpots(data.spots);
@@ -293,43 +303,54 @@ var SkatespotRoot = function (_React$Component2) {
       this.setState({ spots: newSpots });
     }
   }, {
+    key: 'setNewPointLatLong',
+    value: function setNewPointLatLong(_ref3) {
+      var x = _ref3.x,
+          y = _ref3.y,
+          lat = _ref3.lat,
+          lng = _ref3.lng,
+          event = _ref3.event;
+
+      if (this.state.addingNewSpot === true) {
+        this.setState({ newSpotLatLog: [lat, lng] });
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this6 = this;
 
+      var addingNewSpot = this.state.addingNewSpot;
+      var newSpotMarker = addingNewSpot ? React.createElement(SkateSpotMarker, { text: 'New Spot', lat: this.state.newSpotLatLog[0], lng: this.state.newSpotLatLog[1] }) : React.createElement('span', null);
       return React.createElement(
         'div',
         null,
         React.createElement(
           'nav',
-          null,
+          { style: { height: '5%' } },
           React.createElement(
             'a',
-            { href: '#', onClick: function onClick() {
+            { href: '#', style: { float: 'left' }, onClick: function onClick() {
                 return _this6.setSidebarState(3);
-              } },
+              },
+              className: 'back-button' },
             'Profile'
-          ),
-          React.createElement(
-            'div',
-            { className: 'navlink' },
-            React.createElement(
-              'a',
-              { href: '/logout' },
-              'Log out'
-            )
           )
         ),
         React.createElement(
           'div',
-          { style: { height: '100%', width: '30%', float: 'left' } },
-          this.state.sidebarState == 0 && React.createElement(SkateSpotList, {
+          { style: { height: '94%', width: '30%', float: 'left' } },
+          this.state.sidebarState == 0 && React.createElement(SkateSpotListParent, {
             spots: this.state.spots,
             csrf: this.props.csrf,
             url: defaultURL,
             selectFunc: this.setSidebarInfo.bind(this),
             onFetchSpots: this.onFetchSpots.bind(this),
-            updatePublicView: this.updatePublicView.bind(this)
+            updatePublicView: this.updatePublicView.bind(this),
+            toggleAddSpotCallback: function toggleAddSpotCallback(newState) {
+              return _this6.setState({ addingNewSpot: !newState });
+            },
+            newSpotLatLog: this.state.newSpotLatLog
           }),
           this.state.sidebarState == 1 && React.createElement(
             'div',
@@ -338,7 +359,7 @@ var SkatespotRoot = function (_React$Component2) {
               'div',
               { onClick: function onClick() {
                   return _this6.setSidebarState(0);
-                } },
+                }, className: 'back-button' },
               'Back'
             ),
             React.createElement(SpotInfoBox, { spot: this.state.currentSpot, csrf: this.props.csrf })
@@ -350,25 +371,33 @@ var SkatespotRoot = function (_React$Component2) {
               'div',
               { onClick: function onClick() {
                   return _this6.setSidebarState(0);
-                } },
+                }, className: 'back-button' },
               'Back'
             ),
-            React.createElement(AccountMenu, { csrf: this.props.csrf })
+            React.createElement(AccountMenu, { csrf: this.props.csrf }),
+            React.createElement('br', null),
+            React.createElement(
+              'a',
+              { href: '/logout', className: 'back-button', style: { width: '300px' } },
+              'Log out'
+            )
           )
         ),
         React.createElement(
           'div',
-          { style: { height: '100%', width: '70%', float: 'right' } },
+          { style: { height: '95%', width: '70%', float: 'left' } },
           React.createElement(
             GoogleMapReact,
             {
               bootstrapURLKeys: { key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' },
               center: this.state.center,
-              zoom: this.state.zoom
+              zoom: this.state.zoom,
+              onClick: this.setNewPointLatLong.bind(this)
             },
             this.state.spots.map(function (spot) {
-              return React.createElement(SkateSpotMapIcon, { text: spot.name, lat: spot.location[1], lng: spot.location[0] });
-            })
+              return React.createElement(SkateSpotMarker, { text: spot.name, lat: spot.location[1], lng: spot.location[0] });
+            }),
+            newSpotMarker
           )
         )
       );
@@ -448,25 +477,33 @@ var ChangePasswordForm = function (_React$Component) {
           action: "/changePassword",
           method: "POST",
           onSubmit: this.submitRequest,
-          className: "spotForm" },
+          className: "skatespot_list skatespot_list-open" },
+        React.createElement(
+          "h3",
+          { className: "spotName" },
+          "Change Password"
+        ),
         React.createElement(
           "label",
           { htmlFor: "oldPass" },
           "Old Password: "
         ),
         React.createElement("input", { id: "oldPass", type: "password", name: "oldPass", placeholder: "Old Password" }),
+        React.createElement("br", null),
         React.createElement(
           "label",
           { htmlFor: "oldPass" },
           "New Password: "
         ),
         React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "New Password" }),
+        React.createElement("br", null),
         React.createElement(
           "label",
           { htmlFor: "oldPass" },
           "New Password (Re-Enter): "
         ),
         React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "New Password (Re-Enter)" }),
+        React.createElement("br", null),
         React.createElement("input", { type: "hidden", name: "_csrf", value: this.props.csrf }),
         React.createElement("input", { className: "changePassSubmit", type: "submit", value: "Change Password" })
       );
@@ -547,7 +584,7 @@ var ReviewForm = function ReviewForm(props) {
       ),
       React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
       React.createElement("input", { type: "hidden", id: "reviewFormSpotID", name: "spot", value: props.spotId }),
-      React.createElement("input", { type: "submit" })
+      React.createElement("input", { type: "submit", value: "Add Review" })
     )
   );
 };
@@ -642,26 +679,10 @@ var ReviewList = function (_React$Component) {
           this.state.showReviewForm === true && React.createElement(ReviewForm, { spotId: this.props.spotId, csrf: this.props.csrf, submitAction: this.submitReview.bind(this) })
         ),
         this.state.reviews.map(function (review) {
-          return React.createElement(
-            "div",
-            { className: "review-item" },
-            React.createElement(
-              "div",
-              { className: "review-author" },
-              review.author
-            ),
-            React.createElement(
-              "div",
-              { className: "review-rating" },
-              review.rating,
-              " / 5"
-            ),
-            React.createElement(
-              "div",
-              { className: "review-text" },
-              review.reviewText
-            )
-          );
+          return React.createElement(ReviewListItem, {
+            id: review.author,
+            rating: review.rating,
+            reviewText: review.reviewText });
         })
       );
     }
@@ -671,6 +692,61 @@ var ReviewList = function (_React$Component) {
 }(React.Component);
 
 ;
+
+var ReviewListItem = function (_React$Component2) {
+  _inherits(ReviewListItem, _React$Component2);
+
+  function ReviewListItem(props) {
+    _classCallCheck(this, ReviewListItem);
+
+    var _this4 = _possibleConstructorReturn(this, (ReviewListItem.__proto__ || Object.getPrototypeOf(ReviewListItem)).call(this, props));
+
+    _this4.state = {
+      username: '(username)'
+    };
+    return _this4;
+  }
+
+  _createClass(ReviewListItem, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this5 = this;
+
+      $.ajax({
+        method: 'GET',
+        url: "/getUsernameForId?id=" + this.props.id
+      }).done(function (data) {
+        _this5.setState({ username: data.username });
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return React.createElement(
+        "div",
+        { className: "review-item" },
+        React.createElement(
+          "div",
+          { className: "review-author" },
+          this.state.username
+        ),
+        React.createElement(
+          "div",
+          { className: "review-rating" },
+          this.props.rating,
+          " / 5"
+        ),
+        React.createElement(
+          "div",
+          { className: "review-text" },
+          this.props.reviewText
+        )
+      );
+    }
+  }]);
+
+  return ReviewListItem;
+}(React.Component);
 "use strict";
 
 var handleError = function handleError(message) {

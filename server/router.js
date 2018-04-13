@@ -15,6 +15,7 @@ const router = (app) => {
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/addReview', mid.requiresLogin, controllers.Review.addReview);
   app.get('/getReviews', mid.requiresLogin, controllers.Review.getReviews);
+  app.get('/getUsernameForId', mid.requiresLogin, controllers.Account.getUsernameForId);
 };
 
 module.exports = router;

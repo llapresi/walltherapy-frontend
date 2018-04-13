@@ -26,15 +26,19 @@ class ChangePasswordForm extends React.Component {
       action="/changePassword"
       method="POST"
       onSubmit={this.submitRequest}
-      className="spotForm">
+      className="skatespot_list skatespot_list-open">
+        <h3 className="spotName">Change Password</h3>
         <label htmlFor="oldPass">Old Password: </label>
         <input id="oldPass" type="password" name="oldPass" placeholder="Old Password" />
+        <br />
 
         <label htmlFor="oldPass">New Password: </label>
         <input id="pass" type="password" name="pass" placeholder="New Password" />
+        <br />
 
         <label htmlFor="oldPass">New Password (Re-Enter): </label>
         <input id="pass2" type="password" name="pass2" placeholder="New Password (Re-Enter)" />
+        <br />
 
         <input type="hidden" name="_csrf" value={this.props.csrf} />
         <input className="changePassSubmit" type="submit" value="Change Password" />

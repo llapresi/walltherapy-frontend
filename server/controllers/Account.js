@@ -123,9 +123,25 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
+const getUsernameForId = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Account.AccountModel.getUsernameForId(req.query.id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    return res.json({ username: docs.username });
+  });
+}
+
 module.exports.loginPage = loginPage;
 module.exports.logout = logout;
 module.exports.login = login;
 module.exports.signup = signup;
 module.exports.changePassword = changePassword;
 module.exports.getToken = getToken;
+module.exports.getUsernameForId = getUsernameForId;
+

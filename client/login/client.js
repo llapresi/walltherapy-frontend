@@ -4,7 +4,7 @@ const handleLogin = (e) => {
     $("#domoMessage").animate({width:'hide'},350);
 
     if($("#user").val() == '' || $('#pass').val() == '') {
-        handleError('RAWR! Username or password is empty');
+        handleError('Username or password is empty');
         return false;
     }
 
@@ -21,12 +21,12 @@ const handleSignup = (e) => {
     $("#domoMessage").animate({width:'hide'},350);
 
     if($("#user").val() == '' || $('#pass').val() == '' || $('#pass2').val() == '') {
-        handleError('RAWR! All fields are required');
+        handleError('All fields are required');
         return false;
     }
 
     if($("#pass").val() !== $('#pass2').val()) {
-        handleError('RAWR! Passwords do not match');
+        handleError('Passwords do not match');
         return false;
     }
 
@@ -76,14 +76,26 @@ const SignupWindow = (props) => {
 
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
-        <LoginWindow csrf={csrf} />,
+        <div>
+            <div className="splashscreen">
+                <h1>Skatespot.io</h1>
+                <div>Find new places to skate, make new places to skate, and more.</div>
+            </div>
+            <LoginWindow csrf={csrf} />
+        </div>,
         document.querySelector("#content")
     );
 };
 
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
-        <SignupWindow csrf={csrf} />,
+        <div>
+            <div className="splashscreen">
+                <h1>Skatespot.io</h1>
+                <div>Find new places to skate, make new places to skate, and more.</div>
+            </div>
+            <SignupWindow csrf={csrf} />
+        </div>,
         document.querySelector("#content")
     );
 };

@@ -6,7 +6,7 @@ var handleLogin = function handleLogin(e) {
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
     if ($("#user").val() == '' || $('#pass').val() == '') {
-        handleError('RAWR! Username or password is empty');
+        handleError('Username or password is empty');
         return false;
     }
 
@@ -23,12 +23,12 @@ var handleSignup = function handleSignup(e) {
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
     if ($("#user").val() == '' || $('#pass').val() == '' || $('#pass2').val() == '') {
-        handleError('RAWR! All fields are required');
+        handleError('All fields are required');
         return false;
     }
 
     if ($("#pass").val() !== $('#pass2').val()) {
-        handleError('RAWR! Passwords do not match');
+        handleError('Passwords do not match');
         return false;
     }
 
@@ -97,11 +97,47 @@ var SignupWindow = function SignupWindow(props) {
 };
 
 var createLoginWindow = function createLoginWindow(csrf) {
-    ReactDOM.render(React.createElement(LoginWindow, { csrf: csrf }), document.querySelector("#content"));
+    ReactDOM.render(React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "div",
+            { className: "splashscreen" },
+            React.createElement(
+                "h1",
+                null,
+                "Skatespot.io"
+            ),
+            React.createElement(
+                "div",
+                null,
+                "Find new places to skate, make new places to skate, and more."
+            )
+        ),
+        React.createElement(LoginWindow, { csrf: csrf })
+    ), document.querySelector("#content"));
 };
 
 var createSignupWindow = function createSignupWindow(csrf) {
-    ReactDOM.render(React.createElement(SignupWindow, { csrf: csrf }), document.querySelector("#content"));
+    ReactDOM.render(React.createElement(
+        "div",
+        null,
+        React.createElement(
+            "div",
+            { className: "splashscreen" },
+            React.createElement(
+                "h1",
+                null,
+                "Skatespot.io"
+            ),
+            React.createElement(
+                "div",
+                null,
+                "Find new places to skate, make new places to skate, and more."
+            )
+        ),
+        React.createElement(SignupWindow, { csrf: csrf })
+    ), document.querySelector("#content"));
 };
 
 var setup = function setup(csrf) {

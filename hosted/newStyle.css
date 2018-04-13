@@ -2,6 +2,8 @@ html, body {
     font-family: 'Roboto', sans-serif;
     background-color: hsl(202, 30%, 11%);
     color: hsla(0, 0%, 100%, 0.87);
+    margin: 0;
+    height: 100%; overflow: hidden
 }
 
 .skatespot_list {
@@ -17,11 +19,25 @@ html, body {
     transition: border-left .2s;
 }
 
+.skatespot_list-open {
+    border-left: 12px solid rgb(213, 240, 255);
+    transition: border-left .2s;
+}
+
+
 .spotName {
     padding-top: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
     font-size: 30px;
+}
+
+#spotName {
+    width:50%;
+}
+
+#spotDesc {
+    width:50%;
 }
 
 .spotDescription {
@@ -90,4 +106,27 @@ html, body {
 
 #reviewForm {
     font-size: 20px
+}
+
+.back-button {
+    background-color: #55acee;
+    width: 70px;
+    height: 29px;
+    font-weight: 700;
+    font-size: 24px;
+    padding: 4px;
+    text-align: center;
+    color:inherit;
+    text-decoration: none;
+}
+
+.splashscreen {
+    text-align: center;
+    transform: translateY(245px) scale(2);
+    line-height: 10px;
+}
+
+.big-bg {
+    background: url(/assets/img/skate_dof.png) no-repeat 50% 50% fixed;
+    background-size: cover;
 }
