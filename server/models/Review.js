@@ -4,9 +4,6 @@ mongoose.Promise = global.Promise;
 
 let ReviewModel = {};
 
-const models = require('../models');
-const Account = models.Account;
-
 const convertId = mongoose.Types.ObjectId;
 
 const ReviewSchema = new mongoose.Schema({
