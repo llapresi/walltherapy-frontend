@@ -1,12 +1,7 @@
-const usernameDisplay = ({name}) => {
-  return(
-    <div>
-      <h2>{name}</h2>
-    </div>
-  )
-};
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-class ChangePasswordForm extends React.Component {
+export class ChangePasswordForm extends React.Component {
   constructor(props) {
     super(props);
     this.submitRequest = this.submitRequest.bind(this);
@@ -47,7 +42,7 @@ class ChangePasswordForm extends React.Component {
   }
 };
 
-class AccountMenu extends React.Component {
+export class AccountMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = { passwordChanged: false };

@@ -1,4 +1,7 @@
-const ReviewForm = (props) => {
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+export const ReviewForm = (props) => {
   return(
     <div>
       <form id="reviewForm "action="/addReview" method="POST" onSubmit={props.submitAction}>
@@ -17,7 +20,7 @@ const ReviewForm = (props) => {
   );
 };
 
-class ReviewList extends React.Component {
+export class ReviewList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -91,7 +94,7 @@ class ReviewList extends React.Component {
   }
 };
 
-class ReviewListItem extends React.Component {
+export class ReviewListItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

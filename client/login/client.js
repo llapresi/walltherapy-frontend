@@ -1,3 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {sendAjax, redirect, handleError} from '../helper/helper.js'
+
 const handleLogin = (e) => {
     e.preventDefault();
 

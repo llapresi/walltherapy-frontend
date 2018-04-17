@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 class SpotForm extends React.Component {
   constructor(props) {
     super(props);
@@ -51,3 +54,5 @@ class SpotForm extends React.Component {
     );
   }
 };
+
+export default SpotForm;
