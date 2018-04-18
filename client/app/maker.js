@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import SpotForm from './addspot.js';
 import Folder from './folder.js';
 import {ChangePasswordForm, AccountMenu} from './profile.js';
 import {ReviewForm, ReviewList, ReviewListItem} from './reviews.js';
 import {sendAjax, redirect, handleError} from '../helper/helper.js'
 import GoogleMapReact from 'google-map-react';
+import { hot } from 'react-hot-loader';
 
 let defaultURL = '/spots';
 
@@ -16,7 +16,7 @@ const makePublicSpotsURL = (name = '', description = '') => {
 const SkateSpotListParent = (props) => {
   return (
     <div>
-      <Folder folderName="Folder Test">Dickbutt</Folder>
+      <Folder folderName="Folder Test">Pizza at dickies</Folder>
       <AddSkateSpotButton csrf={props.csrf} submitCallback={props.updatePublicView}
       toggleCallback={props.toggleAddSpotCallback} loc={props.newSpotLatLog}/>
       <div>
@@ -217,4 +217,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, document.querySelector("#main"));
+export default hot(module)(App);

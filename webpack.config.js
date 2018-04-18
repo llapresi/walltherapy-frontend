@@ -1,6 +1,6 @@
 module.exports = {
   entry: [
-    './client/app/maker.js',
+    './client/app/App.js',
   ],
   module: {
     rules: [
@@ -16,10 +16,15 @@ module.exports = {
   },
   output: {
     path: `${__dirname}/hosted`,
-    publicPath: '/',
+    publicPath: '/assets/',
     filename: 'bundle.js',
   },
   devServer: {
-    contentBase: './dist',
+    publicPath: '/assets/',
+    proxy: [{
+      context: ['/**', '!/assets/bundle.js'],
+      target: 'http://localhost:3000',
+    }],
+    contentBase: '/assets/',
   },
 };

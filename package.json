@@ -11,10 +11,11 @@
     "buildLoginBundle": "webpack --config login.config.js --mode production",
     "buildAppBundle": "webpack --mode production",
     "build": "npm run buildLoginBundle && npm run buildAppBundle",
-    "watchAppBundle": "webpack --watch --mode development --info-verbosity verbose",
+    "watchAppBundle": "webpack-dev-server --hot --mode development",
     "watchLoginBundle": "webpack --config login.config.js --watch --mode development --info-verbosity verbose",
     "nodemon": "nodemon --watch ./server ./server/app.js",
     "start": "node ./server/app.js",
+    "dev": "start npm run watchAppBundle && start npm run nodemon",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\""
   },
@@ -52,7 +53,9 @@
     "eslint-plugin-import": "^1.10.1",
     "google-map-react": "^0.34.0",
     "nodemon": "^1.11.0",
+    "react-hot-loader": "^4.1.0",
     "webpack": "^4.5.0",
-    "webpack-cli": "^2.0.14"
+    "webpack-cli": "^2.0.14",
+    "webpack-dev-server": "^3.1.3"
   }
 }
