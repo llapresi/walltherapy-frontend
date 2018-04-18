@@ -7,16 +7,16 @@ import {ReviewForm, ReviewList, ReviewListItem} from './reviews.js';
 import {sendAjax, redirect, handleError} from '../helper/helper.js'
 import GoogleMapReact from 'google-map-react';
 
-let defaultURL = '/getSpots';
+let defaultURL = '/spots';
 
 const makePublicSpotsURL = (name = '', description = '') => {
-  return `/getSpots?name=${name}&description=${description}`;
+  return `/spots?name=${name}&description=${description}`;
 };
 
 const SkateSpotListParent = (props) => {
   return (
     <div>
-      <Folder folderName="Folder Test">Dick</Folder>
+      <Folder folderName="Folder Test">Dickbutt</Folder>
       <AddSkateSpotButton csrf={props.csrf} submitCallback={props.updatePublicView}
       toggleCallback={props.toggleAddSpotCallback} loc={props.newSpotLatLog}/>
       <div>
@@ -98,7 +98,7 @@ const SpotInfoBox = ({spot, csrf}) => {
   );
 }
 
-class SkatespotRoot extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -109,13 +109,19 @@ class SkatespotRoot extends React.Component {
       spots: [], // New main spot list, have skatespotlist send state to this
       newSpotLatLog: [0.0, 0.0],
       addingNewSpot: false,
+      csrf: '',
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.setSidebarState = this.setSidebarState.bind(this);
   }
 
   componentDidMount() {
-    sendAjax('GET', '/getSpots', null, (data) => {
+    sendAjax("GET", "/getToken", null, (result) => {
+      console.log(result.csrfToken);
+      this.setState({csrf: result.csrfToken});
+    });
+
+    sendAjax('GET', '/spots', null, (data) => {
       console.log("fetching ajax spots");
       this.onFetchSpots(data.spots);
     });
@@ -167,7 +173,7 @@ class SkatespotRoot extends React.Component {
           {this.state.sidebarState == 0 && 
               <SkateSpotListParent
                 spots={this.state.spots}
-                csrf={this.props.csrf } 
+                csrf={this.state.csrf } 
                 url={defaultURL} 
                 selectFunc={this.setSidebarInfo.bind(this)}
                 onFetchSpots={this.onFetchSpots.bind(this)} 
@@ -179,13 +185,13 @@ class SkatespotRoot extends React.Component {
           {this.state.sidebarState == 1 && 
             <div>
               <div onClick={() => this.setSidebarState(0)} className="back-button">Back</div>
-              <SpotInfoBox spot={this.state.currentSpot} csrf={this.props.csrf}/>
+              <SpotInfoBox spot={this.state.currentSpot} csrf={this.state.csrf}/>
             </div>
           }
           {this.state.sidebarState == 3 && 
             <div>
               <div onClick={() => this.setSidebarState(0)} className="back-button">Back</div>
-              <AccountMenu csrf={this.props.csrf} />
+              <AccountMenu csrf={this.state.csrf} />
               <br />
               <a href="/logout" className="back-button" style={{width: '300px'}}>Log out</a>
             </div>
@@ -211,19 +217,4 @@ class SkatespotRoot extends React.Component {
   }
 }
 
-const setup = (csrf) => {
-  ReactDOM.render(
-    <SkatespotRoot csrf={csrf} />, document.querySelector("#main")
-  );
-};
-
-const getToken = () => {
-  sendAjax("GET", "/getToken", null, (result) => {
-    console.log(result.csrfToken);
-    setup(result.csrfToken);
-  });
-};
-
-$(document).ready(function() {
-  getToken();
-});
+ReactDOM.render(<App />, document.querySelector("#main"));

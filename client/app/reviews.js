@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 export const ReviewForm = (props) => {
   return(
     <div>
-      <form id="reviewForm "action="/addReview" method="POST" onSubmit={props.submitAction}>
+      <form id="reviewForm "action="/reviews" method="POST" onSubmit={props.submitAction}>
         <div className='review-text'>
           Rating: <input type="number" placeholder="3" step="0.5" min="1" max="5" size="1" name="rating" />
         </div>
@@ -34,7 +34,7 @@ export class ReviewList extends React.Component {
   updateReviews (id) {
     $.ajax({
       method: 'GET',
-      url: `/getReviews?spot=${id}`
+      url: `/reviews?spot=${id}`
     }).done((data) => {
       this.setState({reviews: data.reviews});
     });
@@ -49,7 +49,7 @@ export class ReviewList extends React.Component {
     $.ajax({
       cache: false,
       type: 'POST',
-      url: '/addReview',
+      url: '/reviews',
       data: $(e.target).serialize(),
       dataType: "json",
       error: function(xhr, status, error) {

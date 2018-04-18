@@ -14,7 +14,7 @@ class SpotForm extends React.Component {
     $.ajax({
       cache: false,
       type: 'POST',
-      url: '/maker',
+      url: '/spots',
       data: $(e.target).serialize(),
       dataType: "json",
       error: function(xhr, status, error) {
@@ -32,7 +32,7 @@ class SpotForm extends React.Component {
         <form id="spotForm"
         onSubmit={this.createSpot.bind(this)}
         name="spotForm"
-        action="/maker"
+        action="/spots"
         method="POST"
         className="spotForm">
           <label htmlFor="name">Name: </label>
