@@ -40,8 +40,8 @@
     "mongoose": "^4.4.6",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
-    "serve-favicon": "^2.3.0",
-    "underscore": "^1.8.3"
+    "serve-favicon": "^2.5.0",
+    "underscore": "^1.9.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -52,11 +52,11 @@
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.10.1",
     "google-map-react": "^0.34.0",
-    "nodemon": "^1.11.0",
-    "react-hot-loader": "^4.1.0",
+    "nodemon": "^1.17.3",
+    "react-hot-loader": "^4.1.1",
     "rmwc": "^1.5.4",
     "webpack": "^4.5.0",
-    "webpack-cli": "^2.0.14",
+    "webpack-cli": "^2.0.15",
     "webpack-dev-server": "^3.1.3"
   }
 }

@@ -164,7 +164,7 @@ class App extends React.Component {
             </ToolbarSection>
           </ToolbarRow>
         </Toolbar>
-        <div>
+        <div className="appGrid">
           <div className="skatespot-map__parent">
             <GoogleMapReact className="skatespot-map__map"
               bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
@@ -216,6 +216,7 @@ class App extends React.Component {
               <SpotForm csrf={this.state.csrf} loc={this.state.newSpotLatLog} />
             }
           </div>
+
         </div>
       </div>
     )
