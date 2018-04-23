@@ -1,3 +1,7 @@
+// TODO: We need to refactor a bunch of stuff + clean up legacy callbacks
+// to stuff from the pre-material web components UI
+// Also, move toolbar to it's own file
+
 import React from 'react';
 import SpotForm from './addspot.js';
 import Folder from './folder.js';
@@ -11,7 +15,7 @@ import { TabBar, Tab, TabIcon, TabIconText, TabBarScroller } from 'rmwc/Tabs';
 import { hot } from 'react-hot-loader';
 import { Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle, ToolbarMenuIcon, ToolbarIcon } from 'rmwc/Toolbar';
 import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
-import { Drawer, DrawerHeader, DrawerContent } from 'rmwc/Drawer';
+import { Typography } from 'rmwc/Typography';
 
 let defaultURL = '/spots';
 
@@ -52,37 +56,10 @@ const SkateSpotList = (props) => {
   );
 }
 
-class AddSkateSpotButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showForm: false
-    };
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  onSubmit() {
-    this.setState({showForm: false});
-    this.props.toggleCallback(!this.state.showForm);
-    this.props.submitCallback();
-  }
-
-  toggle() {
-    this.setState({showForm: !this.state.showForm})
-    this.props.toggleCallback(this.state.showForm);
-  }
-
-  render() {
-    return (
-      <SpotForm csrf={this.props.csrf} submitCallback={this.onSubmit} loc={this.props.loc}/>
-    );
-  }
-}
-
 const SpotInfoBox = ({spot, csrf}) => {
   return(
     <div className='spot_infobox'>
-      <h3 className='spotName'>{spot.name}</h3>
+      <h2 className='spotName'><Typography use="display2">{spot.name}</Typography></h2>
       <div className='spotDescription'>{spot.description}</div>
       <ReviewList spotId={spot._id} csrf={csrf} />
     </div>
@@ -199,10 +176,7 @@ class App extends React.Component {
                 />
             }
             {this.state.sidebarState == 1 && 
-              <div>
-                <div onClick={() => this.setSidebarState(0)} className="back-button">Back</div>
-                <SpotInfoBox spot={this.state.currentSpot} csrf={this.state.csrf}/>
-              </div>
+              <SpotInfoBox spot={this.state.currentSpot} csrf={this.state.csrf}/>
             }
             {this.state.sidebarState == 3 && 
               <div>

@@ -6,6 +6,14 @@ html, body {
     height: 100%; overflow: hidden
 }
 
+.spot_infobox {
+    padding: 12px;
+}
+
+#reviewForm {
+    padding: 12px;
+}
+
 .skatespot_list {
     background-color: hsl(198, 15%, 30%);
     margin-top: 4px;

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button, ButtonIcon } from 'rmwc/Button';
+import { Elevation } from 'rmwc/Elevation';
 
 class Folder extends React.Component {
   constructor(props) {
@@ -28,10 +30,10 @@ class Folder extends React.Component {
     }
     
     return(
-      <div className={addReviewClasses} onClick={this.toggleContent}>
-        <div className="review-author">{headerString}</div>
+      <div className={addReviewClasses}>
+        <Button onClick={this.toggleContent}>{headerString}</Button>
         {showContent === true &&
-          <div style={{fontSize : '20px'}}>{this.props.children}</div>
+          <Elevation z="9">{this.props.children}</Elevation>
         }
       </div>
     );

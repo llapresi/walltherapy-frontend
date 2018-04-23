@@ -4,6 +4,15 @@ html,body {
     margin:0;
 }
 
+
+.spot_infobox {
+    padding: 12px;
+}
+
+.reviewForm {
+    padding: 12px;
+}
+
 .appGrid {
     display: grid;
     grid-template-columns: 33% 66%;
