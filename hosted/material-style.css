@@ -24,7 +24,7 @@ body {
 
 .appGrid {
     display: grid;
-    grid-template-columns: 33% 66%;
+    grid-template-columns: 400px auto;
     height: calc(100% - 64px);
 }
 
@@ -47,6 +47,12 @@ body {
     grid-column: 1/1;
     grid-row: 1;
     overflow-y: hidden;
+}
+
+.skatespot-map__fab {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
 }
 
 @media only screen and (max-width: 800px) {

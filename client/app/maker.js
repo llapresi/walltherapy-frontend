@@ -9,13 +9,13 @@ import {ChangePasswordForm, AccountMenu} from './profile.js';
 import {ReviewForm, ReviewList, ReviewListItem} from './reviews.js';
 import {sendAjax, redirect, handleError} from '../helper/helper.js'
 import GoogleMapReact from 'google-map-react';
-import { Grid, GridCell } from 'rmwc/Grid';
 import { List, SimpleListItem } from 'rmwc/List';
 import { TabBar, Tab, TabIcon, TabIconText, TabBarScroller } from 'rmwc/Tabs';
 import { hot } from 'react-hot-loader';
 import { Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle, ToolbarMenuIcon, ToolbarIcon } from 'rmwc/Toolbar';
 import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 import { Typography } from 'rmwc/Typography';
+import { Fab } from 'rmwc/Fab';
 
 let defaultURL = '/spots';
 
@@ -152,6 +152,7 @@ class App extends React.Component {
               }
               {newSpotMarker}
             </GoogleMapReact>
+            <Fab className="skatespot-map__fab">add</Fab>
           </div>
           <div className="skatespot-sidebar">
             <TabBarScroller>
