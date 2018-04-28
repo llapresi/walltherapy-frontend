@@ -1,9 +1,18 @@
-html,body {
+html {
     height:100%;
     padding:0;
     margin:0;
 }
 
+body {
+    height:100%;
+    padding:0;
+    margin:0;
+}
+
+#main {
+    height: 100%;
+}
 
 .spot_infobox {
     padding: 12px;
@@ -28,13 +37,16 @@ html,body {
 }
 
 .skatespot-map__parent {
+    position: relative;
     grid-column: 2 / 3;
     grid-row: 1;
+    height: 100%;
 }
 
 .skatespot-sidebar {
     grid-column: 1/1;
     grid-row: 1;
+    overflow-y: hidden;
 }
 
 @media only screen and (max-width: 800px) {
@@ -53,7 +65,7 @@ html,body {
 }
 
 .spotList {
-    height: calc(100% - 130px);
+    height: calc(100% - 145px);
     overflow-y: scroll;
 }
 

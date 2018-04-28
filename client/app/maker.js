@@ -26,13 +26,11 @@ const makePublicSpotsURL = (name = '', description = '', showOurSpots = false) =
 
 const SkateSpotListParent = (props) => {
   return (
-    <div>
-      <div>
-        <TextField id="spotName" className="search_field" box withLeadingIcon="search" label="Name" onChange={props.updatePublicView} />
-        <TextField id="spotDesc" className="search_field" box withLeadingIcon="search" label="Description" onChange={props.updatePublicView} />
-      </div>
+    <React.Fragment>
+      <TextField id="spotName" className="search_field" box withLeadingIcon="search" label="Name" onChange={props.updatePublicView} />
+      <TextField id="spotDesc" className="search_field" box withLeadingIcon="search" label="Description" onChange={props.updatePublicView} />
       <SkateSpotList selectFunc={props.selectFunc} spots={props.spots} />
-    </div>
+    </React.Fragment>
   );
 };
 
@@ -44,15 +42,13 @@ const SkateSpotMarker = ({text}) => {
 
 const SkateSpotList = (props) => {
   return(
-    <div className="spotList">
-      <List twoLine>
-      {props.spots.map(function(spot) {
-        return (
-          <SimpleListItem key={spot._id} text={spot.name} secondaryText={spot.description} meta="info" onClick={() => props.selectFunc(spot)}/>
-        );
-      })}
-      </List>
-    </div>
+    <List twoLine className="spotList">
+    {props.spots.map(function(spot) {
+      return (
+        <SimpleListItem key={spot._id} text={spot.name} secondaryText={spot.description} meta="info" onClick={() => props.selectFunc(spot)}/>
+      );
+    })}
+    </List>
   );
 }
 
@@ -130,7 +126,7 @@ class App extends React.Component {
       <span></span>
     );
     return(
-      <div>
+      <React.Fragment>
         <Toolbar>
           <ToolbarRow>
             <ToolbarSection alignStart>
@@ -158,11 +154,13 @@ class App extends React.Component {
             </GoogleMapReact>
           </div>
           <div className="skatespot-sidebar">
-            <TabBar>
-              <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(0, false)}>Your Spots</Tab>
-              <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(0, true)}>All Spots</Tab>
-              <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(4, false)}>Add Spot</Tab>
-            </TabBar>
+            <TabBarScroller>
+              <TabBar>
+                <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(0, false)}>Your Spots</Tab>
+                <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(0, true)}>All Spots</Tab>
+                <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(4, false)}>Add Spot</Tab>
+              </TabBar>
+            </TabBarScroller>
             {this.state.sidebarState == 0 && 
                 <SkateSpotListParent
                   spots={this.state.spots}
@@ -192,7 +190,7 @@ class App extends React.Component {
           </div>
 
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 }
