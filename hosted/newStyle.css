@@ -137,4 +137,5 @@ html, body {
 .big-bg {
     background: url(/assets/img/skate_dof.png) no-repeat 50% 50% fixed;
     background-size: cover;
+    height: 100%;
 }

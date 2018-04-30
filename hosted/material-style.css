@@ -183,3 +183,10 @@ body {
     transform: translateY(0px);
     padding-left: 3px;
 }
+
+/* Splashscreen Stuff */
+.splash-screen-button {
+    margin-top: 7px;
+    background-color: #d32f2f !important;
+    color: white !important;
+}

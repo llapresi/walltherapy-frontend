@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {sendAjax, redirect, handleError} from '../helper/helper.js'
+import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 
 const handleLogin = (e) => {
     e.preventDefault();
@@ -95,7 +96,7 @@ const createSignupWindow = (csrf) => {
     ReactDOM.render(
         <div>
             <div className="splashscreen">
-                <h1>Skatespot.io</h1>
+                <h1><span className="toolbar-logo"></span>Skatespot.io</h1>
                 <div>Find new places to skate, make new places to skate, and more.</div>
             </div>
             <SignupWindow csrf={csrf} />
