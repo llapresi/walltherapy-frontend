@@ -1,12 +1,10 @@
-const crypto = require('crypto');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const saltRounds = 12;
 
 mongoose.Promise = global.Promise;
 
 let AccountModel = {};
-const iterations = 10000;
-const saltLength = 64;
-const keyLength = 64;
 
 const AccountSchema = new mongoose.Schema({
   username: {
@@ -15,10 +13,6 @@ const AccountSchema = new mongoose.Schema({
     trim: true,
     unique: true,
     match: /^[A-Za-z0-9_\-.]{1,16}$/,
-  },
-  salt: {
-    type: Buffer,
-    required: true,
   },
   password: {
     type: String,
@@ -39,12 +33,7 @@ AccountSchema.statics.toAPI = doc => ({
 const validatePassword = (doc, password, callback) => {
   const pass = doc.password;
 
-  return crypto.pbkdf2(password, doc.salt, iterations, keyLength, 'RSA-SHA512', (err, hash) => {
-    if (hash.toString('hex') !== pass) {
-      return callback(false);
-    }
-    return callback(true);
-  });
+  return bcrypt.compare(password, pass, (err, res) => callback(res));
 };
 
 AccountSchema.statics.findByUsername = (name, callback) => {
@@ -64,11 +53,10 @@ AccountSchema.statics.getUsernameForId = (_id, callback) => {
 };
 
 AccountSchema.statics.generateHash = (password, callback) => {
-  const salt = crypto.randomBytes(saltLength);
-
-  crypto.pbkdf2(password, salt, iterations, keyLength, 'RSA-SHA512', (err, hash) =>
-    callback(salt, hash.toString('hex'))
-  );
+  // Bcrypt.hash auto generates salt, you only need to store hash in model
+  bcrypt.hash(password, saltRounds, (err, hash) => {
+    callback(hash);
+  });
 };
 
 AccountSchema.statics.authenticate = (username, password, callback) =>

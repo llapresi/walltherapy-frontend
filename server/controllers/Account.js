@@ -49,10 +49,9 @@ const signup = (request, response) => {
     return res.status(400).json({ error: 'Passwords do not match' });
   }
 
-  return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
+  return Account.AccountModel.generateHash(req.body.pass, (hash) => {
     const accountData = {
       username: req.body.username,
-      salt,
       password: hash,
     };
 
@@ -99,9 +98,8 @@ const changePassword = (request, response) => {
       return res.status(401).json({ error: 'Old password does not match' });
     }
 
-    return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
+    return Account.AccountModel.generateHash(req.body.pass, (hash) => {
       const newData = {
-        salt,
         password: hash,
       };
 
