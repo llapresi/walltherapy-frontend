@@ -93,21 +93,28 @@ const changePassword = (request, response) => {
     return res.status(400).json({ error: 'Passwords do not match' });
   }
 
-  return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
-    const newData = {
-      salt,
-      password: hash,
-    };
+  return Account.AccountModel.authenticate(req.session.account.username,
+  req.body.oldPass, (err, account) => {
+    if (err || !account) {
+      return res.status(401).json({ error: 'Old password does not match' });
+    }
 
-    const query = {
-      _id: req.session.account._id,
-    };
+    return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
+      const newData = {
+        salt,
+        password: hash,
+      };
 
-    Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err) => {
-      if (err) {
-        return res.send(400, { error: err });
-      }
-      return res.status(200).json({ message: 'succesfully changed password' });
+      const query = {
+        _id: req.session.account._id,
+      };
+
+      Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err2) => {
+        if (err2) {
+          return res.send(400, { error: err });
+        }
+        return res.status(200).json({ message: 'succesfully changed password' });
+      });
     });
   });
 };

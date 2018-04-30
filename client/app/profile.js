@@ -4,6 +4,7 @@ import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 import { Typography } from 'rmwc/Typography';
 import { Checkbox } from 'rmwc/Checkbox';
 import { sendAjax } from '../helper/helper.js'
+import { Snackbar } from 'rmwc/Snackbar';
 
 export class ChangePasswordForm extends React.Component {
   constructor(props) {
@@ -13,8 +14,17 @@ export class ChangePasswordForm extends React.Component {
 
   submitRequest(e) {
     e.preventDefault();
-    sendAjax('POST', $("#passwordForm").attr("action"), $("#passwordForm").serialize(), () => {
-      this.props.onSuccess(true);
+    $.ajax({
+      cache: false,
+      type: 'POST',
+      url: '/changePassword',
+      data: $("#passwordForm").serialize(),
+      dataType: "json",
+      error: function(xhr, status, error) {
+        this.props.passwordCallback(xhr.responseText);
+      }.bind(this),
+    }).done(() => {
+      this.props.passwordCallback("Password Changed Successfully");
     });
   }
 
@@ -45,11 +55,14 @@ export class ChangePasswordForm extends React.Component {
 export class AccountMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { passwordChanged: false };
+    this.state = {
+      showSnackbar: false,
+      snackbarMsg: '',
+    };
   }
 
-  setPasswordNotification(isSuccessful) {
-    this.setState( {passwordChanged: isSuccessful} );
+  setPasswordNotification(message) {
+    this.setState({showSnackbar: true, snackbarMsg: message});
   }
 
   render() {
@@ -58,7 +71,14 @@ export class AccountMenu extends React.Component {
         {this.state.passwordChanged == true &&
           <div>Password Changed Successfully!</div>
         }
-        <ChangePasswordForm csrf={this.props.csrf} onSuccess={this.setPasswordNotification.bind(this)} />
+        <ChangePasswordForm csrf={this.props.csrf} passwordCallback={this.setPasswordNotification.bind(this)} />
+        <Snackbar
+          show={this.state.showSnackbar}
+          onHide={evt => this.setState({showSnackbar: false})}
+          message={this.state.snackbarMsg}
+          actionText="Close"
+          actionHandler={() => {}}
+        />
       </div>
     );
   }

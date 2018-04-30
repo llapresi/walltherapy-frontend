@@ -98,6 +98,7 @@ export class ReviewListItem extends React.Component {
     super(props);
     this.state = {
       username: '(username)',
+      showFullText: false
     }
   }
 
@@ -109,12 +110,21 @@ export class ReviewListItem extends React.Component {
       this.setState({username: data.username});
     });
   }
+
+  toggleFullText() {
+    this.setState({showFullText: !this.state.showFullText});
+  }
   
   render() {
+    let className = "review-list-item";
+    if (this.state.showFullText === true) {
+      className += " review-list-item__active";
+    }
+
     const reviewText = this.props.reviewText;
     const usernameRating = `${this.state.username} - ${this.props.rating}`;
     return(
-      <SimpleListItem text={this.props.reviewText} secondaryText={usernameRating} />
+      <SimpleListItem onClick={() => this.toggleFullText()}className={className} text={this.props.reviewText} secondaryText={usernameRating} />
     );
   }
 }

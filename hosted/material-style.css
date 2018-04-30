@@ -73,7 +73,7 @@ body {
 }
 
 .spotList {
-    height: calc(100% - 80px);
+    height: calc(100% - 145px);
     overflow-y: scroll;
 }
 
@@ -126,4 +126,15 @@ body {
     right: 32px;
     background-color: rgb(240, 240, 240) !important;
     width: 33%;
+}
+
+/* Review List */
+.review-list-item.review-list-item__active {
+    height: auto !important;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+.review-list-item.review-list-item__active > * {
+   overflow: visible !important;
+   white-space: normal  !important;
 }
