@@ -1,12 +1,16 @@
 import React from 'react';
 import { Button, ButtonIcon } from 'rmwc/Button';
 import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
+import { Typography } from 'rmwc/Typography';
+import { Checkbox } from 'rmwc/Checkbox';
+import { Snackbar } from 'rmwc/Snackbar';
 
 class SpotForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      errorMessage: ''
+      errorMessage: '',
+      errorSnackbar: false,
     };
   }
 
@@ -20,7 +24,7 @@ class SpotForm extends React.Component {
       dataType: "json",
       error: function(xhr, status, error) {
         var messageObj = JSON.parse(xhr.responseText);
-        this.setState({errorMessage: messageObj.error})
+        this.setState({errorSnackbar: true, errorMessage: messageObj.error})
       }.bind(this),
     }).done(() => {
       this.props.submitCallback();
@@ -29,25 +33,39 @@ class SpotForm extends React.Component {
 
   render() {
     return(
-      <div className="addSpotParent">
+      <div className="spot_infobox">
         <form id="spotForm"
         onSubmit={this.createSpot.bind(this)}
         name="spotForm"
         action="/spots"
         method="POST"
         className="spotForm">
-          <TextField label="Name" name="name"/>
+          <h2><Typography use="display2">Add Spot</Typography></h2>
+          <Typography use="subheading2">Drag map to new spot position</Typography>
+          <TextField className="spot_name" label="Spot Name" name="name"/>
           <br />
-          <TextField label="Description" name="description"/>
+          <TextField textarea fullwidth label="Spot Description" rows="4" name="description"  />
+          <Checkbox name="isSponsored">Sponsored Post</Checkbox>
+          <br />
+          <div>
+            <Typography use="caption">Increase your visibility with a Sponsored Post.
+            Sponsored Posts always show at the top of search listings, ensuring
+            "premium placement for a premium&trade;"</Typography>
+          </div>
           <br />
           <Button raised>Submit</Button>
-          <div>Click point on map to set new spot position</div>
 
-          <input id="spotLong" type="hidden" name="longitude" value={this.props.loc[1]} />
-          <input id="spotLat" type="hidden" name="latitude" value={this.props.loc[0]} />
+          <input id="spotLong" type="hidden" name="longitude" value={this.props.loc.lng} />
+          <input id="spotLat" type="hidden" name="latitude" value={this.props.loc.lat} />
           <input type="hidden" name="_csrf" value={this.props.csrf} />
         </form>
-        <div>{this.state.errorMessage}</div>
+        <Snackbar
+          show={this.state.errorSnackbar}
+          onHide={evt => this.setState({errorSnackbar: false})}
+          message={this.state.errorMessage}
+          actionText="Close"
+          actionHandler={() => {}}
+        />
       </div>
     );
   }

@@ -1,6 +1,9 @@
+// This isn't actually a folder anymore, just a self-contained class for a dialog
 import React from 'react';
 import { Button, ButtonIcon } from 'rmwc/Button';
 import { Elevation } from 'rmwc/Elevation';
+import { SimpleDialog } from 'rmwc/Dialog';
+
 
 class Folder extends React.Component {
   constructor(props) {
@@ -8,34 +11,21 @@ class Folder extends React.Component {
     this.state = {
       showContent: false,
     };
-    this.toggleContent = this.toggleContent.bind(this);
-  }
-
-  toggleContent() {
-    this.setState({showContent: !this.state.showContent});
   }
 
   render() {
-    const showContent = this.state.showContent;
-    let headerString = '';
-    if(showContent) {
-      headerString = `- ${this.props.folderName}`;
-    } else {
-      headerString = `+ ${this.props.folderName}`;
-    }
-
-    let addReviewClasses = "add-review review-item";
-    if(this.state.showContent) {
-      addReviewClasses = `${addReviewClasses} review-item-open`;
-    }
-    
     return(
-      <div className={addReviewClasses}>
-        <Button onClick={this.toggleContent}>{headerString}</Button>
-        {showContent === true &&
-          <Elevation z="9">{this.props.children}</Elevation>
-        }
-      </div>
+      <React.Fragment>
+        <Button onClick={() => this.setState({showContent: true})}>{this.props.folderName}</Button>
+        <SimpleDialog
+          title={this.props.folderName}
+          body={this.props.children}
+          open={this.state.showContent}
+          onClose={evt => this.setState({showContent: false})}
+          onAccept={evt => this.props.acceptCallback()}
+          acceptLabel="Submit"
+        />
+      </React.Fragment>
     );
   }
 }

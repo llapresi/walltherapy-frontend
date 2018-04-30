@@ -22,6 +22,7 @@ const makeSpot = (req, res) => {
     name: req.body.name,
     location: [req.body.longitude, req.body.latitude],
     description: req.body.description,
+    isSponsored: req.body.isSponsored,
     owner: req.session.account._id,
   };
 

@@ -1,4 +1,9 @@
 import React from 'react';
+import { Button, ButtonIcon } from 'rmwc/Button';
+import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
+import { Typography } from 'rmwc/Typography';
+import { Checkbox } from 'rmwc/Checkbox';
+import { sendAjax } from '../helper/helper.js'
 
 export class ChangePasswordForm extends React.Component {
   constructor(props) {
@@ -20,22 +25,18 @@ export class ChangePasswordForm extends React.Component {
       action="/changePassword"
       method="POST"
       onSubmit={this.submitRequest}
-      className="skatespot_list skatespot_list-open">
-        <h3 className="spotName">Change Password</h3>
-        <label htmlFor="oldPass">Old Password: </label>
-        <input id="oldPass" type="password" name="oldPass" placeholder="Old Password" />
+      className="spot_infobox">
+        <h2><Typography use="display2">Change Password</Typography></h2>
         <br />
-
-        <label htmlFor="oldPass">New Password: </label>
-        <input id="pass" type="password" name="pass" placeholder="New Password" />
+        <TextField type='password' className="oldpass" label="Old Password" name="oldPass"/>
         <br />
-
-        <label htmlFor="oldPass">New Password (Re-Enter): </label>
-        <input id="pass2" type="password" name="pass2" placeholder="New Password (Re-Enter)" />
+        <TextField type='password' className="pass" label="New Password" name="pass"/>
+        <br />
+        <TextField type='password' className="pass2" label="New Password (Re-Enter):" name="pass2"/>
         <br />
 
         <input type="hidden" name="_csrf" value={this.props.csrf} />
-        <input className="changePassSubmit" type="submit" value="Change Password" />
+        <Button raised>Change Password</Button>
       </form>
     );
   }

@@ -40,6 +40,8 @@
     "mongoose": "^4.4.6",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-responsive": "^4.1.0",
+    "react-transition-group": "^2.3.1",
     "serve-favicon": "^2.5.0",
     "underscore": "^1.9.0"
   },

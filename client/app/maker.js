@@ -2,20 +2,22 @@
 // to stuff from the pre-material web components UI
 // Also, move toolbar to it's own file
 
+import { hot } from 'react-hot-loader';
 import React from 'react';
 import SpotForm from './addspot.js';
-import Folder from './folder.js';
-import {ChangePasswordForm, AccountMenu} from './profile.js';
-import {ReviewForm, ReviewList, ReviewListItem} from './reviews.js';
-import {sendAjax, redirect, handleError} from '../helper/helper.js'
+import {AccountMenu} from './profile.js';
+import { ReviewList } from './reviews.js';
+import { sendAjax } from '../helper/helper.js'
 import GoogleMapReact from 'google-map-react';
-import { List, SimpleListItem } from 'rmwc/List';
-import { TabBar, Tab, TabIcon, TabIconText, TabBarScroller } from 'rmwc/Tabs';
-import { hot } from 'react-hot-loader';
 import { Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle, ToolbarMenuIcon, ToolbarIcon } from 'rmwc/Toolbar';
-import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 import { Typography } from 'rmwc/Typography';
 import { Fab } from 'rmwc/Fab';
+import { SkateSpotListParent } from './SpotList.js';
+import SearchBox from './Searchbox.js';
+import { Button, ButtonIcon } from 'rmwc/Button';
+import { SimpleMenu, MenuItem } from 'rmwc/Menu';
+import { Elevation } from 'rmwc/Elevation';
+import { Snackbar } from 'rmwc/Snackbar';
 
 let defaultURL = '/spots';
 
@@ -24,31 +26,9 @@ const makePublicSpotsURL = (name = '', description = '', showOurSpots = false) =
   return `/spots?name=${name}&description=${description}&${profileSpots}`;
 };
 
-const SkateSpotListParent = (props) => {
-  return (
-    <React.Fragment>
-      <TextField id="spotName" className="search_field" box withLeadingIcon="search" label="Name" onChange={props.updatePublicView} />
-      <TextField id="spotDesc" className="search_field" box withLeadingIcon="search" label="Description" onChange={props.updatePublicView} />
-      <SkateSpotList selectFunc={props.selectFunc} spots={props.spots} />
-    </React.Fragment>
-  );
-};
-
 const SkateSpotMarker = ({text}) => {
   return(
     <div className="mapMarker" >{text}</div>
-  );
-}
-
-const SkateSpotList = (props) => {
-  return(
-    <List twoLine className="spotList">
-    {props.spots.map(function(spot) {
-      return (
-        <SimpleListItem key={spot._id} text={spot.name} secondaryText={spot.description} meta="info" onClick={() => props.selectFunc(spot)}/>
-      );
-    })}
-    </List>
   );
 }
 
@@ -71,10 +51,10 @@ class App extends React.Component {
       sidebarState: 0, // 0 = Spots List, 1 = Spot Detail View, 3 = Profile menu
       currentSpot: {}, // data of spot we last selcted
       spots: [], // New main spot list, have skatespotlist send state to this
-      newSpotLatLog: [0.0, 0.0],
       addingNewSpot: false,
       csrf: '',
       showOurSpots: false,
+      showSnackbar: false,
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.setSidebarState = this.setSidebarState.bind(this);
@@ -114,55 +94,63 @@ class App extends React.Component {
     this.setState({spots: newSpots})
   }
 
-  setNewPointLatLong({x, y, lat, lng, event  }) {
-    this.setState({newSpotLatLog: [lat, lng]});
+  onChange({center, zoom}) {
+    this.setState({center: center});
+  }
+
+  onNewSpot() {
+    this.updatePublicView();
+    this.setState({sidebarState: 0, showSnackbar: true});
   }
 
   render() {
-    const addingNewSpot = this.state.addingNewSpot;
-    const newSpotMarker = addingNewSpot ? (
-      <SkateSpotMarker text="New Spot" lat={this.state.newSpotLatLog[0]} lng={this.state.newSpotLatLog[1]} />
-    ) : (
-      <span></span>
-    );
     return(
       <React.Fragment>
-        <Toolbar>
-          <ToolbarRow>
-            <ToolbarSection alignStart>
-              <ToolbarTitle>Skatespot</ToolbarTitle>
-            </ToolbarSection>
-            <ToolbarSection alignEnd>
-              <ToolbarIcon use="account_circle" onClick={() => this.setState({sidebarState: 3})}/>
-            </ToolbarSection>
-          </ToolbarRow>
-        </Toolbar>
+        <Elevation z={4}>
+          <Toolbar>
+            <ToolbarRow>
+              <ToolbarSection alignStart>
+                <ToolbarTitle>Skatespot</ToolbarTitle>
+              </ToolbarSection>
+              <ToolbarSection alignEnd>
+                <SimpleMenu handle={<ToolbarIcon use="account_circle" />}>
+                  <MenuItem>Profile</MenuItem>
+                  <MenuItem onClick={() => this.setState({sidebarState: 3})}>Change Password</MenuItem>
+                  <a href="/logout"><MenuItem>Log out</MenuItem></a>
+                </SimpleMenu>
+              </ToolbarSection>
+            </ToolbarRow>
+          </Toolbar>
+        </Elevation>
         <div className="appGrid">
           <div className="skatespot-map__parent">
             <GoogleMapReact className="skatespot-map__map"
               bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
               center={this.state.center}
               zoom={this.state.zoom}
-              onClick={this.setNewPointLatLong.bind(this)}
+              onChange={this.onChange.bind(this)}
+              options={{
+                zoomControl: false,
+                fullscreenControl: false,
+              }}
             >
               {
                 this.state.spots.map(function(spot) {
                   return <SkateSpotMarker key={spot._id} text={spot.name} lat={spot.location[1]} lng={spot.location[0]}></SkateSpotMarker>
                 })
               }
-              {newSpotMarker}
+              {this.state.sidebarState == 4 &&
+                <SkateSpotMarker text="New Spot" lat={this.state.center.lat} lng={this.state.center.lng} />
+              }
             </GoogleMapReact>
-            <Fab className="skatespot-map__fab">add</Fab>
+            <Fab className="skatespot-map__fab" onClick={() => this.setSidebarState(4, false)}>add</Fab>
+            <Elevation z={2}>
+              <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
+            </Elevation>
           </div>
           <div className="skatespot-sidebar">
-            <TabBarScroller>
-              <TabBar>
-                <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(0, false)}>Your Spots</Tab>
-                <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(0, true)}>All Spots</Tab>
-                <Tab className="spot_menu_tabs" onClick={() => this.setSidebarState(4, false)}>Add Spot</Tab>
-              </TabBar>
-            </TabBarScroller>
-            {this.state.sidebarState == 0 && 
+            {{
+              0: (
                 <SkateSpotListParent
                   spots={this.state.spots}
                   csrf={this.state.csrf } 
@@ -170,27 +158,37 @@ class App extends React.Component {
                   selectFunc={this.setSidebarInfo.bind(this)}
                   onFetchSpots={this.onFetchSpots.bind(this)} 
                   updatePublicView={this.updatePublicView.bind(this)}
-                  toggleAddSpotCallback={(newState) => this.setState({addingNewSpot: !newState})}
-                  newSpotLatLog={this.state.newSpotLatLog}
                 />
-            }
-            {this.state.sidebarState == 1 && 
-              <SpotInfoBox spot={this.state.currentSpot} csrf={this.state.csrf}/>
-            }
-            {this.state.sidebarState == 3 && 
-              <div>
-                <div onClick={() => this.setSidebarState(0)} className="back-button">Back</div>
-                <AccountMenu csrf={this.state.csrf} />
-                <br />
-                <a href="/logout" className="back-button" style={{width: '300px'}}>Log out</a>
-              </div>
-            }
-            {this.state.sidebarState == 4 &&
-              <SpotForm csrf={this.state.csrf} loc={this.state.newSpotLatLog} />
-            }
+              ),
+              1: (
+                <React.Fragment>
+                  <Button onClick={() => this.setSidebarState(0)}><ButtonIcon use="arrow_back" />Back</Button>
+                  <SpotInfoBox spot={this.state.currentSpot} csrf={this.state.csrf}/>
+                </React.Fragment>
+              ),
+              3: (
+                <React.Fragment>
+                  <Button onClick={() => this.setSidebarState(0)}><ButtonIcon use="arrow_back" />Back</Button>
+                  <AccountMenu csrf={this.state.csrf} />
+                </React.Fragment>
+              ),
+              4: (
+                <React.Fragment>
+                  <Button onClick={() => this.setSidebarState(0)}><ButtonIcon use="arrow_back" />Back</Button>
+                  <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
+                </React.Fragment>
+              )
+            }[this.state.sidebarState]}
           </div>
-
         </div>
+        <Snackbar
+          show={this.state.showSnackbar}
+          onHide={evt => this.setState({showSnackbar: false})}
+          message="New Spot Created"
+          actionText="Close"
+          actionHandler={() => {}}
+        />
+
       </React.Fragment>
     )
   }

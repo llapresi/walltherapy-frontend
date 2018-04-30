@@ -16,6 +16,7 @@ body {
 
 .spot_infobox {
     padding: 12px;
+    padding-top: 0px;
 }
 
 .reviewForm {
@@ -30,6 +31,8 @@ body {
 
 .search_field {
     width: 50%;
+    padding-top: 0px;
+    margin-top: 0px;
 }
 
 .mdc-toolbar__section {
@@ -46,7 +49,6 @@ body {
 .skatespot-sidebar {
     grid-column: 1/1;
     grid-row: 1;
-    overflow-y: hidden;
 }
 
 .skatespot-map__fab {
@@ -71,7 +73,7 @@ body {
 }
 
 .spotList {
-    height: calc(100% - 145px);
+    height: calc(100% - 80px);
     overflow-y: scroll;
 }
 
@@ -81,5 +83,47 @@ body {
 }
 
 .addSpotParent {
-    padding:24px;
+    padding-top: 0px;
+    padding:12px;
+}
+
+/* Spot List Animation */
+.spotAnim-enter {
+    transform: translate(-500px);
+}
+.spotAnim-enter-active {
+    transform: translate(0px);
+    transition: transform 200ms linear;
+}
+.spotAnim-exit {
+    transform: translate(0px);
+}
+.spotAnim-exit-active {
+    transform: translate(-500px);
+    transition: transform 200ms linear;
+}
+
+/* Styling the add form */
+.spotForm > .mdc-form-field {
+    transform: translateX(-12px);
+}
+
+.spotForm > .mdc-text-field--textarea {
+    margin-bottom: 0px;
+}
+
+.spotForm > .mdc-text-field--textarea {
+    margin-bottom: 0px;
+}
+
+.spot_name {
+    margin-top: 4px !important;
+}
+
+.gmap-searchbox {
+    position: absolute;
+    top: 0;
+    right: 32px;
+    background-color: rgb(240, 240, 240) !important;
+    width: 33%;
 }

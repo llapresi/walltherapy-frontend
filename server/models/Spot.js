@@ -33,6 +33,12 @@ const SpotSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  isSponsored: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
 });
 
 SpotSchema.statics.toAPI = (doc) => ({
@@ -46,7 +52,7 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
     owner: convertId(ownerId),
   };
 
-  return SpotModel.find(search).select('name location description _id').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
@@ -58,7 +64,7 @@ SpotSchema.statics.findQuery = (loc, name, description, callback, sortBy = 'crea
     description: new RegExp(description, 'i'),
   };
 
-  return SpotModel.find(search).select('name location description _id').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
@@ -68,7 +74,7 @@ SpotSchema.statics.findByID = (id, callback, sortBy = 'createdData') => {
     _id: id,
   };
 
-  return SpotModel.find(search).select('name location description _id').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
@@ -86,7 +92,7 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
     search.description = new RegExp(params.description, 'i');
   }
 
-  return SpotModel.find(search).select('name location description _id').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };
