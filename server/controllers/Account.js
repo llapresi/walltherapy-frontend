@@ -140,7 +140,7 @@ const getUsernameForId = (request, response) => {
 
     return res.json({ username: docs.username });
   });
-}
+};
 
 module.exports.loginPage = loginPage;
 module.exports.logout = logout;

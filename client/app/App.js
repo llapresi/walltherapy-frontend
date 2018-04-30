@@ -1,5 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './maker.js';
+import App from './Main';
 
 ReactDOM.render(<App />, document.querySelector("#main"));

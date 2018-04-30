@@ -92,7 +92,9 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
     search.description = new RegExp(params.description, 'i');
   }
 
-  return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id isSponsored')
+  .sort('-isSponsored')
+  .sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
   .exec(callback);
 };

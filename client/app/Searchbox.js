@@ -10,7 +10,7 @@ export default class SearchBox extends React.Component {
     return (
       <div className="mdc-text-field mdc-text-field--box mdc-text-field--with-leading-icon gmap-searchbox">
         <i className="material-icons mdc-text-field__icon" tabIndex="0" role="button">search</i>
-        <input type="text" ref="input" id="my-text-field" className="mdc-text-field__input" />
+        <input type="text" ref="input" className="mdc-text-field__input mapsearch__input" placeholder="Search map" />
         <div className="mdc-text-field__bottom-line"></div>
       </div>
     );

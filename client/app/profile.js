@@ -46,7 +46,7 @@ export class ChangePasswordForm extends React.Component {
         <br />
 
         <input type="hidden" name="_csrf" value={this.props.csrf} />
-        <Button raised>Change Password</Button>
+        <Button raised theme={['secondary-bg', 'text-primary-on-secondary']}>Change Password</Button>
       </form>
     );
   }

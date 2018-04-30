@@ -18,13 +18,19 @@ export const SkateSpotList = (props) => {
     <List twoLine className="spotList">
       <TransitionGroup className="spotList-anim" enter={true}>
           {props.spots.map(function(spot) {
+            let classNameString = "";
+            let descriptionAppend = "";
+            if(spot.isSponsored === true) {
+              classNameString += "spot__sponsored";
+              descriptionAppend += "Sponsored: "
+            }
             return (
               <CSSTransition
                 key={spot._id}
                 timeout={200}
                 classNames="spotAnim"
               >
-                <SimpleListItem key={spot._id} text={spot.name} secondaryText={spot.description} meta="info" onClick={() => props.selectFunc(spot)}/>
+                <SimpleListItem key={spot._id} className={classNameString} text={spot.name} secondaryText={descriptionAppend +  spot.description} meta="info" onClick={() => props.selectFunc(spot)}/>
               </CSSTransition>
             );
           })}

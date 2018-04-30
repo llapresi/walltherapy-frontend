@@ -53,7 +53,7 @@ class SpotForm extends React.Component {
             "premium placement for a premium&trade;"</Typography>
           </div>
           <br />
-          <Button raised>Submit</Button>
+          <Button raised theme={['secondary-bg', 'text-primary-on-secondary']}>Submit</Button>
 
           <input id="spotLong" type="hidden" name="longitude" value={this.props.loc.lng} />
           <input id="spotLat" type="hidden" name="latitude" value={this.props.loc.lat} />

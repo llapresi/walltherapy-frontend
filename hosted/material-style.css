@@ -1,3 +1,8 @@
+:root {
+    --mdc-theme-primary: #455A64;
+    --mdc-theme-secondary: #d32f2f;
+}
+
 html {
     height:100%;
     padding:0;
@@ -137,4 +142,44 @@ body {
 .review-list-item.review-list-item__active > * {
    overflow: visible !important;
    white-space: normal  !important;
+}
+
+/* Map Marker */
+.mapMarker {
+    background-image: url('/assets/img/skatespot_icon.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    position: absolute !important;
+    width: 30px;
+    height: 30px;
+    left: -15px;
+    top: -15px;
+}
+
+.mapMarker__addspot {
+    background-image: url('/assets/img/skatespot_addspot.png');
+}
+
+/* Search Form */
+.mapsearch__input {
+    padding-top:0px !important;
+}
+
+/* Sponsored Spots */
+.spot__sponsored {
+    background-color: #ffdfdf;
+}
+
+/* Toolbar Logo */
+.toolbar-logo {
+    background-image: url('/assets/img/skatespot_icon_white.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: block;
+    float: left;
+    width: 22px !important;
+    height: 22px !important;
+    transform: translateY(0px);
+    padding-left: 3px;
 }

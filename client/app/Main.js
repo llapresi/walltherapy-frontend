@@ -26,9 +26,13 @@ const makePublicSpotsURL = (name = '', description = '', showOurSpots = false) =
   return `/spots?name=${name}&description=${description}&${profileSpots}`;
 };
 
-const SkateSpotMarker = ({text}) => {
+const SkateSpotMarker = (props) => {
+  let classNameString = "mapMarker";
+  if (props.addspot === true) {
+    classNameString += " mapMarker__addspot";
+  }
   return(
-    <div className="mapMarker" >{text}</div>
+    <div className={classNameString} onClick={() => props.clickCallback(props.spot)}></div>
   );
 }
 
@@ -110,7 +114,7 @@ class App extends React.Component {
           <Toolbar>
             <ToolbarRow>
               <ToolbarSection alignStart>
-                <ToolbarTitle>Skatespot</ToolbarTitle>
+                <ToolbarTitle><span className="toolbar-logo"></span>Skatespot</ToolbarTitle>
               </ToolbarSection>
               <ToolbarSection alignEnd>
                 <SimpleMenu handle={<ToolbarIcon use="account_circle" />}>
@@ -135,12 +139,14 @@ class App extends React.Component {
               }}
             >
               {
-                this.state.spots.map(function(spot) {
-                  return <SkateSpotMarker key={spot._id} text={spot.name} lat={spot.location[1]} lng={spot.location[0]}></SkateSpotMarker>
+                this.state.spots.map((spot) => {
+                  return <SkateSpotMarker key={spot._id} spot={spot} text={spot.name}
+                          lat={spot.location[1]} lng={spot.location[0]}
+                          clickCallback={(spot) => this.setSidebarInfo(spot)}></SkateSpotMarker>
                 })
               }
               {this.state.sidebarState == 4 &&
-                <SkateSpotMarker text="New Spot" lat={this.state.center.lat} lng={this.state.center.lng} />
+                <SkateSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
               }
             </GoogleMapReact>
             <Fab className="skatespot-map__fab" onClick={() => this.setSidebarState(4, false)}>add</Fab>
