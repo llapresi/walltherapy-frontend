@@ -29,9 +29,11 @@ body {
 }
 
 .appGrid {
-    display: grid;
-    grid-template-columns: 400px auto;
-    height: calc(100% - 64px);
+    position: absolute;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 
 .search_field {
@@ -45,15 +47,19 @@ body {
 }
 
 .skatespot-map__parent {
-    position: relative;
-    grid-column: 2 / 3;
-    grid-row: 1;
-    height: 100%;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    left: 400px;
 }
 
 .skatespot-sidebar {
-    grid-column: 1/1;
-    grid-row: 1;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    width: 400px;
 }
 
 .skatespot-map__fab {
@@ -62,23 +68,12 @@ body {
     right: 32px;
 }
 
-@media only screen and (max-width: 800px) {
-    .skatespot-sidebar {
-        width: 100%;
-        height: 50%;
-    }
-    .skatespot-map__parent {
-        width: 100%;
-        height: 50%;
-    }
-
-    .appGrid {
-        display: inherit;
-    }
-}
-
 .spotList {
-    height: calc(100% - 145px);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 400px;
+    top: 56px;
     overflow-y: scroll;
 }
 
@@ -189,4 +184,49 @@ body {
     margin-top: 7px;
     background-color: #d32f2f !important;
     color: white !important;
+}
+
+/* Mobile Stuff */
+@media only screen and (max-width: 800px) {
+    .skatespot-sidebar {
+        top: 50%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+    }
+    .skatespot-map__parent {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 50%;
+    }
+    .spotList {
+        position: absolute;
+        right: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .gmap-searchbox {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        left: 32px;
+        width: calc(100% - 70px);
+        background-color: rgb(240, 240, 240) !important;
+    }
+}
+
+/* Not-Mobile Stuff */
+@media only screen and (min-width: 800px) {
+    .review_section {
+        position: absolute;
+        bottom: 0;
+        left: 12px;
+        width: calc(400px - 24px);
+        padding-right: 12px;
+        top: 200px;
+        overflow-y: scroll;
+    }
 }

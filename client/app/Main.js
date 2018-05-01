@@ -118,7 +118,6 @@ class App extends React.Component {
               </ToolbarSection>
               <ToolbarSection alignEnd>
                 <SimpleMenu handle={<ToolbarIcon use="account_circle" />}>
-                  <MenuItem>Profile</MenuItem>
                   <MenuItem onClick={() => this.setState({sidebarState: 3})}>Change Password</MenuItem>
                   <a href="/logout"><MenuItem>Log out</MenuItem></a>
                 </SimpleMenu>
