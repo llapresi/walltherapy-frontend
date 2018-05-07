@@ -4,6 +4,7 @@ import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 import { Select } from 'rmwc/Select';
 import { Button } from 'rmwc/Button';
 import { Snackbar } from 'rmwc/Snackbar';
+import StarRatingComponent from 'react-star-rating-component';
 import Folder from './folder.js';
 
 
@@ -11,8 +12,10 @@ export const ReviewForm = (props) => {
   return(
     <div>
       <form id="reviewForm" className="reviewForm" action="/reviews" method="POST" onSubmit={props.submitAction}>
-        <TextField label="Rating" name="rating" />
-        <TextField textarea fullwidth label="Write review here..." rows="4" name="reviewText"  />
+        <div className="reviewform-rating">
+            Rating: <StarRatingComponent name="rating" starCount={5} emptyStarColor={"rgba(0,0,0,.54)"} />
+        </div>
+        <TextField textarea fullwidth label="Write review here..." rows="4" name="reviewText" required   />
         <input type="hidden" name="_csrf" value={props.csrf} />
         <input type="hidden" id="reviewFormSpotID" name="spot" value={props.spotId} />
       </form>

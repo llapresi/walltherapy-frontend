@@ -230,3 +230,13 @@ body {
         overflow-y: scroll;
     }
 }
+
+/* Star Rating */
+.reviewform-rating {
+    padding-bottom: 8px;
+}
+
+.dv-star-rating {
+    font-size: 20px;
+    transform: translateY(5px);
+}
