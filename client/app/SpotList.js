@@ -6,8 +6,7 @@ import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 export const SkateSpotListParent = (props) => {
   return (
     <React.Fragment>
-      <TextField id="spotName" className="search_field" box withLeadingIcon="filter_list" label="Name" onChange={props.updatePublicView} />
-      <TextField id="spotDesc" className="search_field" box withLeadingIcon="filter_list" label="Description" onChange={props.updatePublicView} />
+      <TextField id="spotName" className="search_field" box withLeadingIcon="filter_list" label="Filter" onChange={props.updatePublicView} />
       <SkateSpotList selectFunc={props.selectFunc} spots={props.spots} />
     </React.Fragment>
   );

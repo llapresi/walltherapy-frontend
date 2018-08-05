@@ -58,6 +58,9 @@ const getSpots = (request, response) => {
   if (req.query.description) {
     query.description = req.query.description;
   }
+  if (req.query.filter) {
+    query.filter = req.query.filter;
+  }
   if (req.query.profileSpots) {
     query.owner = req.session.account._id;
   }

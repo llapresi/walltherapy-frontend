@@ -23,7 +23,7 @@ let defaultURL = '/spots';
 
 const makePublicSpotsURL = (name = '', description = '', showOurSpots = false) => {
   let profileSpots = showOurSpots ? 'profileSpots=true' : '';
-  return `/spots?name=${name}&description=${description}&${profileSpots}`;
+  return `/spots?filter=${name}&${profileSpots}`;
 };
 
 const SkateSpotMarker = (props) => {

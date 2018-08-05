@@ -81,9 +81,15 @@ SpotSchema.statics.findByID = (id, callback, sortBy = 'createdData') => {
 
 SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
   // TODO: Add finding near location
-  const search = params;
+  const search = {};
   if (params.owner) {
     search.owner = convertId(params.owner);
+  }
+  if (params.filter) {
+    search.$or = [
+      { name: { $regex: params.filter, $options: 'i' } },
+      { description: { $regex: params.filter, $options: 'i' } },
+    ];
   }
   if (params.name) {
     search.name = new RegExp(params.name, 'i');
@@ -92,7 +98,8 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
     search.description = new RegExp(params.description, 'i');
   }
 
-  return SpotModel.find(search).select('name location description _id isSponsored')
+  return SpotModel.find(search)
+  .select('name location description _id isSponsored owner')
   .sort('-isSponsored')
   .sort(sortBy)
   .collation({ locale: 'en', strength: 2 })
