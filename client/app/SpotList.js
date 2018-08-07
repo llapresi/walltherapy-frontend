@@ -2,12 +2,13 @@ import React from 'react';
 import { List, SimpleListItem } from 'rmwc/List';
 import { CSSTransition, TransitionGroup, } from 'react-transition-group';
 import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
+import { Link } from 'react-router-dom';
 
 export const SkateSpotListParent = (props) => {
   return (
     <React.Fragment>
       <TextField id="spotName" className="search_field" box withLeadingIcon="filter_list" label="Filter" onChange={props.updatePublicView} />
-      <SkateSpotList selectFunc={props.selectFunc} spots={props.spots} />
+      <SkateSpotList spots={props.spots} />
     </React.Fragment>
   );
 };
@@ -29,7 +30,9 @@ export const SkateSpotList = (props) => {
                 timeout={200}
                 classNames="spotAnim"
               >
-                <SimpleListItem key={spot._id} className={classNameString} text={spot.name} secondaryText={descriptionAppend +  spot.description} meta="info" onClick={() => props.selectFunc(spot)}/>
+                <Link key={spot._id} className='spotlist_link' to={'/spot/' + spot._id} >
+                  <SimpleListItem className={classNameString} text={spot.name} secondaryText={descriptionAppend +  spot.description} meta="info" />
+                </Link>
               </CSSTransition>
             );
           })}

@@ -11,7 +11,7 @@ const router = (app) => {
   app.post('/changePassword', mid.requiresLogin, mid.requiresSecure,
     controllers.Account.changePassword);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
-  app.get('/maker', mid.requiresLogin, controllers.Spot.makerPage);
+  app.get('/app*', mid.requiresLogin, controllers.App.appPage);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/reviews', mid.requiresLogin, controllers.Review.addReview);
   app.get('/reviews', mid.requiresLogin, controllers.Review.getReviews);

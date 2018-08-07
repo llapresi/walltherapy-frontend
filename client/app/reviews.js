@@ -45,6 +45,7 @@ export class ReviewList extends React.Component {
   }
   
   componentDidMount() {
+    console.log("Recieved spotID is: " + this.props.spotId);
     this.updateReviews(this.props.spotId);
   }
 

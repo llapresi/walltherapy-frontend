@@ -4,6 +4,8 @@ import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
 import { Typography } from 'rmwc/Typography';
 import { Checkbox } from 'rmwc/Checkbox';
 import { Snackbar } from 'rmwc/Snackbar';
+import { Redirect } from 'react-router-dom';
+
 
 class SpotForm extends React.Component {
   constructor(props) {
@@ -11,6 +13,7 @@ class SpotForm extends React.Component {
     this.state = {
       errorMessage: '',
       errorSnackbar: false,
+      spotAdded: false,
     };
   }
 
@@ -28,6 +31,7 @@ class SpotForm extends React.Component {
       }.bind(this),
     }).done(() => {
       this.props.submitCallback();
+      this.setState({spotAdded: true});
     });
   }
 
@@ -66,6 +70,10 @@ class SpotForm extends React.Component {
           actionText="Close"
           actionHandler={() => {}}
         />
+
+        {this.state.spotAdded == true &&
+          <Redirect to='/'/>
+        }
       </div>
     );
   }
