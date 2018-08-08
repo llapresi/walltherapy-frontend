@@ -8,17 +8,17 @@ import SpotForm from './addspot.js';
 import {AccountMenu} from './profile.js';
 import { sendAjax } from '../helper/helper.js'
 import GoogleMapReact from 'google-map-react';
-import { Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle, ToolbarMenuIcon, ToolbarIcon } from 'rmwc/Toolbar';
 import { Fab } from 'rmwc/Fab';
 import { SkateSpotListParent } from './SpotList.js';
 import SearchBox from './Searchbox.js';
 import { Button, ButtonIcon } from 'rmwc/Button';
-import { SimpleMenu, MenuItem } from 'rmwc/Menu';
 import { Elevation } from 'rmwc/Elevation';
 import { Snackbar } from 'rmwc/Snackbar';
 import { Route, Link } from 'react-router-dom';
 import SpotViewParent from './SpotDisplay.js';
 import RunOnMount from './RunOnMount.js';
+import AppToolbar from './Toolbar.js';
+import { ThemeProvider } from 'rmwc/Theme';
 
 let defaultURL = '/spots';
 
@@ -28,22 +28,14 @@ const makePublicSpotsURL = (name = '', description = '', showOurSpots = false) =
 };
 
 const SkateSpotMarker = (props) => {
-  let classNameString = "mapMarker";
-  if (props.addspot === true) {
-    classNameString += " mapMarker__addspot";
-  }
   return(
-    <Link to={'/spot/' + props.spot._id}><div className={classNameString}></div></Link>
+    <Link to={'/spot/' + props.spot._id}><div className="mapMarker"></div></Link>
   );
 }
 
-const SpotInfoBox = ({spot, csrf}) => {
+const AddSpotMarker = (props) => {
   return(
-    <div className='spot_infobox'>
-      <h2 className='spotName'><Typography use="display2">{spot.name}</Typography></h2>
-      <div className='spotDescription'>{spot.description}</div>
-      <ReviewList spotId={spot._id} csrf={csrf} />
-    </div>
+    <div className='mapMarker mapMarker__addspot'></div>
   );
 }
 
@@ -58,6 +50,7 @@ class App extends React.Component {
       csrf: '',
       showOurSpots: false,
       showSnackbar: false,
+      toolbarTitle: "",
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
   }
@@ -98,22 +91,11 @@ class App extends React.Component {
 
   render() {
     return(
-      <React.Fragment>
-        <Elevation z={4}>
-          <Toolbar>
-            <ToolbarRow>
-              <ToolbarSection alignStart>
-                <ToolbarTitle><span className="toolbar-logo"></span>skatespot.io</ToolbarTitle>
-              </ToolbarSection>
-              <ToolbarSection alignEnd>
-                <SimpleMenu handle={<ToolbarIcon use="account_circle" />}>
-                  <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
-                  <a href="/logout"><MenuItem>Log out</MenuItem></a>
-                </SimpleMenu>
-              </ToolbarSection>
-            </ToolbarRow>
-          </Toolbar>
-        </Elevation>
+      <ThemeProvider options={{
+        primary: '#263238',
+        secondary: '#d50000'
+      }}>
+        <AppToolbar title={this.state.toolbarTitle}/>
         <div className="appGrid">
           <div className="skatespot-map__parent">
             <GoogleMapReact className="skatespot-map__map"
@@ -136,7 +118,7 @@ class App extends React.Component {
                 })
               }
               {this.state.addingNewSpot == true &&
-                <SkateSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
+                <AddSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
               }
             </GoogleMapReact>
 
@@ -146,13 +128,10 @@ class App extends React.Component {
             </Elevation>
           </div>
           <div className="skatespot-sidebar">
-            <Route path="/" render={() => <React.Fragment>
-              <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
-            </React.Fragment>} />
 
             <Route exact path='/' render={() =>
               <React.Fragment>
-                <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
+                <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
                 <SkateSpotListParent
                   spots={this.state.spots}
                   csrf={this.state.csrf } 
@@ -165,19 +144,21 @@ class App extends React.Component {
 
             <Route path='/spot/:id' render={(props)=> <React.Fragment>
               <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
-              <Link to='/'><Button><ButtonIcon use="arrow_back" />Back</Button></Link>
-              <SpotViewParent csrf={this.state.csrf} onOpen={(newCenter) => this.setState({center: newCenter}) } {...props} />
+              <SpotViewParent 
+                key={props.match.params.id}
+                csrf={this.state.csrf}
+                onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
+                {...props} 
+              />
             </React.Fragment>} />
 
             <Route path='/profile' render={() => <React.Fragment>
-              <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
-              <Link to='/'><Button><ButtonIcon use="arrow_back" />Back</Button></Link>
+              <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
               <AccountMenu csrf={this.state.csrf} />
             </React.Fragment>} />
 
             <Route path='/add' render={() => <React.Fragment>
-              <RunOnMount func={() => this.setState({addingNewSpot: true})}/>
-              <Link to='/'><Button><ButtonIcon use="arrow_back" />Back</Button></Link>
+              <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
               <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
             </React.Fragment>}/>
           </div>
@@ -189,8 +170,7 @@ class App extends React.Component {
           actionText="Close"
           actionHandler={() => {}}
         />
-
-      </React.Fragment>
+      </ThemeProvider>
     )
   }
 }

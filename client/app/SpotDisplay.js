@@ -28,17 +28,12 @@ class SpotViewParent extends React.Component {
         lat: this.state.spot.location[1],
         lng: this.state.spot.location[0],
       };
-      this.props.onOpen(newCenter);
+      this.props.onOpen(newCenter, this.state.spot.name);
     });
   }
   render() {
     return (
       <SpotView spot={this.state.spot} id={this.props.match.params.id} csrf={this.props.csrf} />
-      // <div className='spot_infobox'>
-      //   <h2 className='spotName'><Typography use="display2">{this.state.spot.name}</Typography></h2>
-      //   <div className='spotDescription'>{this.state.spot.description}</div>
-      //   <ReviewList spotId={this.props.match.params.id} csrf={this.props.csrf} />
-      // </div>
     );
   }
 }

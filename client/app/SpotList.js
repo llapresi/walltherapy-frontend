@@ -30,7 +30,7 @@ export const SkateSpotList = (props) => {
                 timeout={200}
                 classNames="spotAnim"
               >
-                <Link key={spot._id} className='spotlist_link' to={'/spot/' + spot._id} >
+                <Link key={spot._id} className='remove-link-styling force-block' to={'/spot/' + spot._id} >
                   <SimpleListItem className={classNameString} text={spot.name} secondaryText={descriptionAppend +  spot.description} meta="info" />
                 </Link>
               </CSSTransition>

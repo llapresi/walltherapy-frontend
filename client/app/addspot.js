@@ -44,7 +44,6 @@ class SpotForm extends React.Component {
         action="/spots"
         method="POST"
         className="spotForm">
-          <h2><Typography use="display2">Add Spot</Typography></h2>
           <Typography use="subheading2">Drag map to new spot position</Typography>
           <TextField className="spot_name" label="Spot Name" name="name"/>
           <br />

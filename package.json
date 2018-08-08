@@ -45,6 +45,7 @@
     "react-router-dom": "^4.3.1",
     "react-star-rating-component": "^1.4.1",
     "react-transition-group": "^2.3.1",
+    "rmwc": "^1.8.3",
     "serve-favicon": "^2.5.0",
     "underscore": "^1.9.0"
   },
