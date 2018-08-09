@@ -170,7 +170,7 @@ body {
     float: left;
     width: 22px !important;
     height: 22px !important;
-    transform: translateY(2px);
+    transform: translateY(.46rem);
     padding-left: 6px;
 }
 

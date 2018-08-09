@@ -5,7 +5,7 @@ import { Select } from 'rmwc/Select';
 import { Button } from 'rmwc/Button';
 import { Snackbar } from 'rmwc/Snackbar';
 import StarRatingComponent from 'react-star-rating-component';
-import Folder from './folder.js';
+import Folder from './Widgets/Folder.js';
 
 
 export const ReviewForm = (props) => {
@@ -80,7 +80,8 @@ export class ReviewList extends React.Component {
                 <ReviewListItem
                   id={review.author}
                   rating={review.rating}
-                  reviewText={review.reviewText} />
+                  reviewText={review.reviewText}
+                  key={review._id} />
               );
             })}
           </List>

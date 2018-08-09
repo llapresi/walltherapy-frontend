@@ -1,34 +1,40 @@
 import React from 'react';
-import { Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle, ToolbarMenuIcon, ToolbarIcon } from 'rmwc/Toolbar';
 import { SimpleMenu, MenuItem } from 'rmwc/Menu';
-import { IconButton } from 'rmwc/IconButton';
 import { Switch, Route, Link } from 'react-router-dom';
+import {
+  TopAppBar,
+  TopAppBarRow,
+  TopAppBarSection,
+  TopAppBarNavigationIcon,
+  TopAppBarActionItem,
+  TopAppBarTitle
+} from 'rmwc/TopAppBar';
 
 
 const AppToolbar = (props) => {
   let title;
   if (props.title == "") {
-    title = <ToolbarTitle><span className="toolbar-logo"></span>skatespot.io</ToolbarTitle>;
+    title = <TopAppBarTitle><span className="toolbar-logo"></span>skatespot.io</TopAppBarTitle>;
   } else {
-    title = <ToolbarTitle>{props.title}</ToolbarTitle>;
+    title = <TopAppBarTitle>{props.title}</TopAppBarTitle>;
   }
   return(
-    <Toolbar fixed>
-      <ToolbarRow>
-        <ToolbarSection alignStart>
+    <TopAppBar fixed>
+      <TopAppBarRow>
+        <TopAppBarSection alignStart>
           <Switch>
-            <Route path="/(spot|profile|add)/" render={() => <Link to='/' className="remove-link-styling"><IconButton use="arrow_back"/></Link>} />
+            <Route path="/(spot|profile|add)/" render={() => <Link to='/' className="remove-link-styling"><TopAppBarActionItem use="arrow_back"/></Link>} />
           </Switch>
           {title}
-        </ToolbarSection>
-        <ToolbarSection alignEnd>
-          <SimpleMenu handle={<ToolbarIcon use="account_circle" />}>
+        </TopAppBarSection>
+        <TopAppBarSection alignEnd>
+          <SimpleMenu handle={<TopAppBarActionItem use="account_circle" />}>
             <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
             <a href="/logout"><MenuItem>Log out</MenuItem></a>
           </SimpleMenu>
-        </ToolbarSection>
-      </ToolbarRow>
-    </Toolbar>
+        </TopAppBarSection>
+      </TopAppBarRow>
+    </TopAppBar>
   );
 };
 

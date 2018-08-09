@@ -10,15 +10,16 @@ import { sendAjax } from '../helper/helper.js'
 import GoogleMapReact from 'google-map-react';
 import { Fab } from 'rmwc/Fab';
 import { SkateSpotListParent } from './SpotList.js';
-import SearchBox from './Searchbox.js';
+import SearchBox from './Widgets/Searchbox';
 import { Button, ButtonIcon } from 'rmwc/Button';
 import { Elevation } from 'rmwc/Elevation';
 import { Snackbar } from 'rmwc/Snackbar';
 import { Route, Link } from 'react-router-dom';
 import SpotViewParent from './SpotDisplay.js';
-import RunOnMount from './RunOnMount.js';
+import RunOnMount from './Widgets/RunOnMount.js';
 import AppToolbar from './Toolbar.js';
 import { ThemeProvider } from 'rmwc/Theme';
+
 
 let defaultURL = '/spots';
 
@@ -53,6 +54,7 @@ class App extends React.Component {
       toolbarTitle: "",
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
+    this.setParentState = this.setParentState.bind(this);
   }
 
   componentDidMount() {
@@ -67,12 +69,16 @@ class App extends React.Component {
     });
   }
 
+  setParentState(newState){
+    this.setState(newState);
+  }
+
   updatePublicView() {
     let toFetch = makePublicSpotsURL($('#spotName').val(), $('#spotDesc').val(), this.state.showOurSpots);
     console.log(toFetch);
     sendAjax('GET', toFetch, null, (data) => {
       console.log("fetching ajax spots");
-      this.onFetchSpots(data.spots);
+      this.setState({spots: data.spots})
     });
   }
 
@@ -136,7 +142,6 @@ class App extends React.Component {
                   spots={this.state.spots}
                   csrf={this.state.csrf } 
                   url={defaultURL} 
-                  onFetchSpots={this.onFetchSpots.bind(this)} 
                   updatePublicView={this.updatePublicView.bind(this)}
                 />
               </React.Fragment>
@@ -161,6 +166,7 @@ class App extends React.Component {
               <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
               <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
             </React.Fragment>}/>
+
           </div>
         </div>
         <Snackbar

@@ -16,7 +16,7 @@ class Folder extends React.Component {
   render() {
     return(
       <React.Fragment>
-        <Button onClick={() => this.setState({showContent: true})}>{this.props.folderName}</Button>
+        <Button raised onClick={() => this.setState({showContent: true})}>{this.props.folderName}</Button>
         <SimpleDialog
           title={this.props.folderName}
           body={this.props.children}

@@ -6,7 +6,6 @@ import { ReviewList } from './reviews.js';
 const SpotView = (props) => {
   return(
     <div className='spot_infobox'>
-      <h2 className='spotName'><Typography use="display2">{props.spot.name}</Typography></h2>
       <div className='spotDescription'>{props.spot.description}</div>
       <ReviewList spotId={props.id} csrf={props.csrf} />
     </div>
