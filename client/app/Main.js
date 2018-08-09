@@ -54,7 +54,6 @@ class App extends React.Component {
       toolbarTitle: "",
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
-    this.setParentState = this.setParentState.bind(this);
   }
 
   componentDidMount() {
@@ -67,10 +66,6 @@ class App extends React.Component {
       console.log("fetching ajax spots");
       this.onFetchSpots(data.spots);
     });
-  }
-
-  setParentState(newState){
-    this.setState(newState);
   }
 
   updatePublicView() {
