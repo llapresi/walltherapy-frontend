@@ -8,6 +8,7 @@ body {
     height:100%;
     padding:0;
     margin:0;
+    overflow-y: hidden;
 }
 
 #main {
@@ -256,3 +257,24 @@ body {
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
     color: #D50000;
 }
+
+.fade-enter {
+    opacity: 0;
+    transform: translateY(400px);
+  }
+  
+  .fade-enter-active {
+    opacity: 1;
+    transform: translateY(0px);
+    transition: opacity 450ms, transform 450ms;
+  }
+  
+  .fade-exit {
+    opacity: 1;
+  }
+  
+  .fade-exit-active {
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+  

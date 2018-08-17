@@ -14,11 +14,12 @@ import SearchBox from './Widgets/Searchbox';
 import { Button, ButtonIcon } from 'rmwc/Button';
 import { Elevation } from 'rmwc/Elevation';
 import { Snackbar } from 'rmwc/Snackbar';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, Switch } from 'react-router-dom';
 import SpotViewParent from './SpotDisplay.js';
 import RunOnMount from './Widgets/RunOnMount.js';
 import AppToolbar from './Toolbar.js';
 import { ThemeProvider } from 'rmwc/Theme';
+import { CSSTransition, TransitionGroup, } from 'react-transition-group';
 
 
 let defaultURL = '/spots';
@@ -92,86 +93,99 @@ class App extends React.Component {
 
   render() {
     return(
-      <ThemeProvider options={{
-        primary: '#263238',
-        secondary: '#d50000'
-      }}>
-        <AppToolbar title={this.state.toolbarTitle}/>
-        <div className="appGrid">
-          <div className="skatespot-map__parent">
-            <GoogleMapReact className="skatespot-map__map"
-              bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
-              center={this.state.center}
-              zoom={this.state.zoom}
-              onChange={this.onChange.bind(this)}
-              options={{
-                zoomControl: false,
-                fullscreenControl: false,
-              }}
-            >
-              {
-                this.state.spots.map((spot) => {
-                  return(
-                    <SkateSpotMarker key={spot._id} spot={spot} text={spot.name}
-                      lat={spot.location[1]} lng={spot.location[0]}>
-                    </SkateSpotMarker>
-                  );
-                })
-              }
-              {this.state.addingNewSpot == true &&
-                <AddSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
-              }
-            </GoogleMapReact>
+        <ThemeProvider options={{
+          primary: '#263238',
+          secondary: '#d50000'
+        }}>
+          <AppToolbar title={this.state.toolbarTitle}/>
+          <div className="appGrid">
+            <div className="skatespot-map__parent">
+              <GoogleMapReact className="skatespot-map__map"
+                bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
+                center={this.state.center}
+                zoom={this.state.zoom}
+                onChange={this.onChange.bind(this)}
+                options={{
+                  zoomControl: false,
+                  fullscreenControl: false,
+                }}
+              >
+                {
+                  this.state.spots.map((spot) => {
+                    return(
+                      <SkateSpotMarker key={spot._id} spot={spot} text={spot.name}
+                        lat={spot.location[1]} lng={spot.location[0]}>
+                      </SkateSpotMarker>
+                    );
+                  })
+                }
+                {this.state.addingNewSpot == true &&
+                  <AddSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
+                }
+              </GoogleMapReact>
 
-            <Link to='/add'><Fab className="skatespot-map__fab">add</Fab></Link>
-            <Elevation z={2}>
-              <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
-            </Elevation>
+              <Link to='/add'><Fab className="skatespot-map__fab">add</Fab></Link>
+              <Elevation z={2}>
+                <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
+              </Elevation>
+            </div>
+            <Route render={({location}) => (
+              <TransitionGroup>
+                <CSSTransition
+                  key={location.key}
+                  classNames='fade'
+                  timeout={{
+                    enter: 450,
+                    exit: 200
+                  }}
+                >
+                <div className="skatespot-sidebar">
+                  <Switch location={location}>
+                    <Route exact path='/' render={() =>
+                      <React.Fragment>
+                        <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
+                        <SkateSpotListParent
+                          spots={this.state.spots}
+                          csrf={this.state.csrf } 
+                          url={defaultURL} 
+                          updatePublicView={this.updatePublicView.bind(this)}
+                        />
+                      </React.Fragment>
+                    }/>
+
+                    <Route path='/spot/:id' render={(props)=> <React.Fragment>
+                      <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
+                      <SpotViewParent 
+                        key={props.match.params.id}
+                        csrf={this.state.csrf}
+                        onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
+                        {...props} 
+                      />
+                    </React.Fragment>} />
+
+                    <Route path='/profile' render={() => <React.Fragment>
+                      <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
+                      <AccountMenu csrf={this.state.csrf} />
+                    </React.Fragment>} />
+
+                    <Route path='/add' render={() => <React.Fragment>
+                      <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
+                      <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
+                    </React.Fragment>}/>
+                  </Switch>
+                  </div>
+                </CSSTransition>
+              </TransitionGroup>
+            )} />
           </div>
-          <div className="skatespot-sidebar">
-
-            <Route exact path='/' render={() =>
-              <React.Fragment>
-                <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
-                <SkateSpotListParent
-                  spots={this.state.spots}
-                  csrf={this.state.csrf } 
-                  url={defaultURL} 
-                  updatePublicView={this.updatePublicView.bind(this)}
-                />
-              </React.Fragment>
-            }/>
-
-            <Route path='/spot/:id' render={(props)=> <React.Fragment>
-              <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
-              <SpotViewParent 
-                key={props.match.params.id}
-                csrf={this.state.csrf}
-                onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
-                {...props} 
-              />
-            </React.Fragment>} />
-
-            <Route path='/profile' render={() => <React.Fragment>
-              <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
-              <AccountMenu csrf={this.state.csrf} />
-            </React.Fragment>} />
-
-            <Route path='/add' render={() => <React.Fragment>
-              <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
-              <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
-            </React.Fragment>}/>
-
-          </div>
-        </div>
-        <Snackbar
-          show={this.state.showSnackbar}
-          onHide={evt => this.setState({showSnackbar: false})}
-          message="New Spot Created"
-          actionText="Close"
-          actionHandler={() => {}}
-        />
-      </ThemeProvider>
+          <Snackbar
+            show={this.state.showSnackbar}
+            onHide={evt => this.setState({showSnackbar: false})}
+            message="New Spot Created"
+            actionText="Close"
+            actionHandler={() => {}}
+          />
+        </ThemeProvider>
     )
   }
 }

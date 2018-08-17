@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 
 export const SkateSpotListParent = (props) => {
   return (
-    <React.Fragment>
+    <div>
       <TextField id="spotName" className="search_field" box withLeadingIcon="filter_list" label="Filter" onChange={props.updatePublicView} />
       <SkateSpotList spots={props.spots} />
-    </React.Fragment>
+    </div>
   );
 };
 
