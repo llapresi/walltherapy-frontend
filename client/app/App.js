@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './Main';
-import { BrowserRouter } from 'react-router-dom'
+import { Router } from 'react-router-dom'
+import history from './History.js'
 
 ReactDOM.render(
-  <BrowserRouter basename='/app/'>
+  <Router history={history}>
     <App />
-  </BrowserRouter>,
+  </Router>,
 document.querySelector("#main"));

@@ -20,6 +20,7 @@ import RunOnMount from './Widgets/RunOnMount.js';
 import AppToolbar from './Toolbar.js';
 import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup, } from 'react-transition-group';
+import ShowAddSpot from './Transitions/ShowAddSpot.js'
 
 
 let defaultURL = '/spots';
@@ -124,20 +125,33 @@ class App extends React.Component {
                 }
               </GoogleMapReact>
 
-              <Link to='/add'><Fab className="skatespot-map__fab">add</Fab></Link>
+              <Link to={{pathname: '/add', state: ShowAddSpot}}><Fab className="skatespot-map__fab">add</Fab></Link>
               <Elevation z={2}>
                 <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
               </Elevation>
             </div>
             <Route render={({location}) => (
-              <TransitionGroup>
+              <TransitionGroup
+                childFactory={child => React.cloneElement(
+                  child,
+                  {
+                    classNames: (function() {
+                      if(location.state === undefined) {
+                        return "transition__slide-tospot";
+                      } else {
+                        return location.state.transition
+                      }})(),
+                    timeout: (function() {
+                      if(location.state === undefined) {
+                        return 450;
+                      } else {
+                        return location.state.duration
+                      }})()
+                  }
+                )}
+              >
                 <CSSTransition
                   key={location.key}
-                  classNames='fade'
-                  timeout={{
-                    enter: 450,
-                    exit: 200
-                  }}
                 >
                 <div className="skatespot-sidebar">
                   <Switch location={location}>

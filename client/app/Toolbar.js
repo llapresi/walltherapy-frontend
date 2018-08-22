@@ -9,6 +9,8 @@ import {
   TopAppBarActionItem,
   TopAppBarTitle
 } from 'rmwc/TopAppBar';
+import HideAddSpot from './Transitions/HideAddSpot.js'
+
 
 
 const AppToolbar = (props) => {
@@ -19,11 +21,11 @@ const AppToolbar = (props) => {
     title = <TopAppBarTitle>{props.title}</TopAppBarTitle>;
   }
   return(
-    <TopAppBar fixed>
+    <TopAppBar fixed className="mdc-elevation--z4">
       <TopAppBarRow>
         <TopAppBarSection alignStart>
           <Switch>
-            <Route path="/(spot|profile|add)/" render={() => <Link to='/' className="remove-link-styling"><TopAppBarActionItem use="arrow_back"/></Link>} />
+            <Route path="/(spot|profile|add)/" render={() => <Link to={{pathname: '/', state: HideAddSpot}} className="remove-link-styling"><TopAppBarActionItem use="arrow_back"/></Link>} />
           </Switch>
           {title}
         </TopAppBarSection>
