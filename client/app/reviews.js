@@ -6,6 +6,7 @@ import { Button } from 'rmwc/Button';
 import { Snackbar } from 'rmwc/Snackbar';
 import StarRatingComponent from 'react-star-rating-component';
 import Folder from './Widgets/Folder.js';
+import { CSSTransition } from 'react-transition-group';
 
 
 export const ReviewForm = (props) => {
@@ -31,6 +32,7 @@ export class ReviewList extends React.Component {
       errorMsg: '',
       showSnackbar: false,
       snackbarMsg: '',
+      reviewListAnim: false
     };
     this.updateReviews = this.updateReviews.bind(this);
   }
@@ -40,7 +42,7 @@ export class ReviewList extends React.Component {
       method: 'GET',
       url: `/reviews?spot=${id}`
     }).done((data) => {
-      this.setState({reviews: data.reviews});
+      this.setState({reviews: data.reviews, reviewListAnim: true});
     });
   }
   
@@ -74,17 +76,19 @@ export class ReviewList extends React.Component {
           <Folder folderName="Add Review" acceptCallback={this.submitReview.bind(this)}>
             <ReviewForm spotId={this.props.spotId} csrf={this.props.csrf} />
           </Folder>
-          <List twoLine="true" nonInteractive="true">
-            {this.state.reviews.map(function(review) {
-              return(
-                <ReviewListItem
-                  id={review.author}
-                  rating={review.rating}
-                  reviewText={review.reviewText}
-                  key={review._id} />
-              );
-            })}
-          </List>
+          <CSSTransition in={this.state.reviewListAnim} classNames="transition__show_reviewlist" timeout={350}>
+            <List twoLine="true" nonInteractive="true">
+              {this.state.reviews.map(function(review) {
+                return(
+                  <ReviewListItem
+                    id={review.author}
+                    rating={review.rating}
+                    reviewText={review.reviewText}
+                    key={review._id} />
+                );
+              })}
+            </List>
+          </CSSTransition>
         </div>
         <Snackbar
           show={this.state.showSnackbar}

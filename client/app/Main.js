@@ -32,7 +32,7 @@ const makePublicSpotsURL = (name = '', description = '', showOurSpots = false) =
 
 const SkateSpotMarker = (props) => {
   return(
-    <Link to={'/spot/' + props.spot._id}><div className="mapMarker"></div></Link>
+    <Link to={{pathname: '/spot/' + props.spot._id, state: {spot: props.spot}}}><div className="mapMarker"></div></Link>
   );
 }
 
@@ -125,72 +125,64 @@ class App extends React.Component {
                 }
               </GoogleMapReact>
 
-              <Link to={{pathname: '/add', state: ShowAddSpot}}><Fab className="skatespot-map__fab">add</Fab></Link>
+              <Link to={{pathname: '/add', state: ShowAddSpot}}><Fab className="skatespot-map__fab">add_location</Fab></Link>
               <Elevation z={2}>
                 <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
               </Elevation>
             </div>
-            <Route render={({location}) => (
+            <Route render={({location}) => {
+              // Use default if animation vales are not provided by the Link
+              let transitionToUse = (location.state !== undefined && location.state.transition !== undefined) ? location.state.transition : "transition__show_addspot";
+              let timeoutToUse = (location.state !== undefined && location.state.duration !== undefined) ? location.state.duration: 250;              
+              return (
               <TransitionGroup
                 childFactory={child => React.cloneElement(
                   child,
                   {
-                    classNames: (function() {
-                      if(location.state === undefined) {
-                        return "transition__slide-tospot";
-                      } else {
-                        return location.state.transition
-                      }})(),
-                    timeout: (function() {
-                      if(location.state === undefined) {
-                        return 450;
-                      } else {
-                        return location.state.duration
-                      }})()
+                    classNames: transitionToUse,
+                    timeout: timeoutToUse
                   }
                 )}
               >
-                <CSSTransition
-                  key={location.key}
-                >
-                <div className="skatespot-sidebar">
-                  <Switch location={location}>
-                    <Route exact path='/' render={() =>
-                      <React.Fragment>
-                        <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
-                        <SkateSpotListParent
-                          spots={this.state.spots}
-                          csrf={this.state.csrf } 
-                          url={defaultURL} 
-                          updatePublicView={this.updatePublicView.bind(this)}
+                <CSSTransition key={location.key}>
+                  <div className="skatespot-sidebar">
+                    <Switch location={location}>
+                      <Route exact path='/' render={() =>
+                        <React.Fragment>
+                          <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
+                          <SkateSpotListParent
+                            spots={this.state.spots}
+                            csrf={this.state.csrf } 
+                            url={defaultURL} 
+                            updatePublicView={this.updatePublicView.bind(this)}
+                          />
+                        </React.Fragment>
+                      }/>
+
+                      <Route path='/spot/:id' render={(props)=> <React.Fragment>
+                        <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
+                        <SpotViewParent 
+                          key={props.match.params.id}
+                          csrf={this.state.csrf}
+                          onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
+                          {...props} 
                         />
-                      </React.Fragment>
-                    }/>
+                      </React.Fragment>} />
 
-                    <Route path='/spot/:id' render={(props)=> <React.Fragment>
-                      <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
-                      <SpotViewParent 
-                        key={props.match.params.id}
-                        csrf={this.state.csrf}
-                        onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
-                        {...props} 
-                      />
-                    </React.Fragment>} />
+                      <Route path='/profile' render={() => <React.Fragment>
+                        <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
+                        <AccountMenu csrf={this.state.csrf} />
+                      </React.Fragment>} />
 
-                    <Route path='/profile' render={() => <React.Fragment>
-                      <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
-                      <AccountMenu csrf={this.state.csrf} />
-                    </React.Fragment>} />
-
-                    <Route path='/add' render={() => <React.Fragment>
-                      <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
-                      <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
-                    </React.Fragment>}/>
-                  </Switch>
+                      <Route path='/add' render={() => <React.Fragment>
+                        <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
+                        <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
+                      </React.Fragment>}/>
+                    </Switch>
                   </div>
                 </CSSTransition>
               </TransitionGroup>
-            )} />
+            )}} />
           </div>
           <Snackbar
             show={this.state.showSnackbar}
