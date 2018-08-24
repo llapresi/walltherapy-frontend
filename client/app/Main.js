@@ -54,6 +54,7 @@ class App extends React.Component {
       showOurSpots: false,
       showSnackbar: false,
       toolbarTitle: "",
+      locationWatchId: ""
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
   }
@@ -126,6 +127,7 @@ class App extends React.Component {
               </GoogleMapReact>
 
               <Link to={{pathname: '/add', state: ShowAddSpot}}><Fab className="skatespot-map__fab">add_location</Fab></Link>
+              <Fab className="skatespot-map__location" onClick={() => this.getUserGeolocation()}>gps_fixed</Fab>
               <Elevation z={2}>
                 <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
               </Elevation>
@@ -193,6 +195,19 @@ class App extends React.Component {
           />
         </ThemeProvider>
     )
+  }
+  
+  getUserGeolocation() {
+    if ("geolocation" in navigator) {
+      console.log("Asking for user location");
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.setState({center: {lat: position.coords.latitude, lng: position.coords.longitude}});
+      }, (error) => {
+        console.log("Geolocation failed");
+      });
+    } else {
+      /* geolocation IS NOT available */
+    }
   }
 }
 
