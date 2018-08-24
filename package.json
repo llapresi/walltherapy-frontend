@@ -11,6 +11,7 @@
     "buildLoginBundle": "webpack --config login.config.js --mode production",
     "buildAppBundle": "webpack --mode production",
     "build": "npm run buildLoginBundle && npm run buildAppBundle",
+    "postinstall": "npm run buildLoginBundle && npm run buildAppBundle",
     "watchAppBundle": "webpack-dev-server --hot --mode development",
     "watchLoginBundle": "webpack --config login.config.js --watch --mode development --info-verbosity verbose",
     "nodemon": "nodemon --watch ./server ./server/app.js",
