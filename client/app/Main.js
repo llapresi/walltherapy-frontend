@@ -42,6 +42,13 @@ const AddSpotMarker = (props) => {
   );
 }
 
+const GeolocationFAB = (props) => {
+  let cssClassNames = props.watchingLocation ? "skatespot-map__location skatespot-map__location-active" : "skatespot-map__location";
+  return(
+    <Fab className={cssClassNames} onClick={props.onClick}>gps_fixed</Fab>
+  );
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -54,7 +61,8 @@ class App extends React.Component {
       showOurSpots: false,
       showSnackbar: false,
       toolbarTitle: "",
-      locationWatchId: ""
+      locationWatchId: null,
+      watchingLocation: false
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
   }
@@ -95,118 +103,145 @@ class App extends React.Component {
 
   render() {
     return(
-        <ThemeProvider options={{
-          primary: '#263238',
-          secondary: '#d50000'
-        }}>
-          <AppToolbar title={this.state.toolbarTitle}/>
-          <div className="appGrid">
-            <div className="skatespot-map__parent">
-              <GoogleMapReact className="skatespot-map__map"
-                bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
-                center={this.state.center}
-                zoom={this.state.zoom}
-                onChange={this.onChange.bind(this)}
-                options={{
-                  zoomControl: false,
-                  fullscreenControl: false,
-                }}
-              >
-                {
-                  this.state.spots.map((spot) => {
-                    return(
-                      <SkateSpotMarker key={spot._id} spot={spot} text={spot.name}
-                        lat={spot.location[1]} lng={spot.location[0]}>
-                      </SkateSpotMarker>
-                    );
-                  })
-                }
-                {this.state.addingNewSpot == true &&
-                  <AddSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
-                }
-              </GoogleMapReact>
+      <ThemeProvider options={{
+        primary: '#263238',
+        secondary: '#d50000'
+      }}>
+        <AppToolbar title={this.state.toolbarTitle}/>
+        <div className="appGrid">
+          <div className="skatespot-map__parent">
+            <GoogleMapReact className="skatespot-map__map"
+              bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
+              center={this.state.center}
+              zoom={this.state.zoom}
+              onChange={this.onChange.bind(this)}
+              options={{
+                zoomControl: false,
+                fullscreenControl: false,
+              }}
+              onDrag={() => this.stopWatchingGeolocation()}
+            >
+              {
+                this.state.spots.map((spot) => {
+                  return(
+                    <SkateSpotMarker key={spot._id} spot={spot} text={spot.name}
+                      lat={spot.location[1]} lng={spot.location[0]}>
+                    </SkateSpotMarker>
+                  );
+                })
+              }
+              {this.state.addingNewSpot == true &&
+                <AddSpotMarker addspot={true} lat={this.state.center.lat} lng={this.state.center.lng} />
+              }
+            </GoogleMapReact>
 
-              <Link to={{pathname: '/add', state: ShowAddSpot}}><Fab className="skatespot-map__fab">add_location</Fab></Link>
-              <Fab className="skatespot-map__location" onClick={() => this.getUserGeolocation()}>gps_fixed</Fab>
-              <Elevation z={2}>
-                <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
-              </Elevation>
-            </div>
-            <Route render={({location}) => {
-              // Use default if animation vales are not provided by the Link
-              let transitionToUse = (location.state !== undefined && location.state.transition !== undefined) ? location.state.transition : "transition__show_addspot";
-              let timeoutToUse = (location.state !== undefined && location.state.duration !== undefined) ? location.state.duration: 250;              
-              return (
-              <TransitionGroup
-                childFactory={child => React.cloneElement(
-                  child,
-                  {
-                    classNames: transitionToUse,
-                    timeout: timeoutToUse
-                  }
-                )}
-              >
-                <CSSTransition key={location.key}>
-                  <div className="skatespot-sidebar">
-                    <Switch location={location}>
-                      <Route exact path='/' render={() =>
-                        <React.Fragment>
-                          <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
-                          <SkateSpotListParent
-                            spots={this.state.spots}
-                            csrf={this.state.csrf } 
-                            url={defaultURL} 
-                            updatePublicView={this.updatePublicView.bind(this)}
-                          />
-                        </React.Fragment>
-                      }/>
-
-                      <Route path='/spot/:id' render={(props)=> <React.Fragment>
-                        <RunOnMount func={() => this.setState({addingNewSpot: false})}/>
-                        <SpotViewParent 
-                          key={props.match.params.id}
-                          csrf={this.state.csrf}
-                          onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
-                          {...props} 
-                        />
-                      </React.Fragment>} />
-
-                      <Route path='/profile' render={() => <React.Fragment>
-                        <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
-                        <AccountMenu csrf={this.state.csrf} />
-                      </React.Fragment>} />
-
-                      <Route path='/add' render={() => <React.Fragment>
-                        <RunOnMount func={() => this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})}/>
-                        <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
-                      </React.Fragment>}/>
-                    </Switch>
-                  </div>
-                </CSSTransition>
-              </TransitionGroup>
-            )}} />
+            <Link to={{pathname: '/add', state: ShowAddSpot}}><Fab className="skatespot-map__fab">add_location</Fab></Link>
+            <GeolocationFAB watchingLocation={this.state.watchingLocation} onClick={() => this.getUserGeolocation()}/>
+            <Elevation z={2}>
+              <SearchBox searchCallback={(newLoc) => this.setState({center: newLoc})} />
+            </Elevation>
           </div>
-          <Snackbar
-            show={this.state.showSnackbar}
-            onHide={evt => this.setState({showSnackbar: false})}
-            message="New Spot Created"
-            actionText="Close"
-            actionHandler={() => {}}
-          />
-        </ThemeProvider>
+          <Route render={({location}) => {
+            // Use default if animation vales are not provided by the Link
+            let transitionToUse = (location.state !== undefined && location.state.transition !== undefined) ? location.state.transition : "transition__show_addspot";
+            let timeoutToUse = (location.state !== undefined && location.state.duration !== undefined) ? location.state.duration: 250;              
+            return (
+            <TransitionGroup
+              childFactory={child => React.cloneElement(
+                child,
+                {
+                  classNames: transitionToUse,
+                  timeout: timeoutToUse
+                }
+              )}
+            >
+              <CSSTransition key={location.key}>
+                <div className="skatespot-sidebar">
+                  <Switch location={location}>
+                    <Route exact path='/' render={() =>
+                      <React.Fragment>
+                        <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: ""})}/>
+                        <SkateSpotListParent
+                          spots={this.state.spots}
+                          csrf={this.state.csrf } 
+                          url={defaultURL} 
+                          updatePublicView={this.updatePublicView.bind(this)}
+                        />
+                      </React.Fragment>
+                    }/>
+
+                    <Route path='/spot/:id' render={(props)=> <React.Fragment>
+                      <RunOnMount func={() => {
+                        this.setState({addingNewSpot: false});
+                        this.stopWatchingGeolocation();
+                      }}/>
+                      <SpotViewParent 
+                        key={props.match.params.id}
+                        csrf={this.state.csrf}
+                        onOpen={(newCenter, title) => this.setState({center: newCenter, toolbarTitle: title}) } 
+                        {...props} 
+                      />
+                    </React.Fragment>} />
+
+                    <Route path='/profile' render={() => <React.Fragment>
+                      <RunOnMount func={() => this.setState({addingNewSpot: false, toolbarTitle: "Change Password"})}/>
+                      <AccountMenu csrf={this.state.csrf} />
+                    </React.Fragment>} />
+
+                    <Route path='/add' render={() => <React.Fragment>
+                      <RunOnMount func={() => {
+                        this.setState({addingNewSpot: true, toolbarTitle: "Add Spot"})
+                        this.stopWatchingGeolocation();
+                      }}/>
+                      <SpotForm csrf={this.state.csrf} loc={this.state.center} submitCallback={this.onNewSpot.bind(this)} />
+                    </React.Fragment>}/>
+                  </Switch>
+                </div>
+              </CSSTransition>
+            </TransitionGroup>
+          )}} />
+        </div>
+        <Snackbar
+          show={this.state.showSnackbar}
+          onHide={evt => this.setState({showSnackbar: false})}
+          message="New Spot Created"
+          actionText="Close"
+          actionHandler={() => {}}
+        />
+      </ThemeProvider>
     )
   }
   
   getUserGeolocation() {
     if ("geolocation" in navigator) {
-      console.log("Asking for user location");
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.setState({center: {lat: position.coords.latitude, lng: position.coords.longitude}});
-      }, (error) => {
-        console.log("Geolocation failed");
-      });
+      if (this.state.watchingLocation === false) {
+        this.setState({watchingLocation: true});
+        console.log("Asking for user location/Starting");
+        let watchID = navigator.geolocation.watchPosition((position) => {
+          console.log("Fetching position");
+          this.setState({center: {lat: position.coords.latitude, lng: position.coords.longitude}});
+        }, (error) => {
+          console.log(error);
+          if(error.code === 1) {
+            console.log("User doesn't allow location");
+            this.setState({watchingLocation: false});
+          }
+        });
+        this.setState({locationWatchId: watchID});
+        console.log(watchID);
+      } else {
+        this.stopWatchingGeolocation();
+      }
     } else {
       /* geolocation IS NOT available */
+    }
+  }
+
+  stopWatchingGeolocation() {
+    if(this.state.watchingLocation === true) {
+      console.log("Stopping location watch");
+      navigator.geolocation.clearWatch(this.state.locationWatchId);
+      this.setState({watchingLocation: false});
     }
   }
 }

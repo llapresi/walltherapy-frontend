@@ -90,6 +90,10 @@ body {
     color: rgba(0, 0, 0, 0.54);
 }
 
+.skatespot-map__location-active > .mdc-fab__icon{
+    color: #d50000;
+}
+
 .spotList {
     position: absolute;
     bottom: 0;
