@@ -1,9 +1,7 @@
 import React from 'react';
-import { Button, ButtonIcon } from 'rmwc/Button';
-import { TextField, TextFieldIcon, TextFieldHelperText } from 'rmwc/TextField';
+import { Button } from 'rmwc/Button';
+import { TextField } from 'rmwc/TextField';
 import { Typography } from 'rmwc/Typography';
-import { Checkbox } from 'rmwc/Checkbox';
-import { sendAjax } from '../helper/helper.js'
 import { Snackbar } from 'rmwc/Snackbar';
 
 export class ChangePasswordForm extends React.Component {

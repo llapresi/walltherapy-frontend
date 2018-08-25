@@ -1,5 +1,5 @@
 { 
-  "extends": "airbnb/base",
+  "extends": "airbnb",
   "rules": {
     "no-underscore-dangle" : "off",
     "no-plusplus": "off"
