@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const Spot = models.Spot;
+const { Spot } = models;
 
 const makeSpot = (req, res) => {
   if (!req.body.name || !req.body.longitude || !req.body.latitude || !req.body.description) {
@@ -37,7 +37,7 @@ const getSpots = (request, response) => {
   const req = request;
   const res = response;
 
-  const query = req.query;
+  const { query } = req;
   /* Only change these ones in the controller because the other URL params besides the ones below
    should be the same name as the model props */
   if (req.query.profileSpots) {

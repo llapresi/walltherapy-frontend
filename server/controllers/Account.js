@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const Account = models.Account;
+const { Account } = models;
 
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
@@ -93,28 +93,28 @@ const changePassword = (request, response) => {
   }
 
   return Account.AccountModel.authenticate(req.session.account.username,
-  req.body.oldPass, (err, account) => {
-    if (err || !account) {
-      return res.status(401).json({ error: 'Old password does not match' });
-    }
+    req.body.oldPass, (err, account) => {
+      if (err || !account) {
+        return res.status(401).json({ error: 'Old password does not match' });
+      }
 
-    return Account.AccountModel.generateHash(req.body.pass, (hash) => {
-      const newData = {
-        password: hash,
-      };
+      return Account.AccountModel.generateHash(req.body.pass, (hash) => {
+        const newData = {
+          password: hash,
+        };
 
-      const query = {
-        _id: req.session.account._id,
-      };
+        const query = {
+          _id: req.session.account._id,
+        };
 
-      Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err2) => {
-        if (err2) {
-          return res.send(400, { error: err });
-        }
-        return res.status(200).json({ message: 'succesfully changed password' });
+        Account.AccountModel.findOneAndUpdate(query, newData, { upsert: true }, (err2) => {
+          if (err2) {
+            return res.send(400, { error: err });
+          }
+          return res.status(200).json({ message: 'succesfully changed password' });
+        });
       });
     });
-  });
 };
 
 const getToken = (request, response) => {
@@ -149,4 +149,3 @@ module.exports.signup = signup;
 module.exports.changePassword = changePassword;
 module.exports.getToken = getToken;
 module.exports.getUsernameForId = getUsernameForId;
-

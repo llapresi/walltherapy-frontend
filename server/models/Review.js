@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 mongoose.Promise = global.Promise;
 // ;const _ = require('underscore');
 
@@ -37,7 +38,7 @@ const ReviewSchema = new mongoose.Schema({
   },
 });
 
-ReviewSchema.statics.toAPI = (doc) => ({
+ReviewSchema.statics.toAPI = doc => ({
   spot: doc.spot,
   author: doc.author,
   rating: doc.rating,
@@ -58,8 +59,8 @@ ReviewSchema.statics.query = (params, callback, sortBy = 'createdData') => {
   }
 
   return ReviewModel.find(search).select('spot author rating reviewText createdData').sort(sortBy)
-  .collation({ locale: 'en', strength: 2 })
-  .exec(callback);
+    .collation({ locale: 'en', strength: 2 })
+    .exec(callback);
 };
 
 

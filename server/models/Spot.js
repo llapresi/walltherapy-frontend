@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 mongoose.Promise = global.Promise;
 // ;const _ = require('underscore');
 
@@ -41,7 +42,7 @@ const SpotSchema = new mongoose.Schema({
   },
 });
 
-SpotSchema.statics.toAPI = (doc) => ({
+SpotSchema.statics.toAPI = doc => ({
   name: doc.name,
   latitude: doc.latitude,
   location: doc.location,
@@ -53,8 +54,8 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
   };
 
   return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
-  .collation({ locale: 'en', strength: 2 })
-  .exec(callback);
+    .collation({ locale: 'en', strength: 2 })
+    .exec(callback);
 };
 
 SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
@@ -80,11 +81,11 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
   }
 
   return SpotModel.find(search)
-  .select('name location description _id isSponsored owner')
-  .sort('-isSponsored')
-  .sort(sortBy)
-  .collation({ locale: 'en', strength: 2 })
-  .exec(callback);
+    .select('name location description _id isSponsored owner')
+    .sort('-isSponsored')
+    .sort(sortBy)
+    .collation({ locale: 'en', strength: 2 })
+    .exec(callback);
 };
 
 SpotModel = mongoose.model('Spot', SpotSchema);

@@ -10,6 +10,7 @@ const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
+const router = require('./router.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/Skatespotio_BCrypt';
@@ -30,10 +31,9 @@ let redisPASS;
 
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
-  redisPASS = redisURL.auth.split(':')[1];
+  [, redisPASS] = redisURL.auth.split(':');
 }
 
-const router = require('./router.js');
 const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));

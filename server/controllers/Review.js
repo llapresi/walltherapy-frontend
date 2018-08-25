@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const Review = models.Review;
+const { Review } = models;
 
 const addReview = (req, res) => {
   if (!req.body.spot || !req.body.rating || !req.body.reviewText) {
