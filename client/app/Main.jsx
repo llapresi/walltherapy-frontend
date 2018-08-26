@@ -115,6 +115,10 @@ class App extends React.Component {
             console.log("User doesn't allow location");
           }
           this.stopWatchingGeolocation();
+        }, {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
         });
         this.setState({ locationWatchId: watchID });
         console.log(watchID);
@@ -295,7 +299,7 @@ class App extends React.Component {
         </div>
         <Snackbar
           show={showSnackbar}
-          onHide={evt => this.setState({ showSnackbar: false })}
+          onHide={() => this.setState({ showSnackbar: false })}
           message="New Spot Created"
           actionText="Close"
           actionHandler={() => {}}
