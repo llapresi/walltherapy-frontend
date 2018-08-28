@@ -1,8 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 export default class SearchBox extends React.Component {
   componentDidMount() {
+    const { google } = window;
     const input = this.inputTextbox;
     this.searchBox = new google.maps.places.SearchBox(input);
     this.searchBox.addListener('places_changed', this.onPlacesChanged.bind(this));
@@ -10,12 +11,14 @@ export default class SearchBox extends React.Component {
 
   componentWillUnmount() {
     // https://developers.google.com/maps/documentation/javascript/events#removing
+    const { google } = window;
     google.maps.event.clearInstanceListeners(this.searchBox);
   }
 
   onPlacesChanged() {
+    const { searchCallback } = this.props;
     const searchLocation = this.searchBox.getPlaces()[0].geometry.location;
-    this.props.searchCallback({ lat: searchLocation.lat(), lng: searchLocation.lng() });
+    searchCallback({ lat: searchLocation.lat(), lng: searchLocation.lng() });
   }
 
   render() {
@@ -28,3 +31,6 @@ export default class SearchBox extends React.Component {
     );
   }
 }
+SearchBox.propTypes = {
+  searchCallback: PropTypes.func.isRequired,
+};
