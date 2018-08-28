@@ -41,15 +41,19 @@ const AddSpotMarker = () => (
   <div className="mapMarker mapMarker__addspot" />
 );
 
-const GeolocationFAB = ({ watchingLocation, onClick }) => {
+const GeolocationFAB = ({ exited, watchingLocation, onClick }) => {
   const cssClassNames = watchingLocation ? 'skatespot-map__location skatespot-map__location-active' : 'skatespot-map__location';
   return (
-    <Fab className={cssClassNames} onClick={onClick}>gps_fixed</Fab>
+    <Fab exited={exited} className={cssClassNames} onClick={onClick}>gps_fixed</Fab>
   );
 };
 GeolocationFAB.propTypes = {
   watchingLocation: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
+  exited: PropTypes.bool,
+};
+GeolocationFAB.defaultProps = {
+  exited: false,
 };
 
 class App extends React.Component {
@@ -196,12 +200,35 @@ class App extends React.Component {
               && <AddSpotMarker lat={center.lat} lng={center.lng} />
               }
             </GoogleMapReact>
-
-            <Link to={{ pathname: '/add', state: ShowAddSpot }}><Fab className="skatespot-map__fab">add_location</Fab></Link>
-            <GeolocationFAB
-              watchingLocation={watchingLocation}
-              onClick={() => this.getUserGeolocation()}
-            />
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <React.Fragment>
+                    <Link to={{ pathname: '/add', state: ShowAddSpot }}><Fab className="skatespot-map__fab">add_location</Fab></Link>
+                    <GeolocationFAB
+                      watchingLocation={watchingLocation}
+                      onClick={() => this.getUserGeolocation()}
+                    />
+                  </React.Fragment>
+                )}
+              />
+              <Route
+                exact
+                path="/*"
+                render={() => (
+                  <React.Fragment>
+                    <Link to={{ pathname: '/add', state: ShowAddSpot }}><Fab exited className="skatespot-map__fab">add_location</Fab></Link>
+                    <GeolocationFAB
+                      exited
+                      watchingLocation={watchingLocation}
+                      onClick={() => this.getUserGeolocation()}
+                    />
+                  </React.Fragment>
+                )}
+              />
+            </Switch>
             <Elevation z={2}>
               <SearchBox searchCallback={newLoc => this.setState({ center: newLoc })} />
             </Elevation>
