@@ -42,7 +42,7 @@ const AddSpotMarker = () => (
 );
 
 const GeolocationFAB = ({ exited, watchingLocation, onClick }) => {
-  const cssClassNames = watchingLocation ? 'skatespot-map__location skatespot-map__location-active' : 'skatespot-map__location';
+  const cssClassNames = watchingLocation ? 'skatespot-map__fab skatespot-map__location skatespot-map__location-active' : 'skatespot-map__fab skatespot-map__location';
   return (
     <Fab exited={exited} className={cssClassNames} onClick={onClick}>gps_fixed</Fab>
   );
@@ -61,9 +61,10 @@ class App extends React.Component {
     super(props);
     this.state = {
       center: { lat: 43.084727, lng: -77.674423 },
+      newSpotLocation: {},
       zoom: 17,
       spots: [], // New main spot list, have skatespotlist send state to this
-      addingNewSpot: false,
+      addingNewSpot: 0, // 0 = not adding spot, 1 = current center, 2 = spot location set
       csrf: '',
       showOurSpots: false,
       showSnackbar: false,
@@ -75,6 +76,7 @@ class App extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.updatePublicView = this.updatePublicView.bind(this);
     this.onNewSpot = this.onNewSpot.bind(this);
+    this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
   }
 
   componentDidMount() {
@@ -134,14 +136,8 @@ class App extends React.Component {
     }
   }
 
-  updatePublicView() {
-    const { showOurSpots } = this.state;
-    const toFetch = makePublicSpotsURL($('#spotName').val(), showOurSpots);
-    console.log(toFetch);
-    sendAjax('GET', toFetch, null, (data) => {
-      console.log('fetching ajax spots');
-      this.setState({ spots: data.spots });
-    });
+  setNewSpotLocation(loc) {
+    this.setState({ newSpotLocation: loc, addingNewSpot: 2 });
   }
 
   stopWatchingGeolocation() {
@@ -151,6 +147,16 @@ class App extends React.Component {
       navigator.geolocation.clearWatch(locationWatchId);
       this.setState({ watchingLocation: false });
     }
+  }
+
+  updatePublicView() {
+    const { showOurSpots } = this.state;
+    const toFetch = makePublicSpotsURL($('#spotName').val(), showOurSpots);
+    console.log(toFetch);
+    sendAjax('GET', toFetch, null, (data) => {
+      console.log('fetching ajax spots');
+      this.setState({ spots: data.spots });
+    });
   }
 
   render() {
@@ -163,6 +169,7 @@ class App extends React.Component {
       showSnackbar,
       toolbarTitle,
       watchingLocation,
+      newSpotLocation,
     } = this.state;
     return (
       <ThemeProvider options={{
@@ -196,8 +203,11 @@ class App extends React.Component {
                   />
                 ))
               }
-              {addingNewSpot === true
+              {addingNewSpot === 1
               && <AddSpotMarker lat={center.lat} lng={center.lng} />
+              }
+              {addingNewSpot === 2
+              && <AddSpotMarker lat={newSpotLocation.lat} lng={newSpotLocation.lng} />
               }
             </GoogleMapReact>
             <Switch>
@@ -257,7 +267,7 @@ class App extends React.Component {
                         path="/"
                         render={() => (
                           <React.Fragment>
-                            <RunOnMount func={() => this.setState({ addingNewSpot: false, toolbarTitle: '' })} />
+                            <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: '' })} />
                             <SkateSpotListParent
                               spots={spots}
                               csrf={csrf}
@@ -273,7 +283,7 @@ class App extends React.Component {
                         render={props => (
                           <React.Fragment>
                             <RunOnMount func={() => {
-                              this.setState({ addingNewSpot: false });
+                              this.setState({ addingNewSpot: 0 });
                               this.stopWatchingGeolocation();
                             }}
                             />
@@ -293,7 +303,7 @@ class App extends React.Component {
                         path="/profile"
                         render={() => (
                           <React.Fragment>
-                            <RunOnMount func={() => this.setState({ addingNewSpot: false, toolbarTitle: 'Change Password' })} />
+                            <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: 'Change Password' })} />
                             <AccountMenu csrf={csrf} />
                           </React.Fragment>
                         )}
@@ -304,7 +314,7 @@ class App extends React.Component {
                         render={() => (
                           <React.Fragment>
                             <RunOnMount func={() => {
-                              this.setState({ addingNewSpot: true, toolbarTitle: 'Add Spot' });
+                              this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot' });
                               this.stopWatchingGeolocation();
                             }}
                             />
@@ -312,6 +322,7 @@ class App extends React.Component {
                               csrf={csrf}
                               loc={center}
                               submitCallback={this.onNewSpot}
+                              setSpotCallback={this.setNewSpotLocation}
                             />
                           </React.Fragment>
                         )}

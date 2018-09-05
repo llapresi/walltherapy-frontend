@@ -17,7 +17,6 @@ body {
 
 .spot_infobox {
     padding: 12px;
-    padding-top: 0px;
 }
 
 .reviewForm {
@@ -67,9 +66,7 @@ body {
 }
 
 .skatespot-map__location {
-    position: absolute;
-    bottom: 5.5rem;
-    right: 1rem;
+    transform: translateY(-4.5rem);
     background-color: white;
     z-index: 1;
 }
@@ -77,11 +74,6 @@ body {
 @media(min-width: 1024px) {
     .skatespot-map__fab {
         bottom: 1.5rem;
-        right: 1.5rem;
-    }
-
-    .skatespot-map__location {
-        bottom: 6rem;
         right: 1.5rem;
     }
  }
@@ -220,6 +212,8 @@ body {
         right: 0;
         bottom: 0;
         width: 100%;
+        z-index: 1;
+        background-color: rgba(255, 255, 255, 1);
     }
     .skatespot-map__parent {
         top: 0;
@@ -241,6 +235,11 @@ body {
         left: 32px;
         width: calc(100% - 70px);
         background-color: rgb(240, 240, 240) !important;
+    }
+
+    .skatespot-map__fab {
+        bottom: 1.5rem;
+        right: 1.5rem;
     }
 }
 
@@ -389,4 +388,16 @@ body {
     opacity: 0;
     transition: opacity 250ms cubic-bezier(0.4, 0.0, 1, 1);
     transition-delay: 0.1s;
+}
+
+/* Snackbar Fix */
+.mdc-snackbar {
+    z-index: 1;
+}
+
+/* Bottom Bar for AddSpot */
+.addspot__bottombar {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
 }

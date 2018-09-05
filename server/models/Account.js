@@ -53,6 +53,10 @@ AccountSchema.statics.getUsernameForId = (_id, callback) => {
   return AccountModel.findOne(search, callback);
 };
 
+AccountSchema.method('compareHash', function compareHash(plaintextToCheck) {
+  return bcrypt.compare(plaintextToCheck, this.password);
+});
+
 AccountSchema.statics.generateHash = (password, callback) => {
   // Bcrypt.hash auto generates salt, you only need to store hash in model
   bcrypt.hash(password, saltRounds, (err, hash) => {

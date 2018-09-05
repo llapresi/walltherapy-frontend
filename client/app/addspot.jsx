@@ -1,12 +1,10 @@
 import React from 'react';
 import { Button } from 'rmwc/Button';
 import { TextField } from 'rmwc/TextField';
-import { Typography } from 'rmwc/Typography';
-import { Checkbox } from 'rmwc/Checkbox';
 import { Snackbar } from 'rmwc/Snackbar';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
+import AddSpotBottomSheet from './Widgets/AddSpotBottomSheet';
 
 class SpotForm extends React.Component {
   constructor(props) {
@@ -15,7 +13,15 @@ class SpotForm extends React.Component {
       errorMessage: '',
       errorSnackbar: false,
       spotAdded: false,
+      newSpotLocation: {},
+      spotHasBeenSet: false,
     };
+    this.setSpotLocation = this.setSpotLocation.bind(this);
+  }
+
+  setSpotLocation(loc, func) {
+    this.setState({ spotHasBeenSet: true, newSpotLocation: loc });
+    func(loc);
   }
 
   createSpot(e) {
@@ -30,6 +36,7 @@ class SpotForm extends React.Component {
       error: (xhr) => {
         const messageObj = JSON.parse(xhr.responseText);
         this.setState({ errorSnackbar: true, errorMessage: messageObj.error });
+        console.log(`Review Error: ${messageObj}`);
       },
     }).done(() => {
       submitCallback();
@@ -38,10 +45,16 @@ class SpotForm extends React.Component {
   }
 
   render() {
-    const { loc, csrf } = this.props;
-    const { errorSnackbar, errorMessage, spotAdded } = this.state;
+    const { loc, csrf, setSpotCallback } = this.props;
+    const {
+      errorSnackbar, errorMessage, spotAdded, spotHasBeenSet, newSpotLocation,
+    } = this.state;
     return (
       <div className="spot_infobox">
+        {spotHasBeenSet === false
+        && <AddSpotBottomSheet callback={() => this.setSpotLocation(loc, setSpotCallback)} />
+        }
+        {spotHasBeenSet === true && (
         <form
           id="spotForm"
           onSubmit={this.createSpot.bind(this)}
@@ -50,26 +63,18 @@ class SpotForm extends React.Component {
           method="POST"
           className="spotForm"
         >
-          <Typography use="subheading2">Drag map to new spot position</Typography>
           <TextField className="spot_name" label="Spot Name" name="name" />
           <br />
           <TextField textarea fullwidth label="Spot Description" rows="4" name="description" />
-          <Checkbox name="isSponsored">Sponsored Post</Checkbox>
-          <br />
-          <div>
-            <Typography use="caption">
-            Increase your visibility with a Sponsored Post.
-            Sponsored Posts always show at the top of search listings, ensuring
-            &ldquo;premium placement for a premium&trade;&rdquo;
-            </Typography>
-          </div>
           <br />
           <Button raised theme={['secondary-bg', 'text-primary-on-secondary']}>Submit</Button>
 
-          <input id="spotLong" type="hidden" name="longitude" value={loc.lng} />
-          <input id="spotLat" type="hidden" name="latitude" value={loc.lat} />
+          <input id="spotLong" type="hidden" name="longitude" value={newSpotLocation.lng} />
+          <input id="spotLat" type="hidden" name="latitude" value={newSpotLocation.lat} />
           <input type="hidden" name="_csrf" value={csrf} />
         </form>
+        )
+        }
         <Snackbar
           show={errorSnackbar}
           onHide={() => this.setState({ errorSnackbar: false })}
