@@ -1,1 +1,4 @@
 /hosted
+/node_modules
+/client/helper
+/client/login

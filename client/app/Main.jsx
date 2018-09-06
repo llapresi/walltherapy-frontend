@@ -138,7 +138,7 @@ class App extends React.Component {
   }
 
   setNewSpotLocation(loc) {
-    this.setState({ newSpotLocation: loc, addingNewSpot: 2 });
+    this.setState({ newSpotLocation: loc, addingNewSpot: 2, bottomSheetSize: 2 });
   }
 
   stopWatchingGeolocation() {
@@ -187,7 +187,19 @@ class App extends React.Component {
               && location.state.transition !== undefined) ? location.state.transition : 'transition__show_addspot';
             const timeoutToUse = (location.state !== undefined
               && location.state.duration !== undefined) ? location.state.duration : 350;
-            const sidebarClass = bottomSheetSize === 0 ? 'skatespot-sidebar skatespot-sidebar-mini' : 'skatespot-sidebar';
+            let sidebarClass = '';
+            switch (bottomSheetSize) {
+              case 0:
+                sidebarClass += 'skatespot-sidebar-mini skatespot-sidebar';
+                break;
+              case 2:
+                sidebarClass += 'skatespot-sidebar-big skatespot-sidebar';
+                break;
+              default:
+                sidebarClass = 'skatespot-sidebar';
+                break;
+            }
+
             return (
               <div className={sidebarClass}>
                 <TransitionGroup

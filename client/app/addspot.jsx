@@ -19,9 +19,10 @@ class SpotForm extends React.Component {
     this.setSpotLocation = this.setSpotLocation.bind(this);
   }
 
-  setSpotLocation(loc, func) {
+  setSpotLocation() {
+    const { loc, setSpotCallback } = this.props;
     this.setState({ spotHasBeenSet: true, newSpotLocation: loc });
-    func(loc);
+    setSpotCallback(loc);
   }
 
   createSpot(e) {
@@ -45,14 +46,14 @@ class SpotForm extends React.Component {
   }
 
   render() {
-    const { loc, csrf, setSpotCallback } = this.props;
+    const { csrf } = this.props;
     const {
       errorSnackbar, errorMessage, spotAdded, spotHasBeenSet, newSpotLocation,
     } = this.state;
     return (
       <div className="spot_infobox">
         {spotHasBeenSet === false
-        && <AddSpotBottomSheet callback={() => this.setSpotLocation(loc, setSpotCallback)} />
+        && <AddSpotBottomSheet callback={this.setSpotLocation} />
         }
         {spotHasBeenSet === true && (
         <form
@@ -97,6 +98,7 @@ SpotForm.propTypes = {
     lng: PropTypes.number,
   }).isRequired,
   submitCallback: PropTypes.func.isRequired,
+  setSpotCallback: PropTypes.func.isRequired,
 };
 
 export default SpotForm;
