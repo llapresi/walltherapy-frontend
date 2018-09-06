@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 export const SkateSpotListParent = ({ spots, updatePublicView }) => (
-  <div>
+  <div className="skateSpotListParent">
     <TextField id="spotName" className="search_field" box withLeadingIcon="filter_list" label="Filter" onChange={updatePublicView} />
     <SkateSpotList spots={spots} />
   </div>
@@ -19,7 +19,7 @@ SkateSpotListParent.propTypes = {
 
 export const SkateSpotList = ({ spots }) => (
   <List twoLine className="spotList">
-    <TransitionGroup className="spotList-anim" enter>
+    <TransitionGroup className="spotList-anim" component={null}>
       {spots.map((spot) => {
         let classNameString = '';
         let descriptionAppend = '';

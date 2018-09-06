@@ -13,7 +13,7 @@ export const ReviewForm = ({ submitAction, csrf, spotId }) => (
   <div>
     <form id="reviewForm" className="reviewForm" action="/reviews" method="POST" onSubmit={submitAction}>
       <div className="reviewform-rating">
-        Rating:
+        <span>Rating:</span>
         <StarRatingComponent name="rating" starCount={5} emptyStarColor="rgba(0,0,0,.54)" />
       </div>
       <TextField textarea fullwidth label="Write review here..." rows="4" name="reviewText" required />
@@ -93,13 +93,6 @@ export class ReviewList extends React.Component {
             </List>
           </CSSTransition>
         </div>
-        <Snackbar
-          show={showSnackbar}
-          onHide={() => this.setState({ showSnackbar: false })}
-          message={snackbarMsg}
-          actionText="Close"
-          actionHandler={() => {}}
-        />
       </React.Fragment>
     );
   }

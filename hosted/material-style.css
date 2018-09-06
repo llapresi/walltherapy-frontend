@@ -24,11 +24,13 @@ body {
 }
 
 .appGrid {
-    position: absolute;
+    position: fixed;
     top: 64px;
     left: 0;
     bottom: 0;
     right: 0;
+    display: flex;
+    flex-direction: row;
 }
 
 .search_field {
@@ -42,19 +44,17 @@ body {
 }
 
 .skatespot-map__parent {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    left: 400px;
-    z-index: 1; 
+    flex: 1;
+    position: relative;
+}
+
+.skatespot-map__parent > div:first-of-type {
+    position: absolute !important;
+    z-index: 0;
 }
 
 .skatespot-sidebar {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    top: 0;
+    position: relative;
     width: 400px;
 }
 
@@ -87,11 +87,7 @@ body {
 }
 
 .spotList {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 400px;
-    top: 56px;
+    flex: 1;
     overflow-y: scroll;
 }
 
@@ -206,53 +202,35 @@ body {
 
 /* Mobile Stuff */
 @media only screen and (max-width: 800px) {
+    .appGrid {
+        flex-direction: column-reverse;
+    }
+
+    .skateSpotListParent {
+        display: flex;
+        flex-direction: column;
+    }
+
     .skatespot-sidebar {
-        top: 50%;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        z-index: 1;
-        background-color: rgba(255, 255, 255, 1);
+        height: 50vh !important;
+        width: 100% !important;
+        transition: height 175ms cubic-bezier(0.4, 0.0, 0.2, 1);
     }
-    .skatespot-map__parent {
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 50%;
-    }
-    .spotList {
-        position: absolute;
-        right: 0;
-        left: 0;
-        width: 100%;
+    
+    .skatespot-sidebar-mini {
+        height: 12vh !important;
+        transition: height 175ms cubic-bezier(0.4, 0.0, 0.2, 1);
     }
 
     .gmap-searchbox {
-        position: absolute;
-        top: 0;
         width: 100%;
         left: 32px;
         width: calc(100% - 70px);
-        background-color: rgb(240, 240, 240) !important;
     }
 
     .skatespot-map__fab {
         bottom: 1.5rem;
         right: 1.5rem;
-    }
-}
-
-/* Not-Mobile Stuff */
-@media only screen and (min-width: 800px) {
-    .review_section {
-        position: absolute;
-        bottom: 0;
-        left: 12px;
-        width: calc(400px - 24px);
-        padding-right: 12px;
-        top: 200px;
-        overflow-y: scroll;
     }
 }
 
@@ -328,13 +306,14 @@ body {
 /* add spot menu transition */
 .transition__show_addspot-enter {
     transform: translateY(300px);
+    position: absolute;
     opacity: 0;
 }
   
 .transition__show_addspot-enter-active {
     transform: translateY(0px);
     opacity: 1;
-    transition: opacity 250ms, transform 250ms cubic-bezier(0.0, 0.0, 0.2, 1);
+    transition: opacity 350ms, transform 350ms cubic-bezier(0.0, 0.0, 0.2, 1);
 }
   
 .transition__show_addspot-exit {
@@ -343,17 +322,18 @@ body {
   
 .transition__show_addspot-exit-active {
     opacity: 0;
-    transition: opacity 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 /* remove spot menu transition */
 .transition__hide_addspot-enter {
     opacity: 0;
+    position: absolute;
 }
   
 .transition__hide_addspot-enter-active {
     opacity: 1;
-    transition: opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
   
 .transition__hide_addspot-exit {
@@ -364,7 +344,7 @@ body {
 .transition__hide_addspot-exit-active {
     opacity: 0;
     transform: translateY(300px);
-    transition: opacity 250ms, transform 250ms cubic-bezier(0.4, 0.0, 1, 1);
+    transition: opacity 350ms, transform 350ms cubic-bezier(0.4, 0.0, 1, 1);
 }
 
 /* add spot menu transition */
@@ -400,4 +380,10 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 12px;
+}
+
+.skateSpotListParent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
