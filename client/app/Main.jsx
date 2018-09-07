@@ -8,7 +8,7 @@ import GoogleMapReact from 'google-map-react';
 import { Fab } from 'rmwc/Fab';
 import { Elevation } from 'rmwc/Elevation';
 import { Snackbar } from 'rmwc/Snackbar';
-import { Route, Link, Switch } from 'react-router-dom';
+import { Route, Link, Switch, Redirect } from 'react-router-dom';
 import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
@@ -22,6 +22,8 @@ import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
 import SearchBox from './Widgets/Searchbox';
 import ObjectPropTypes from './ObjectShapes';
+import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+import { SkateSpotMarkerRouter, AddSpotMarker } from './SkateSpotMarker';
 
 const defaultURL = '/spots';
 
@@ -30,16 +32,6 @@ const makePublicSpotsURL = (name = '', showOurSpots = false) => {
   return `/spots?filter=${name}&${profileSpots}`;
 };
 
-const SkateSpotMarker = ({ spot }) => (
-  <Link to={{ pathname: `/spot/${spot._id}`, state: { spot } }}><div className="mapMarker" /></Link>
-);
-SkateSpotMarker.propTypes = {
-  spot: ObjectPropTypes.Spot.isRequired,
-};
-
-const AddSpotMarker = () => (
-  <div className="mapMarker mapMarker__addspot" />
-);
 
 const GeolocationFAB = ({ exited, watchingLocation, onClick }) => {
   const cssClassNames = watchingLocation ? 'skatespot-map__fab skatespot-map__location skatespot-map__location-active' : 'skatespot-map__fab skatespot-map__location';
@@ -96,8 +88,8 @@ class App extends React.Component {
     this.setState({ spots: newSpots });
   }
 
-  onChange({ center }) {
-    this.setState({ center });
+  onChange(e) {
+    this.setState({center: e.target.getCenter()});
   }
 
   onNewSpot() {
@@ -287,36 +279,31 @@ class App extends React.Component {
           }}
           />
           <div className="skatespot-map__parent">
-            <GoogleMapReact
-              className="skatespot-map__map"
-              bootstrapURLKeys={{ key: 'AIzaSyCLrWfeNtdjy7sTf9YKsqYn5ZUqYVbjhWo' }}
-              center={center}
-              zoom={zoom}
-              onChange={this.onChange}
-              options={{
-                zoomControl: false,
-                fullscreenControl: false,
-              }}
-              onDrag={() => this.stopWatchingGeolocation()}
+            <Map
+              center={[center.lat, center.lng]}
+              zoom={18}
+              onDrag={this.onChange}
             >
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+              />
               {
                 spots.map(spot => (
-                  <SkateSpotMarker
+                  <SkateSpotMarkerRouter
                     key={spot._id}
                     spot={spot}
-                    text={spot.name}
-                    lat={spot.location[1]}
-                    lng={spot.location[0]}
+                    position={[spot.location[1], spot.location[0]]}
                   />
                 ))
               }
               {addingNewSpot === 1
-              && <AddSpotMarker lat={center.lat} lng={center.lng} />
+              && <AddSpotMarker position={[center.lat, center.lng]} />
               }
               {addingNewSpot === 2
-              && <AddSpotMarker lat={newSpotLocation.lat} lng={newSpotLocation.lng} />
+              && <AddSpotMarker position={[newSpotLocation.lat, newSpotLocation.lng]} />
               }
-            </GoogleMapReact>
+            </Map>
             <Switch>
               <Route
                 exact
