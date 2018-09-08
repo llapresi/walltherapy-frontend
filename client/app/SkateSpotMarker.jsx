@@ -14,7 +14,8 @@ class SkateSpotMarker extends React.Component {
     const customMarker = L.icon({
       iconUrl: '/../assets/img/skatespot_icon.png',
       iconSize: [32, 32],
-      iconAnchor: [16, 32]
+      iconAnchor: [16, 32],
+      className: "skatespotmarker"
     });
     const linkLocation = { pathname: `/spot/${spot._id}`, state: { spot } };
     return (
@@ -33,9 +34,10 @@ export const AddSpotMarker = ({position}) => {
   const customMarker = L.icon({
     iconUrl: '/../assets/img/skatespot_addspot.png',
     iconSize: [32, 32],
-    iconAnchor: [16, 32]
+    iconAnchor: [16, 32],
+    className: "skatespotmarker skatespotmarker_add"
   });
   return (
-    <Marker icon={customMarker} position={position} />
+    <Marker className="addspot-marker" icon={customMarker} position={position} />
   );
 };

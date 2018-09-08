@@ -64,12 +64,15 @@ class App extends React.Component {
       locationWatchId: null,
       watchingLocation: false,
       bottomSheetSize: 1, // 0 = minimized, 1 = normal, 2 = maximized
+      leafletMap: null,
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
     this.updatePublicView = this.updatePublicView.bind(this);
     this.onNewSpot = this.onNewSpot.bind(this);
     this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
+    this.onZoomChange = this.onZoomChange.bind(this);
+    this.onMapLoad = this.onMapLoad.bind(this);
   }
 
   componentDidMount() {
@@ -84,12 +87,48 @@ class App extends React.Component {
     });
   }
 
+  changeBottomSheetSize(newSize) {
+
+  }
+
   onFetchSpots(newSpots) {
     this.setState({ spots: newSpots });
   }
 
   onChange(e) {
     this.setState({center: e.target.getCenter()});
+    this.stopWatchingGeolocation();
+  }
+
+  onMapLoad(e) {
+    console.log("map loaded");
+    this.setState({leafletMap: e.target});
+  }
+
+  resizeBottomSheetFunc() {
+    const {leafletMap} = this.state;
+    let start = null;
+    function animateFunc(timestamp) {
+      if (!start) {
+        start = timestamp;
+      }
+      let progress = timestamp - start;
+      console.log(`frames: ${progress}`);
+      leafletMap.invalidateSize();
+      if(progress < 600 || !start) {
+        requestAnimationFrame(animateFunc);
+      }
+    }
+    animateFunc();
+  }
+
+  onMapResize(e) {
+    e.target.invalidateSize();
+    console.log("map resizing");
+  }
+
+  onZoomChange(e) {
+    this.setState({zoom: e.target.getZoom()});
   }
 
   onNewSpot() {
@@ -211,7 +250,12 @@ class App extends React.Component {
                         path="/"
                         render={() => (
                           <React.Fragment>
-                            <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 })} />
+                            <RunOnMount func={() => {
+                              this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
+                              if (this.state.leafletMap) {
+                                this.resizeBottomSheetFunc();
+                              }
+                            }} />
                             <SkateSpotListParent
                               spots={spots}
                               csrf={csrf}
@@ -260,6 +304,9 @@ class App extends React.Component {
                             <RunOnMount func={() => {
                               this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot', bottomSheetSize: 0 });
                               this.stopWatchingGeolocation();
+                              if (this.state.leafletMap) {
+                                this.resizeBottomSheetFunc();
+                              }
                             }}
                             />
                             <SpotForm
@@ -281,8 +328,10 @@ class App extends React.Component {
           <div className="skatespot-map__parent">
             <Map
               center={[center.lat, center.lng]}
-              zoom={18}
-              onDrag={this.onChange}
+              zoom={zoom}
+              onDragend={this.onChange}
+              onZoomend={this.onZoomChange}
+              whenReady={this.onMapLoad}
             >
               <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

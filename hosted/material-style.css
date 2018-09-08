@@ -219,7 +219,7 @@ body {
     }
     
     .skatespot-sidebar-mini {
-        height: 12vh !important;
+        height: 4rem !important;
         transition: height 255ms cubic-bezier(0.4, 0.0, 0.2, 1);
     }
 
@@ -386,7 +386,7 @@ body {
 .addspot__bottombar {
     display: flex;
     justify-content: space-between;
-    padding: 12px;
+    padding: 4px;
 }
 
 .skateSpotListParent {
@@ -398,4 +398,19 @@ body {
 .leaflet-container {
     height: 100%;
     width: 100%;
-  }
+}
+
+.skatespotmarker {
+  animation-name: addMarker;
+  animation-duration: .47s;
+  animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+.skatespotmarker_add {
+    transition: transform 0.24s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes addMarker {
+    from { margin-top: -65vh }
+    to   { margin-top: -32px; }
+}
