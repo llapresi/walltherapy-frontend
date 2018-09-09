@@ -4,14 +4,14 @@
 
 import { hot } from 'react-hot-loader';
 import React from 'react';
-import GoogleMapReact from 'google-map-react';
 import { Fab } from 'rmwc/Fab';
 import { Elevation } from 'rmwc/Elevation';
 import { Snackbar } from 'rmwc/Snackbar';
-import { Route, Link, Switch, Redirect } from 'react-router-dom';
+import { Route, Link, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
+import { Map, TileLayer } from 'react-leaflet';
 import { SkateSpotListParent } from './SpotList';
 import ShowAddSpot from './Transitions/ShowAddSpot';
 import SpotForm from './addspot';
@@ -21,8 +21,6 @@ import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
 import SearchBox from './Widgets/Searchbox';
-import ObjectPropTypes from './ObjectShapes';
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import { SkateSpotMarkerRouter, AddSpotMarker } from './SkateSpotMarker';
 
 const defaultURL = '/spots';
@@ -87,48 +85,36 @@ class App extends React.Component {
     });
   }
 
-  changeBottomSheetSize(newSize) {
-
-  }
-
   onFetchSpots(newSpots) {
     this.setState({ spots: newSpots });
   }
 
   onChange(e) {
-    this.setState({center: e.target.getCenter()});
+    this.setState({ center: e.target.getCenter() });
     this.stopWatchingGeolocation();
   }
 
   onMapLoad(e) {
-    console.log("map loaded");
-    this.setState({leafletMap: e.target});
-  }
+    console.log('map loaded');
+    this.setState({ leafletMap: e.target });
 
-  resizeBottomSheetFunc() {
-    const {leafletMap} = this.state;
     let start = null;
     function animateFunc(timestamp) {
       if (!start) {
         start = timestamp;
       }
-      let progress = timestamp - start;
+      const progress = timestamp - start;
       console.log(`frames: ${progress}`);
-      leafletMap.invalidateSize();
-      if(progress < 600 || !start) {
+      e.target.invalidateSize();
+      if (progress < 300 || !start) {
         requestAnimationFrame(animateFunc);
       }
     }
     animateFunc();
   }
 
-  onMapResize(e) {
-    e.target.invalidateSize();
-    console.log("map resizing");
-  }
-
   onZoomChange(e) {
-    this.setState({zoom: e.target.getZoom()});
+    this.setState({ zoom: e.target.getZoom() });
   }
 
   onNewSpot() {
@@ -172,6 +158,23 @@ class App extends React.Component {
     this.setState({ newSpotLocation: loc, addingNewSpot: 2, bottomSheetSize: 2 });
   }
 
+  resizeBottomSheetFunc() {
+    const { leafletMap } = this.state;
+    let start = null;
+    function animateFunc(timestamp) {
+      if (!start) {
+        start = timestamp;
+      }
+      const progress = timestamp - start;
+      console.log(`frames: ${progress}`);
+      leafletMap.invalidateSize();
+      if (progress < 300 || !start) {
+        requestAnimationFrame(animateFunc);
+      }
+    }
+    animateFunc();
+  }
+
   stopWatchingGeolocation() {
     const { watchingLocation, locationWatchId } = this.state;
     if (watchingLocation === true) {
@@ -203,6 +206,7 @@ class App extends React.Component {
       watchingLocation,
       newSpotLocation,
       bottomSheetSize,
+      leafletMap,
     } = this.state;
     return (
       <ThemeProvider options={{
@@ -252,10 +256,11 @@ class App extends React.Component {
                           <React.Fragment>
                             <RunOnMount func={() => {
                               this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
-                              if (this.state.leafletMap) {
+                              if (leafletMap) {
                                 this.resizeBottomSheetFunc();
                               }
-                            }} />
+                            }}
+                            />
                             <SkateSpotListParent
                               spots={spots}
                               csrf={csrf}
@@ -304,7 +309,7 @@ class App extends React.Component {
                             <RunOnMount func={() => {
                               this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot', bottomSheetSize: 0 });
                               this.stopWatchingGeolocation();
-                              if (this.state.leafletMap) {
+                              if (leafletMap) {
                                 this.resizeBottomSheetFunc();
                               }
                             }}
@@ -335,7 +340,7 @@ class App extends React.Component {
             >
               <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
               />
               {
                 spots.map(spot => (
