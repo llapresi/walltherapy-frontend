@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import { Map, TileLayer } from 'react-leaflet';
 import { SkateSpotListParent } from './SpotList';
 import ShowAddSpot from './Transitions/ShowAddSpot';
+import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
 import SpotForm from './addspot';
 import { AccountMenu } from './profile';
 import { sendAjax } from '../helper/helper';
@@ -364,7 +365,7 @@ class App extends React.Component {
                 path="/"
                 render={() => (
                   <React.Fragment>
-                    <Link to={{ pathname: '/add', state: ShowAddSpot }}><Fab className="skatespot-map__fab">add_location</Fab></Link>
+                    <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab className="skatespot-map__fab">add_location</Fab></Link>
                     <GeolocationFAB
                       watchingLocation={watchingLocation}
                       onClick={() => this.getUserGeolocation()}
@@ -377,7 +378,7 @@ class App extends React.Component {
                 path="/*"
                 render={() => (
                   <React.Fragment>
-                    <Link to={{ pathname: '/add', state: ShowAddSpot }}><Fab exited className="skatespot-map__fab">add_location</Fab></Link>
+                    <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab exited className="skatespot-map__fab">add_location</Fab></Link>
                     <GeolocationFAB
                       exited
                       watchingLocation={watchingLocation}

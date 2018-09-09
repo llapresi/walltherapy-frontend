@@ -216,13 +216,13 @@ body {
     .skatespot-sidebar {
         height: 50vh !important;
         width: 100% !important;
-        transition: height 255ms, background-color 255ms;
+        transition: height 350ms, background-color 350ms;
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
     }
     
     .skatespot-sidebar-mini {
         height: 4rem !important;
-        transition: height 255ms, background-color 255ms; 
+        transition: height 350ms, background-color 350ms; 
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         background-color: #4f5b62;
         color: white;
@@ -230,7 +230,7 @@ body {
 
     .skatespot-sidebar-big {
         height: 100vh !important;
-        transition: height 255ms, background-color 255ms;
+        transition: height 350ms, background-color 350ms;
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         background-color: white;
     }
@@ -340,6 +340,26 @@ body {
 .transition__show_addspot-exit-active {
     opacity: 0;
     transition: opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* add spot bottom sheet transition */
+.transition__show_addspot_bar-enter {
+    position: absolute;
+    opacity: 0;
+}
+  
+.transition__show_addspot_bar-enter-active {
+    opacity: 1;
+    transition: opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+  
+.transition__show_addspot_bar-exit {
+    opacity: 1;
+}
+  
+.transition__show_addspot_bar-exit-active {
+    opacity: 0;
+    transition: opacity 150ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 /* remove spot menu transition */
