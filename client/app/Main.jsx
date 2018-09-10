@@ -145,10 +145,6 @@ class App extends React.Component {
     this.setState({ newSpotLocation: loc, addingNewSpot: 2, bottomSheetSize: 2 });
   }
 
-  resizeBottomSheetFunc() {
-    const { leafletMap } = this.state;
-  }
-
   stopWatchingGeolocation() {
     const { watchingLocation, locationWatchId } = this.state;
     if (watchingLocation === true) {
@@ -193,9 +189,11 @@ class App extends React.Component {
           <Route render={({ location }) => {
             // Use default if animation vales are not provided by the Link
             const transitionToUse = (location.state !== undefined
-              && location.state.transition !== undefined) ? location.state.transition : ShowAddSpot.transition;
+              && location.state.transition !== undefined) ? location.state.transition
+              : ShowAddSpot.transition;
             const timeoutToUse = (location.state !== undefined
-              && location.state.duration !== undefined) ? location.state.duration : ShowAddSpot.duration;
+              && location.state.duration !== undefined) ? location.state.duration
+              : ShowAddSpot.duration;
             let sidebarClass = '';
             switch (bottomSheetSize) {
               case 0:
@@ -230,9 +228,6 @@ class App extends React.Component {
                           <React.Fragment>
                             <RunOnMount func={() => {
                               this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
-                              if (leafletMap) {
-                                this.resizeBottomSheetFunc();
-                              }
                             }}
                             />
                             <SkateSpotListParent
@@ -283,9 +278,6 @@ class App extends React.Component {
                             <RunOnMount func={() => {
                               this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot', bottomSheetSize: 0 });
                               this.stopWatchingGeolocation();
-                              if (leafletMap) {
-                                this.resizeBottomSheetFunc();
-                              }
                             }}
                             />
                             <SpotForm
