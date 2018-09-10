@@ -11,7 +11,7 @@ import { Route, Link, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
-import { Map, TileLayer } from 'react-leaflet';
+import { Map, TileLayer, AttributionControl } from 'react-leaflet';
 import { SkateSpotListParent } from './SpotList';
 import ShowAddSpot from './Transitions/ShowAddSpot';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
@@ -98,20 +98,6 @@ class App extends React.Component {
   onMapLoad(e) {
     console.log('map loaded');
     this.setState({ leafletMap: e.target });
-
-    let start = null;
-    function animateFunc(timestamp) {
-      if (!start) {
-        start = timestamp;
-      }
-      const progress = timestamp - start;
-      console.log(`frames: ${progress}`);
-      e.target.invalidateSize();
-      if (progress < 300 || !start) {
-        requestAnimationFrame(animateFunc);
-      }
-    }
-    animateFunc();
   }
 
   onZoomChange(e) {
@@ -161,19 +147,6 @@ class App extends React.Component {
 
   resizeBottomSheetFunc() {
     const { leafletMap } = this.state;
-    let start = null;
-    function animateFunc(timestamp) {
-      if (!start) {
-        start = timestamp;
-      }
-      const progress = timestamp - start;
-      console.log(`frames: ${progress}`);
-      leafletMap.invalidateSize();
-      if (progress < 300 || !start) {
-        requestAnimationFrame(animateFunc);
-      }
-    }
-    animateFunc();
   }
 
   stopWatchingGeolocation() {
@@ -220,9 +193,9 @@ class App extends React.Component {
           <Route render={({ location }) => {
             // Use default if animation vales are not provided by the Link
             const transitionToUse = (location.state !== undefined
-              && location.state.transition !== undefined) ? location.state.transition : 'transition__show_addspot';
+              && location.state.transition !== undefined) ? location.state.transition : ShowAddSpot.transition;
             const timeoutToUse = (location.state !== undefined
-              && location.state.duration !== undefined) ? location.state.duration : 350;
+              && location.state.duration !== undefined) ? location.state.duration : ShowAddSpot.duration;
             let sidebarClass = '';
             switch (bottomSheetSize) {
               case 0:
@@ -338,11 +311,13 @@ class App extends React.Component {
               onDragend={this.onChange}
               onZoomend={this.onZoomChange}
               whenReady={this.onMapLoad}
+              attributionControl={false}
             >
               <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
               />
+              <AttributionControl position="topright" />
               {
                 spots.map(spot => (
                   <SkateSpotMarkerRouter

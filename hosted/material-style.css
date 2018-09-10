@@ -17,6 +17,7 @@ body {
 
 .spot_infobox {
     padding: 12px;
+    width: calc(100% - 24px);
 }
 
 .reviewForm {
@@ -29,8 +30,6 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    display: flex;
-    flex-direction: row;
 }
 
 .search_field {
@@ -44,19 +43,19 @@ body {
 }
 
 .skatespot-map__parent {
-    flex: 1;
-    position: relative;
-}
-
-.skatespot-map__parent > div:first-of-type {
-    position: absolute !important;
-    z-index: 0;
+    position: absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
 }
 
 .skatespot-sidebar {
-    position: relative;
+    position: absolute;
     width: 400px;
     z-index: 2;
+    background-color: white;
+    overflow-y: auto;
 }
 
 .skatespot-map__fab {
@@ -211,26 +210,31 @@ body {
         display: flex;
         width: 100% !important;
         flex-direction: column;
+        height: 50% !important;
     }
 
     .skatespot-sidebar {
-        height: 50vh !important;
-        width: 100% !important;
-        transition: height 350ms, background-color 350ms;
+        position: absolute;
+        bottom:0;
+        top: 50%;
+        width:100%;
+        height:100%;
+        background-color:white;
+        transition: transform 350ms, background-color 350ms;
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
     }
     
     .skatespot-sidebar-mini {
-        height: 4rem !important;
-        transition: height 350ms, background-color 350ms; 
+        transform: translate3d(0, calc(50% - 64px), 0);
+        transition: transform 350ms, background-color 350ms; 
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         background-color: #4f5b62;
         color: white;
     }
 
     .skatespot-sidebar-big {
-        height: 100vh !important;
-        transition: height 350ms, background-color 350ms;
+        transform: translate3d(0, -50%, 0);
+        transition: transform 350ms, background-color 350ms;
         transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
         background-color: white;
     }
@@ -242,12 +246,22 @@ body {
     }
 
     .skatespot-map__fab {
-        bottom: 1.5rem;
-        right: 1.5rem;
+        bottom: calc(50% + 1rem);
+        right: 1rem;
     }
 
     .addspot__bottombar-next-button {
         color: var(--mdc-theme-on-primary) !important;
+    }
+}
+
+/* Desktop Only */
+@media only screen and (min-width: 800px) {
+    .skatespot-sidebar {
+        height:100%;
+    }
+    .skatespot-map__parent {
+        left: 400px;
     }
 }
 
@@ -433,9 +447,9 @@ body {
 }
 
 .skatespotmarker {
-  animation-name: addMarker;
-  animation-duration: .47s;
-  animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+    animation-name: addMarker;
+    animation-duration: .47s;
+    animation-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);  
 }
 
 .skatespotmarker_add {
