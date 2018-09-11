@@ -1,6 +1,6 @@
 const SlideToList = {
   transition: 'transition__slide-tolist',
-  duration: 400000,
+  duration: 450,
 };
 
 export default SlideToList;
