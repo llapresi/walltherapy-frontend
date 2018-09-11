@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
 import { SkateSpotListParent } from './SpotList';
 import ShowAddSpot from './Transitions/ShowAddSpot';
+import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
 import SpotForm from './addspot';
 import { AccountMenu } from './profile';
@@ -21,8 +22,8 @@ import { sendAjax } from '../helper/helper';
 import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
-import SearchBox from './Widgets/Searchbox';
 import { SkateSpotMarkerRouter, AddSpotMarker } from './SkateSpotMarker';
+import NewSearchbox from './Widgets/NewSearchbox';
 
 const defaultURL = '/spots';
 
@@ -154,9 +155,9 @@ class App extends React.Component {
     }
   }
 
-  updatePublicView() {
+  updatePublicView(e) {
     const { showOurSpots } = this.state;
-    const toFetch = makePublicSpotsURL($('#spotName').val(), showOurSpots);
+    const toFetch = makePublicSpotsURL(e.target.value, showOurSpots);
     console.log(toFetch);
     sendAjax('GET', toFetch, null, (data) => {
       console.log('fetching ajax spots');
@@ -188,111 +189,92 @@ class App extends React.Component {
         <div className="appGrid">
           <Route render={({ location }) => {
             // Use default if animation vales are not provided by the Link
-            const transitionToUse = (location.state !== undefined
-              && location.state.transition !== undefined) ? location.state.transition
-              : ShowAddSpot.transition;
-            const timeoutToUse = (location.state !== undefined
-              && location.state.duration !== undefined) ? location.state.duration
-              : ShowAddSpot.duration;
-            let sidebarClass = '';
-            switch (bottomSheetSize) {
-              case 0:
-                sidebarClass += 'skatespot-sidebar-mini skatespot-sidebar';
-                break;
-              case 2:
-                sidebarClass += 'skatespot-sidebar-big skatespot-sidebar';
-                break;
-              default:
-                sidebarClass = 'skatespot-sidebar';
-                break;
-            }
+            const transitionToUse = CardSlide.transition;
+            const timeoutToUse = CardSlide.duration;
 
             return (
-              <div className={sidebarClass}>
-                <TransitionGroup
-                  component={null}
-                  childFactory={child => React.cloneElement(
-                    child,
-                    {
-                      classNames: transitionToUse,
-                      timeout: timeoutToUse,
-                    },
-                  )}
-                >
-                  <CSSTransition key={location.key}>
-                    <Switch location={location}>
-                      <Route
-                        exact
-                        path="/"
-                        render={() => (
-                          <React.Fragment>
-                            <RunOnMount func={() => {
-                              this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
-                            }}
-                            />
-                            <SkateSpotListParent
-                              spots={spots}
-                              csrf={csrf}
-                              url={defaultURL}
-                              updatePublicView={this.updatePublicView}
-                            />
-                          </React.Fragment>
-                        )}
-                      />
+              <TransitionGroup
+                component={null}
+                childFactory={child => React.cloneElement(
+                  child,
+                  {
+                    classNames: transitionToUse,
+                    timeout: timeoutToUse,
+                  },
+                )}
+              >
+                <CSSTransition key={location.key}>
+                  <Switch location={location}>
+                    <Route
+                      exact
+                      path="/"
+                      render={() => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
+                          }}
+                          />
+                          <SkateSpotListParent
+                            spots={spots}
+                            csrf={csrf}
+                            url={defaultURL}
+                          />
+                        </React.Fragment>
+                      )}
+                    />
 
-                      <Route
-                        path="/spot/:id"
-                        render={props => (
-                          <React.Fragment>
-                            <RunOnMount func={() => {
-                              this.setState({ addingNewSpot: 0, bottomSheetSize: 1 });
-                              this.stopWatchingGeolocation();
-                            }}
-                            />
-                            <SpotViewParent
-                              key={props.match.params.id}
-                              csrf={csrf}
-                              onOpen={(newCenter, title) => this.setState({
-                                center: newCenter, toolbarTitle: title,
-                              })}
-                              {...props}
-                            />
-                          </React.Fragment>
-                        )}
-                      />
+                    <Route
+                      path="/spot/:id"
+                      render={props => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 0, bottomSheetSize: 1 });
+                            this.stopWatchingGeolocation();
+                          }}
+                          />
+                          <SpotViewParent
+                            key={props.match.params.id}
+                            csrf={csrf}
+                            onOpen={(newCenter, title) => this.setState({
+                              center: newCenter, toolbarTitle: title,
+                            })}
+                            {...props}
+                          />
+                        </React.Fragment>
+                      )}
+                    />
 
-                      <Route
-                        path="/profile"
-                        render={() => (
-                          <React.Fragment>
-                            <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: 'Change Password', bottomSheetSize: 1 })} />
-                            <AccountMenu csrf={csrf} />
-                          </React.Fragment>
-                        )}
-                      />
+                    <Route
+                      path="/profile"
+                      render={() => (
+                        <React.Fragment>
+                          <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: 'Change Password', bottomSheetSize: 1 })} />
+                          <AccountMenu csrf={csrf} />
+                        </React.Fragment>
+                      )}
+                    />
 
-                      <Route
-                        path="/add"
-                        render={() => (
-                          <React.Fragment>
-                            <RunOnMount func={() => {
-                              this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot', bottomSheetSize: 0 });
-                              this.stopWatchingGeolocation();
-                            }}
-                            />
-                            <SpotForm
-                              csrf={csrf}
-                              loc={center}
-                              submitCallback={this.onNewSpot}
-                              setSpotCallback={this.setNewSpotLocation}
-                            />
-                          </React.Fragment>
-                        )}
-                      />
-                    </Switch>
-                  </CSSTransition>
-                </TransitionGroup>
-              </div>
+                    <Route
+                      path="/add"
+                      render={() => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot', bottomSheetSize: 0 });
+                            this.stopWatchingGeolocation();
+                          }}
+                          />
+                          <SpotForm
+                            csrf={csrf}
+                            loc={center}
+                            submitCallback={this.onNewSpot}
+                            setSpotCallback={this.setNewSpotLocation}
+                          />
+                        </React.Fragment>
+                      )}
+                    />
+                  </Switch>
+                </CSSTransition>
+              </TransitionGroup>
             );
           }}
           />
@@ -304,6 +286,7 @@ class App extends React.Component {
               onZoomend={this.onZoomChange}
               whenReady={this.onMapLoad}
               attributionControl={false}
+              zoomControl={false}
             >
               <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -356,7 +339,11 @@ class App extends React.Component {
               />
             </Switch>
             <Elevation z={2}>
-              <SearchBox searchCallback={newLoc => this.setState({ center: newLoc })} />
+              <NewSearchbox
+                onFocus={() => this.setState({ bottomSheetSize: 2 })}
+                onBlur={() => this.setState({ bottomSheetSize: 0 })}
+                updateSpotList={this.updatePublicView}
+              />
             </Elevation>
           </div>
 

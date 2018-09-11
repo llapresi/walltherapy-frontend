@@ -1,9 +1,7 @@
-import React from 'react'
-import {withRouter} from 'react-router-dom'
+import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { Marker } from 'react-leaflet';
 import ObjectPropTypes from './ObjectShapes';
-
-
 
 class SkateSpotMarker extends React.Component {
   constructor(props) {
@@ -30,12 +28,12 @@ SkateSpotMarker.propTypes = {
 
 export const SkateSpotMarkerRouter = withRouter(SkateSpotMarker);
 
-export const AddSpotMarker = ({position}) => {
+export const AddSpotMarker = ({ position }) => {
   const customMarker = L.icon({
     iconUrl: '/../assets/img/skatespot_addspot.png',
     iconSize: [32, 32],
     iconAnchor: [16, 32],
-    className: "skatespotmarker skatespotmarker_add"
+    className: 'skatespotmarker skatespotmarker_add'
   });
   return (
     <Marker className="addspot-marker" icon={customMarker} position={position} />
