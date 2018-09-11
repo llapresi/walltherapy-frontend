@@ -50,8 +50,12 @@ class SpotForm extends React.Component {
     const {
       errorSnackbar, errorMessage, spotAdded, spotHasBeenSet, newSpotLocation,
     } = this.state;
+    let styleClasses = 'AddSpotBox';
+    if (spotHasBeenSet) {
+      styleClasses = `${styleClasses} extended`;
+    }
     return (
-      <div className="spot_infobox">
+      <div className={styleClasses}>
         {spotHasBeenSet === false
         && <AddSpotBottomSheet callback={this.setSpotLocation} />
         }

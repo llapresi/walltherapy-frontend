@@ -3,9 +3,11 @@ import { List, SimpleListItem } from 'rmwc/List';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { TextField } from 'rmwc/TextField';
 
-export const SkateSpotListParent = ({ spots }) => (
+export const SkateSpotListParent = ({ spots, updateSpotList }) => (
   <div className="skateSpotListParent">
+    <TextField className="newSearchBar" onChange={updateSpotList} label="Search" box withLeadingIcon="search" />
     <SkateSpotList spots={spots} />
   </div>
 );

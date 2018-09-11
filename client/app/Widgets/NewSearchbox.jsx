@@ -1,5 +1,7 @@
 import React from 'react';
 import { TextField } from 'rmwc/TextField';
+import { withRouter } from 'react-router-dom';
+
 
 class NewSearchbox extends React.Component {
   constructor(props) {
@@ -9,8 +11,8 @@ class NewSearchbox extends React.Component {
   }
 
   onFocus() {
-    const { onFocus } = this.props;
-    onFocus();
+    const { history } = this.props;
+    history.push('/search');
   }
 
   onBlur() {
@@ -34,4 +36,4 @@ class NewSearchbox extends React.Component {
   }
 }
 
-export default NewSearchbox;
+export default withRouter(NewSearchbox);

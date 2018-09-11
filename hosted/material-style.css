@@ -36,6 +36,12 @@ body {
     right: 0;
 }
 
+@media(max-width: 599px) {
+    .appGrid {
+        top:56px;
+    }
+}
+
 .search_field {
     width: 100%;
     padding-top: 0px;
@@ -62,7 +68,7 @@ body {
 }
 
 .skatespot-map__location {
-    transform: translate3d(0, -4.5rem, 0);
+    bottom: 5.5rem;
     background-color: white;
     z-index: 1;
 }
@@ -70,6 +76,11 @@ body {
 @media(min-width: 1024px) {
     .skatespot-map__fab {
         bottom: 1.5rem;
+        right: 1.5rem;
+    }
+
+    .skatespot-map__location {
+        bottom: 6rem;
         right: 1.5rem;
     }
  }
@@ -198,25 +209,17 @@ body {
 
 /* Mobile Stuff */
 @media only screen and (max-width: 800px) {
-    .appGrid {
-        flex-direction: column-reverse;
-    }
 
     .skateSpotListParent {
         display: flex;
         width: 100% !important;
         flex-direction: column;
-        height: 50% !important;
+        height: 100% !important;
     }
 
     .gmap-searchbox {
         left: 32px;
         width: calc(100% - 70px);
-    }
-
-    .skatespot-map__fab {
-        bottom: calc(50% + 1rem);
-        right: 1rem;
     }
 
     .addspot__bottombar-next-button {
@@ -458,4 +461,31 @@ body {
 .transition__cardslide-exit-active {
     transition: transform 200ms cubic-bezier(0.4, 0.0, 1, 1);
     transform: translate3d(0px, 100%, 0px);
+}
+
+.AddSpotBox {
+    position: absolute;
+    height: 64px;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 12px;
+    width:100%;
+    z-index:1;
+    background-color: #4f5b62;
+    color: var(--mdc-theme-on-primary);
+}
+
+.AddSpotBox.extended {
+    height: 100%;
+    background-color: white;
+    color: black;
+    transition: all 270ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.newSearchBar {
+    margin-top: 0px;
+}
+
+.leaflet-top.leaflet-right {
+    z-index: 0;
 }

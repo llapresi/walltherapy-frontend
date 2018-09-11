@@ -7,7 +7,9 @@ import {
   TopAppBarSection,
   TopAppBarActionItem,
   TopAppBarTitle,
+  TopAppBarNavigationIcon
 } from 'rmwc/TopAppBar';
+import { IconButton } from 'rmwc/IconButton';
 import PropTypes from 'prop-types';
 import HideAddSpot from './Transitions/HideAddSpot';
 
@@ -30,7 +32,7 @@ const AppToolbar = ({ title }) => {
         <TopAppBarSection alignStart>
           <Switch>
             <Route
-              path="/(spot|profile|add)/"
+              path="/(spot|profile|add|search)/"
               render={() => (
                 <Link to={{ pathname: '/', state: HideAddSpot }} className="remove-link-styling">
                   <TopAppBarActionItem use="arrow_back" />
@@ -41,6 +43,14 @@ const AppToolbar = ({ title }) => {
           {titleElement}
         </TopAppBarSection>
         <TopAppBarSection alignEnd>
+          <Route
+            exact path="/"
+            render={() => (
+              <TopAppBarActionItem>
+                <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">search</Link>
+              </TopAppBarActionItem>
+            )}
+          />
           <SimpleMenu handle={<TopAppBarActionItem use="account_circle" />}>
             <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
             <a href="/logout"><MenuItem>Log out</MenuItem></a>

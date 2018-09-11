@@ -65,6 +65,7 @@ class App extends React.Component {
       watchingLocation: false,
       bottomSheetSize: 1, // 0 = minimized, 1 = normal, 2 = maximized
       leafletMap: null,
+      showSpotList: false,
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -73,6 +74,7 @@ class App extends React.Component {
     this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
     this.onZoomChange = this.onZoomChange.bind(this);
     this.onMapLoad = this.onMapLoad.bind(this);
+    this.toggleShowSpotList = this.toggleShowSpotList.bind(this);
   }
 
   componentDidMount() {
@@ -146,6 +148,11 @@ class App extends React.Component {
     this.setState({ newSpotLocation: loc, addingNewSpot: 2, bottomSheetSize: 2 });
   }
 
+  toggleShowSpotList() {
+    const { showSpotList } = this.state;
+    this.setState({ showSpotList: !showSpotList });
+  }
+
   stopWatchingGeolocation() {
     const { watchingLocation, locationWatchId } = this.state;
     if (watchingLocation === true) {
@@ -157,7 +164,8 @@ class App extends React.Component {
 
   updatePublicView(e) {
     const { showOurSpots } = this.state;
-    const toFetch = makePublicSpotsURL(e.target.value, showOurSpots);
+    const filterValue = e === undefined ? '' : e.target.value;
+    const toFetch = makePublicSpotsURL(filterValue, showOurSpots);
     console.log(toFetch);
     sendAjax('GET', toFetch, null, (data) => {
       console.log('fetching ajax spots');
@@ -178,6 +186,7 @@ class App extends React.Component {
       newSpotLocation,
       bottomSheetSize,
       leafletMap,
+      showSpotList,
     } = this.state;
     return (
       <ThemeProvider options={{
@@ -194,7 +203,6 @@ class App extends React.Component {
 
             return (
               <TransitionGroup
-                component={null}
                 childFactory={child => React.cloneElement(
                   child,
                   {
@@ -214,10 +222,21 @@ class App extends React.Component {
                             this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
                           }}
                           />
+                        </React.Fragment>
+                      )}
+                    />
+
+                    <Route
+                      path="/search"
+                      render={() => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
+                          }}
+                          />
                           <SkateSpotListParent
                             spots={spots}
-                            csrf={csrf}
-                            url={defaultURL}
+                            updateSpotList={this.updatePublicView}
                           />
                         </React.Fragment>
                       )}
@@ -284,6 +303,7 @@ class App extends React.Component {
               zoom={zoom}
               onDragend={this.onChange}
               onZoomend={this.onZoomChange}
+              onClick={this.toggleShowSpotList}
               whenReady={this.onMapLoad}
               attributionControl={false}
               zoomControl={false}
@@ -338,15 +358,7 @@ class App extends React.Component {
                 )}
               />
             </Switch>
-            <Elevation z={2}>
-              <NewSearchbox
-                onFocus={() => this.setState({ bottomSheetSize: 2 })}
-                onBlur={() => this.setState({ bottomSheetSize: 0 })}
-                updateSpotList={this.updatePublicView}
-              />
-            </Elevation>
           </div>
-
         </div>
         <Snackbar
           show={showSnackbar}
