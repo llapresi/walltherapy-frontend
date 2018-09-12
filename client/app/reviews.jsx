@@ -80,13 +80,13 @@ export class ReviewList extends React.Component {
     const { spotId, csrf } = this.props;
     return (
       <React.Fragment>
+        <h3 className="reviews-header">Reviews:</h3>
+        <Folder folderName="Add Review" acceptCallback={this.submitReview}>
+          <ReviewForm spotId={spotId} csrf={csrf} />
+        </Folder>
         <div className="review_section">
-          <h3 className="reviews-header">Reviews:</h3>
-          <Folder folderName="Add Review" acceptCallback={this.submitReview}>
-            <ReviewForm spotId={spotId} csrf={csrf} />
-          </Folder>
           <CSSTransition in={reviewListAnim} classNames="transition__show_reviewlist" timeout={350}>
-            <List twoLine="true" nonInteractive="true">
+            <List className="reviewList" twoLine="true" nonInteractive="true">
               {reviews.map(review => (
                 <ReviewListItem review={review} key={review._id} />
               ))}

@@ -1,6 +1,6 @@
 // This isn't actually a folder anymore, just a self-contained class for a dialog
 import React from 'react';
-import { Button } from 'rmwc/Button';
+import { Fab } from 'rmwc/Fab';
 import { SimpleDialog } from 'rmwc/Dialog';
 import PropTypes from 'prop-types';
 
@@ -18,7 +18,12 @@ class Folder extends React.Component {
     const { showContent } = this.state;
     return (
       <React.Fragment>
-        <Button raised onClick={() => this.setState({ showContent: true })}>{folderName}</Button>
+        <Fab
+          icon="add"
+          className="fab__review"
+          label={folderName}
+          onClick={() => this.setState({ showContent: true })}
+        />
         <SimpleDialog
           title={folderName}
           body={children}

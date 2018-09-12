@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import SpotCard from './Widgets/SpotCard';
 import { sendAjax } from '../helper/helper';
 import { ReviewList } from './reviews';
 import ObjectPropTypes from './ObjectShapes';

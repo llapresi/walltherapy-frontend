@@ -12,6 +12,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
 import { SkateSpotListParent } from './SpotList';
+import SpotCard from './Widgets/SpotCard';
 import ShowAddSpot from './Transitions/ShowAddSpot';
 import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
@@ -262,6 +263,7 @@ class App extends React.Component {
                             })}
                             {...props}
                           />
+                          {/* <SpotCard/> */}
                         </React.Fragment>
                       )}
                     />
