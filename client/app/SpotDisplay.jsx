@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import SpotCard from './Widgets/SpotCard';
 import { sendAjax } from '../helper/helper';
 import { ReviewList } from './reviews';
 import ObjectPropTypes from './ObjectShapes';
 
 const SpotView = ({ spot, id, csrf }) => (
-  <div className="spot_infobox">
+  <div className="spot_infobox desktop-400 horizontal__desktop">
     <div className="spotDescription">{spot.description}</div>
     <ReviewList spotId={id} csrf={csrf} />
   </div>

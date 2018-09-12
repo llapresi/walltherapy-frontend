@@ -6,13 +6,14 @@ import PropTypes from 'prop-types';
 import { TextField } from 'rmwc/TextField';
 
 export const SkateSpotListParent = ({ spots, updateSpotList }) => (
-  <div className="skateSpotListParent">
+  <div className="skateSpotListParent desktop-400 horizontal__desktop">
     <TextField className="newSearchBar" onChange={updateSpotList} label="Search" box withLeadingIcon="search" />
     <SkateSpotList spots={spots} />
   </div>
 );
 SkateSpotListParent.propTypes = {
   spots: PropTypes.arrayOf(PropTypes.object).isRequired,
+  updateSpotList: PropTypes.func.isRequired,
 };
 
 

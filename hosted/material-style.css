@@ -27,6 +27,12 @@ body {
     flex-direction: column;
 }
 
+@media(min-width: 800px) {
+    .desktop-400 {
+        width:400px !important;
+    }
+}
+
 .reviewForm {
     padding: 12px;
 }
@@ -224,19 +230,16 @@ body {
         left: 32px;
         width: calc(100% - 70px);
     }
+}
 
-    .addspot__bottombar-next-button {
-        color: var(--mdc-theme-on-primary) !important;
-    }
+.addspot__bottombar-next-button {
+    color: var(--mdc-theme-on-primary) !important;
 }
 
 /* Desktop Only */
 @media only screen and (min-width: 800px) {
     .skatespot-sidebar {
         height:100%;
-    }
-    .skatespot-map__parent {
-        left: 400px;
     }
 }
 
@@ -495,7 +498,7 @@ body {
 
 .fab__review {
     bottom: 1rem;
-    position: fixed;
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -505,4 +508,25 @@ body {
     flex: 1;
     overflow-y: scroll;
     margin: 0 -12px -12px -12px;
+}
+
+@media(min-width: 800px) {
+    .transition__cardslide-enter.horizontal__desktop {
+        transform: translate3d(-100%, 0px, 0px);
+    }
+      
+    .transition__cardslide-enter-active.horizontal__desktop {
+        transition: transform 200ms cubic-bezier(0.0, 0.0, 0.2, 1);
+        transform: translate3d(0px, 0px, 0px);
+        transition-delay: 225ms;
+    }
+      
+    .transition__cardslide-exit.horizontal__desktop {
+        transform: translate3d(0px, 0px, 0px);
+    }
+      
+    .transition__cardslide-exit-active.horizontal__desktop {
+        transition: transform 200ms cubic-bezier(0.4, 0.0, 1, 1);
+        transform: translate3d(-100%, 0px, 0px);
+    }
 }

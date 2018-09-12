@@ -13,7 +13,6 @@ import PropTypes from 'prop-types';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
 import { SkateSpotListParent } from './SpotList';
 import SpotCard from './Widgets/SpotCard';
-import ShowAddSpot from './Transitions/ShowAddSpot';
 import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
 import SpotForm from './addspot';
@@ -23,8 +22,7 @@ import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
 import { SkateSpotMarker, AddSpotMarker } from './SkateSpotMarker';
-
-const defaultURL = '/spots';
+import history from './History';
 
 const makePublicSpotsURL = (name = '', showOurSpots = false) => {
   const profileSpots = showOurSpots ? 'profileSpots=true' : '';
@@ -62,9 +60,6 @@ class App extends React.Component {
       toolbarTitle: '',
       locationWatchId: null,
       watchingLocation: false,
-      bottomSheetSize: 1, // 0 = minimized, 1 = normal, 2 = maximized
-      leafletMap: null,
-      showSpotList: false,
       selectedSpot: null, // Spot to show card of in base route
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
@@ -73,9 +68,8 @@ class App extends React.Component {
     this.onNewSpot = this.onNewSpot.bind(this);
     this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
     this.onZoomChange = this.onZoomChange.bind(this);
-    this.onMapLoad = this.onMapLoad.bind(this);
-    this.toggleShowSpotList = this.toggleShowSpotList.bind(this);
-    this.showSpotCard = this.showSpotCard.bind(this);
+    this.hideSpotCard = this.hideSpotCard.bind(this);
+    this.setSpotCard = this.setSpotCard.bind(this);
   }
 
   componentDidMount() {
@@ -95,13 +89,8 @@ class App extends React.Component {
   }
 
   onChange(e) {
-    this.setState({ center: e.target.getCenter() });
+    this.setState({ center: e.target.getCenter(), selectedSpot: null });
     this.stopWatchingGeolocation();
-  }
-
-  onMapLoad(e) {
-    console.log('map loaded');
-    this.setState({ leafletMap: e.target });
   }
 
   onZoomChange(e) {
@@ -146,15 +135,27 @@ class App extends React.Component {
   }
 
   setNewSpotLocation(loc) {
-    this.setState({ newSpotLocation: loc, addingNewSpot: 2, bottomSheetSize: 2 });
+    this.setState({ newSpotLocation: loc, addingNewSpot: 2 });
   }
 
-  showSpotCard(spot) {
+  setSpotCard(spot) {
+    this.setState({
+      selectedSpot: spot,
+      center: {
+        lat: spot.location[1],
+        lng: spot.location[0],
+      },
+    });
+    if (history.location.pathname.includes('/spot/')) {
+      history.push('/');
+    }
   }
 
-  toggleShowSpotList() {
-    const { showSpotList } = this.state;
-    this.setState({ showSpotList: !showSpotList });
+  hideSpotCard() {
+    this.setState({ selectedSpot: null });
+    if (history.location.pathname.includes('/spot/')) {
+      history.push('/');
+    }
   }
 
   stopWatchingGeolocation() {
@@ -188,9 +189,7 @@ class App extends React.Component {
       toolbarTitle,
       watchingLocation,
       newSpotLocation,
-      bottomSheetSize,
-      leafletMap,
-      showSpotList,
+      selectedSpot,
     } = this.state;
     return (
       <ThemeProvider options={{
@@ -223,9 +222,12 @@ class App extends React.Component {
                       render={() => (
                         <React.Fragment>
                           <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
+                            this.setState({ addingNewSpot: 0, toolbarTitle: '' });
                           }}
                           />
+                          {selectedSpot !== null
+                          && <SpotCard spot={selectedSpot} />
+                          }
                         </React.Fragment>
                       )}
                     />
@@ -235,7 +237,7 @@ class App extends React.Component {
                       render={() => (
                         <React.Fragment>
                           <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 0, toolbarTitle: '', bottomSheetSize: 1 });
+                            this.setState({ addingNewSpot: 0, toolbarTitle: '' });
                           }}
                           />
                           <SkateSpotListParent
@@ -251,7 +253,7 @@ class App extends React.Component {
                       render={props => (
                         <React.Fragment>
                           <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 0, bottomSheetSize: 1 });
+                            this.setState({ addingNewSpot: 0 });
                             this.stopWatchingGeolocation();
                           }}
                           />
@@ -263,7 +265,6 @@ class App extends React.Component {
                             })}
                             {...props}
                           />
-                          {/* <SpotCard/> */}
                         </React.Fragment>
                       )}
                     />
@@ -272,7 +273,7 @@ class App extends React.Component {
                       path="/profile"
                       render={() => (
                         <React.Fragment>
-                          <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: 'Change Password', bottomSheetSize: 1 })} />
+                          <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: 'Change Password' })} />
                           <AccountMenu csrf={csrf} />
                         </React.Fragment>
                       )}
@@ -283,7 +284,7 @@ class App extends React.Component {
                       render={() => (
                         <React.Fragment>
                           <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot', bottomSheetSize: 0 });
+                            this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot' });
                             this.stopWatchingGeolocation();
                           }}
                           />
@@ -308,8 +309,7 @@ class App extends React.Component {
               zoom={zoom}
               onDragend={this.onChange}
               onZoomend={this.onZoomChange}
-              onClick={this.toggleShowSpotList}
-              whenReady={this.onMapLoad}
+              onClick={this.hideSpotCard}
               attributionControl={false}
               zoomControl={false}
             >
@@ -324,6 +324,7 @@ class App extends React.Component {
                     key={spot._id}
                     spot={spot}
                     position={[spot.location[1], spot.location[0]]}
+                    onClick={this.setSpotCard}
                   />
                 ))
               }

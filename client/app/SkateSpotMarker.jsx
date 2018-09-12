@@ -3,23 +3,23 @@ import { Marker } from 'react-leaflet';
 import PropTypes from 'prop-types';
 import * as L from 'leaflet';
 import ObjectPropTypes from './ObjectShapes';
-import history from './History';
 
-export const SkateSpotMarker = ({ position, spot }) => {
+export const SkateSpotMarker = ({ position, spot, onClick }) => {
   const customMarker = L.icon({
     iconUrl: '/../assets/img/skatespot_icon.png',
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     className: 'skatespotmarker',
   });
-  const linkLocation = { pathname: `/spot/${spot._id}`, state: { spot } };
+  // const linkLocation = { pathname: `/spot/${spot._id}`, state: { spot } };
   return (
-    <Marker onClick={() => history.push(linkLocation)} position={position} icon={customMarker} />
+    <Marker onClick={() => onClick(spot)} position={position} icon={customMarker} />
   );
 };
 SkateSpotMarker.propTypes = {
   position: PropTypes.arrayOf(PropTypes.number).isRequired,
   spot: ObjectPropTypes.Spot.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export const AddSpotMarker = ({ position }) => {

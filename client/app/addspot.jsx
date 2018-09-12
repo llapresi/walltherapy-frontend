@@ -52,7 +52,7 @@ class SpotForm extends React.Component {
     } = this.state;
     let styleClasses = 'AddSpotBox';
     if (spotHasBeenSet) {
-      styleClasses = `${styleClasses} extended`;
+      styleClasses = `${styleClasses} extended horizontal__desktop desktop-400`;
     }
     return (
       <div className={styleClasses}>
