@@ -5,7 +5,6 @@
 import { hot } from 'react-hot-loader';
 import React from 'react';
 import { Fab } from 'rmwc/Fab';
-import { Elevation } from 'rmwc/Elevation';
 import { Snackbar } from 'rmwc/Snackbar';
 import { Route, Link, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'rmwc/Theme';
@@ -22,8 +21,7 @@ import { sendAjax } from '../helper/helper';
 import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
-import { SkateSpotMarkerRouter, AddSpotMarker } from './SkateSpotMarker';
-import NewSearchbox from './Widgets/NewSearchbox';
+import { SkateSpotMarker, AddSpotMarker } from './SkateSpotMarker';
 
 const defaultURL = '/spots';
 
@@ -66,6 +64,7 @@ class App extends React.Component {
       bottomSheetSize: 1, // 0 = minimized, 1 = normal, 2 = maximized
       leafletMap: null,
       showSpotList: false,
+      selectedSpot: null, // Spot to show card of in base route
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -75,6 +74,7 @@ class App extends React.Component {
     this.onZoomChange = this.onZoomChange.bind(this);
     this.onMapLoad = this.onMapLoad.bind(this);
     this.toggleShowSpotList = this.toggleShowSpotList.bind(this);
+    this.showSpotCard = this.showSpotCard.bind(this);
   }
 
   componentDidMount() {
@@ -146,6 +146,9 @@ class App extends React.Component {
 
   setNewSpotLocation(loc) {
     this.setState({ newSpotLocation: loc, addingNewSpot: 2, bottomSheetSize: 2 });
+  }
+
+  showSpotCard(spot) {
   }
 
   toggleShowSpotList() {
@@ -315,7 +318,7 @@ class App extends React.Component {
               <AttributionControl position="topright" />
               {
                 spots.map(spot => (
-                  <SkateSpotMarkerRouter
+                  <SkateSpotMarker
                     key={spot._id}
                     spot={spot}
                     position={[spot.location[1], spot.location[0]]}
