@@ -60,6 +60,7 @@ ReviewSchema.statics.query = (params, callback, sortBy = 'createdData') => {
 
   return ReviewModel.find(search).select('spot author rating reviewText createdData').sort(sortBy)
     .collation({ locale: 'en', strength: 2 })
+    .populate('author', '-password -__v')
     .exec(callback);
 };
 

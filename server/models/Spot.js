@@ -85,6 +85,7 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
     .sort('-isSponsored')
     .sort(sortBy)
     .collation({ locale: 'en', strength: 2 })
+    .populate('owner', '-password -__v')
     .exec(callback);
 };
 

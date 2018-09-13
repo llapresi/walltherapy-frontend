@@ -29,7 +29,7 @@ const SpotCard = ({ spot }) => (
           theme="text-secondary-on-background"
           style={{ marginTop: '-1rem' }}
         >
-          {spot.owner}
+          {spot.owner.username}
         </Typography>
         <Typography style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} use="body1" tag="div" theme="text-secondary-on-background">
           {spot.description}
