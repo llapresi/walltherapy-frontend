@@ -11,7 +11,7 @@ import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
-import { SkateSpotListParent } from './SpotList';
+import SkateSpotListParent from './SpotList';
 import SpotCard from './Widgets/SpotCard';
 import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
@@ -24,9 +24,12 @@ import AppToolbar from './Toolbar';
 import { SkateSpotMarker, AddSpotMarker } from './SkateSpotMarker';
 import history from './History';
 
-const makePublicSpotsURL = (name = '', showOurSpots = false) => {
-  const profileSpots = showOurSpots ? 'profileSpots=true' : '';
-  return `/spots?filter=${name}&${profileSpots}`;
+const makePublicSpotsURL = (name = '', showOurSpots = false, latlng = null) => {
+  const maxDistanceKm = 400;
+  const profileSpots = showOurSpots ? '&profileSpots=true' : '';
+  const locCenter = latlng !== null ? `&lat=${latlng.lat}&lng=${latlng.lng}&dist=${maxDistanceKm}` : '';
+  console.log(`/spots?filter=${name}${profileSpots}${locCenter}`);
+  return `/spots?filter=${name}${profileSpots}${locCenter}`;
 };
 
 
@@ -90,7 +93,9 @@ class App extends React.Component {
 
   onChange(e) {
     this.setState({ center: e.target.getCenter(), selectedSpot: null });
+    console.log(e.target.getBounds());
     this.stopWatchingGeolocation();
+    this.updatePublicView();
   }
 
   onZoomChange(e) {
@@ -168,9 +173,9 @@ class App extends React.Component {
   }
 
   updatePublicView(e) {
-    const { showOurSpots } = this.state;
+    const { showOurSpots, center } = this.state;
     const filterValue = e === undefined ? '' : e.target.value;
-    const toFetch = makePublicSpotsURL(filterValue, showOurSpots);
+    const toFetch = makePublicSpotsURL(filterValue, showOurSpots, center);
     console.log(toFetch);
     sendAjax('GET', toFetch, null, (data) => {
       console.log('fetching ajax spots');
@@ -240,10 +245,7 @@ class App extends React.Component {
                             this.setState({ addingNewSpot: 0, toolbarTitle: '' });
                           }}
                           />
-                          <SkateSpotListParent
-                            spots={spots}
-                            updateSpotList={this.updatePublicView}
-                          />
+                          <SkateSpotListParent />
                         </React.Fragment>
                       )}
                     />

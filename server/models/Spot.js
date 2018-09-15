@@ -80,6 +80,14 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
     search._id = params._id;
   }
 
+  // Location stuff
+  if (params.lng && params.lat && params.dist) {
+    search.location = {
+      $near: [params.lng, params.lat],
+      $maxDistance: params.dist / 6371,
+    };
+  }
+
   return SpotModel.find(search)
     .select('name location description _id isSponsored owner')
     .sort('-isSponsored')

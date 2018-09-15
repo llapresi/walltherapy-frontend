@@ -38,7 +38,7 @@ class SpotViewParent extends React.Component {
       this.onNewSpotData(location.state.spot);
     } else {
       // Fetching new spot data
-      console.log('Fetching new spot data');
+      console.log(`Fetching new spot data: /spots?id=${match.params.id}`);
       sendAjax('GET', `/spots?id=${match.params.id}`, null, (data) => {
         this.setState({ spot: data.spots[0] });
         this.onNewSpotData(data.spots[0]);

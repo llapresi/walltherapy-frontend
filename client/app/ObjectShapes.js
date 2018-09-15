@@ -7,11 +7,11 @@ const ObjectPropTypes = {
     isSponsored: PropTypes.bool,
     location: PropTypes.array,
     name: PropTypes.string,
-    owner: PropTypes.string,
+    owner: PropTypes.object,
   }),
   Review: PropTypes.shape({
     _id: PropTypes.string,
-    author: PropTypes.string,
+    author: PropTypes.object,
     createdData: PropTypes.string,
     rating: PropTypes.number,
     reviewText: PropTypes.string,
