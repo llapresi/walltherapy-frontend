@@ -14,7 +14,7 @@ const makePublicSpotsURL = (name = '', showOurSpots = false, latlng = null) => {
   return `/spots?filter=${name}${profileSpots}${locCenter}`;
 };
 
-class SkateSpotListParent extends React.Component {
+class SpotSearchParent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,13 +41,13 @@ class SkateSpotListParent extends React.Component {
     return (
       <div className="skateSpotListParent desktop-400 horizontal__desktop">
         <TextField className="newSearchBar" onChange={this.updateSpotList} label="Search" box withLeadingIcon="search" />
-        <SkateSpotList spots={spots} />
+        <SpotSearch spots={spots} />
       </div>
     );
   }
 }
 
-const SkateSpotList = ({ spots }) => (
+const SpotSearch = ({ spots }) => (
   <List twoLine className="spotList">
     <TransitionGroup className="spotList-anim" component={null}>
       {spots.map((spot) => {
@@ -72,8 +72,8 @@ const SkateSpotList = ({ spots }) => (
     </TransitionGroup>
   </List>
 );
-SkateSpotList.propTypes = {
+SpotSearch.propTypes = {
   spots: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default SkateSpotListParent;
+export default SpotSearchParent;
