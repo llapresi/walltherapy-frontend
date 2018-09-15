@@ -15,12 +15,12 @@ import SpotCard from './Widgets/SpotCard';
 import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
 import SpotForm from './addspot';
-import { AccountMenu } from './profile';
+import AccountMenu from './AccountMenu';
 import { sendAjax } from '../helper/helper';
 import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
-import { SkateSpotMarker, AddSpotMarker } from './SkateSpotMarker';
+import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
 import GeolocationFAB from './Widgets/GeolocationFab';
 
@@ -48,7 +48,7 @@ class App extends React.Component {
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.updatePublicView = this.updateSpots.bind(this);
+    this.updateSpots = this.updateSpots.bind(this);
     this.onNewSpot = this.onNewSpot.bind(this);
     this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
     this.onZoomChange = this.onZoomChange.bind(this);
@@ -156,7 +156,6 @@ class App extends React.Component {
   updateSpots() {
     const { center } = this.state;
     const toFetch = makePublicSpotsURL(center);
-    console.log(toFetch);
     sendAjax('GET', toFetch, null, (data) => {
       console.log('fetching ajax spots');
       this.setState({ spots: data.spots });
@@ -242,9 +241,11 @@ class App extends React.Component {
                           <SpotViewParent
                             key={props.match.params.id}
                             csrf={csrf}
-                            onOpen={(newCenter, title) => this.setState({
-                              center: newCenter, toolbarTitle: title,
-                            })}
+                            onOpen={(newCenter, title) => {
+                              this.setState({ center: newCenter, toolbarTitle: title }, () => {
+                                this.updateSpots();
+                              });
+                            }}
                             {...props}
                           />
                         </React.Fragment>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Marker } from 'react-leaflet';
 import PropTypes from 'prop-types';
 import * as L from 'leaflet';
-import ObjectPropTypes from './ObjectShapes';
+import ObjectPropTypes from '../ObjectShapes';
 
 export const SkateSpotMarker = ({ position, spot, onClick }) => {
   const customMarker = L.icon({

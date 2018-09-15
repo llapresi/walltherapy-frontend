@@ -7,9 +7,7 @@ import {
   TopAppBarSection,
   TopAppBarActionItem,
   TopAppBarTitle,
-  TopAppBarNavigationIcon
 } from 'rmwc/TopAppBar';
-import { IconButton } from 'rmwc/IconButton';
 import PropTypes from 'prop-types';
 import HideAddSpot from './Transitions/HideAddSpot';
 
@@ -20,7 +18,7 @@ const AppToolbar = ({ title }) => {
     titleElement = (
       <TopAppBarTitle>
         <span className="toolbar-logo" />
-        skatespot.io
+        <span>skatespot.io</span>
       </TopAppBarTitle>
     );
   } else {
@@ -44,7 +42,8 @@ const AppToolbar = ({ title }) => {
         </TopAppBarSection>
         <TopAppBarSection alignEnd>
           <Route
-            exact path="/"
+            exact
+            path="/"
             render={() => (
               <TopAppBarActionItem>
                 <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">search</Link>
