@@ -9,7 +9,6 @@ import { Snackbar } from 'rmwc/Snackbar';
 import { Route, Link, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import PropTypes from 'prop-types';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
 import SpotSearchParent from './Search';
 import SpotCard from './Widgets/SpotCard';
@@ -23,29 +22,12 @@ import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
 import { SkateSpotMarker, AddSpotMarker } from './SkateSpotMarker';
 import history from './History';
+import GeolocationFAB from './Widgets/GeolocationFab';
 
-const makePublicSpotsURL = (name = '', showOurSpots = false, latlng = null) => {
+const makePublicSpotsURL = (latlng = null) => {
   const maxDistanceKm = 400;
-  const profileSpots = showOurSpots ? '&profileSpots=true' : '';
-  const locCenter = latlng !== null ? `&lat=${latlng.lat}&lng=${latlng.lng}&dist=${maxDistanceKm}` : '';
-  console.log(`/spots?filter=${name}${profileSpots}${locCenter}`);
-  return `/spots?filter=${name}${profileSpots}${locCenter}`;
-};
-
-
-const GeolocationFAB = ({ exited, watchingLocation, onClick }) => {
-  const cssClassNames = watchingLocation ? 'skatespot-map__fab skatespot-map__location skatespot-map__location-active' : 'skatespot-map__fab skatespot-map__location';
-  return (
-    <Fab exited={exited} className={cssClassNames} onClick={onClick}>gps_fixed</Fab>
-  );
-};
-GeolocationFAB.propTypes = {
-  watchingLocation: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-  exited: PropTypes.bool,
-};
-GeolocationFAB.defaultProps = {
-  exited: false,
+  const locCenter = latlng !== null ? `lat=${latlng.lat}&lng=${latlng.lng}&dist=${maxDistanceKm}` : '';
+  return `/spots?${locCenter}`;
 };
 
 class App extends React.Component {
@@ -58,7 +40,6 @@ class App extends React.Component {
       spots: [], // New main spot list, have skatespotlist send state to this
       addingNewSpot: 0, // 0 = not adding spot, 1 = current center, 2 = spot location set
       csrf: '',
-      showOurSpots: false,
       showSnackbar: false,
       toolbarTitle: '',
       locationWatchId: null,
@@ -67,7 +48,7 @@ class App extends React.Component {
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.updatePublicView = this.updatePublicView.bind(this);
+    this.updatePublicView = this.updateSpots.bind(this);
     this.onNewSpot = this.onNewSpot.bind(this);
     this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
     this.onZoomChange = this.onZoomChange.bind(this);
@@ -95,7 +76,7 @@ class App extends React.Component {
     this.setState({ center: e.target.getCenter(), selectedSpot: null });
     console.log(e.target.getBounds());
     this.stopWatchingGeolocation();
-    this.updatePublicView();
+    this.updateSpots();
   }
 
   onZoomChange(e) {
@@ -103,7 +84,7 @@ class App extends React.Component {
   }
 
   onNewSpot() {
-    this.updatePublicView();
+    this.updateSpots();
     this.setState({ showSnackbar: true });
   }
 
@@ -172,10 +153,9 @@ class App extends React.Component {
     }
   }
 
-  updatePublicView(e) {
-    const { showOurSpots, center } = this.state;
-    const filterValue = e === undefined ? '' : e.target.value;
-    const toFetch = makePublicSpotsURL(filterValue, showOurSpots, center);
+  updateSpots() {
+    const { center } = this.state;
+    const toFetch = makePublicSpotsURL(center);
     console.log(toFetch);
     sendAjax('GET', toFetch, null, (data) => {
       console.log('fetching ajax spots');
