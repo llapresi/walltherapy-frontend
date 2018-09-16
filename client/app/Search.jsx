@@ -6,12 +6,14 @@ import PropTypes from 'prop-types';
 import { TextField } from 'rmwc/TextField';
 import { sendAjax } from '../helper/helper';
 
-const makePublicSpotsURL = (name = '', showOurSpots = false, latlng = null) => {
-  const maxDistanceKm = 400;
-  const profileSpots = showOurSpots ? '&profileSpots=true' : '';
-  const locCenter = latlng !== null ? `&lat=${latlng.lat}&lng=${latlng.lng}&dist=${maxDistanceKm}` : '';
-  console.log(`/spots?filter=${name}${profileSpots}${locCenter}`);
-  return `/spots?filter=${name}${profileSpots}${locCenter}`;
+const makePublicSpotsURL = (name = '', latlng = null) => {
+  const maxDistanceKm = 6;
+  let locCenter = latlng !== null ? `&lat=${latlng.lat}&lng=${latlng.lng}` : '';
+  if (locCenter !== '' && name === '') {
+    locCenter = `${locCenter}&dist=${maxDistanceKm}`;
+  }
+  console.log(`/spots?filter=${name}${locCenter}`);
+  return `/spots?filter=${name}${locCenter}`;
 };
 
 class SpotSearchParent extends React.Component {
@@ -28,8 +30,9 @@ class SpotSearchParent extends React.Component {
   }
 
   updateSpotList(e) {
+    const { center } = this.props;
     const filterValue = e === undefined ? '' : e.target.value;
-    const toFetch = makePublicSpotsURL(filterValue);
+    const toFetch = makePublicSpotsURL(filterValue, center);
     sendAjax('GET', toFetch, null, (data) => {
       console.log('Searchbar fetching spots');
       this.setState({ spots: data.spots });
@@ -49,27 +52,19 @@ class SpotSearchParent extends React.Component {
 
 const SpotSearch = ({ spots }) => (
   <List twoLine className="spotList">
-    <TransitionGroup className="spotList-anim" component={null}>
-      {spots.map((spot) => {
-        let classNameString = '';
-        let descriptionAppend = '';
-        if (spot.isSponsored === true) {
-          classNameString += 'spot__sponsored';
-          descriptionAppend += 'Sponsored: ';
-        }
-        return (
-          <CSSTransition
-            key={spot._id}
-            timeout={200}
-            classNames="spotAnim"
-          >
-            <Link className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
-              <SimpleListItem className={classNameString} text={spot.name} secondaryText={descriptionAppend + spot.description} meta="info" />
-            </Link>
-          </CSSTransition>
-        );
-      })}
-    </TransitionGroup>
+    {spots.map((spot) => {
+      let classNameString = '';
+      let descriptionAppend = '';
+      if (spot.isSponsored === true) {
+        classNameString += 'spot__sponsored';
+        descriptionAppend += 'Sponsored: ';
+      }
+      return (
+        <Link className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
+          <SimpleListItem className={classNameString} text={spot.name} secondaryText={descriptionAppend + spot.description} meta="info" />
+        </Link>
+      );
+    })}
   </List>
 );
 SpotSearch.propTypes = {

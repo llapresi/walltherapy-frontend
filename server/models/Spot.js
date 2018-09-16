@@ -58,7 +58,7 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
     .exec(callback);
 };
 
-SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
+SpotSchema.statics.query = (params, callback) => {
   // TODO: Add finding near location
   const search = {};
   if (params.owner) {
@@ -81,18 +81,18 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
   }
 
   // Location stuff
-  if (params.lng && params.lat && params.dist) {
-    const maxDistRadians = (params.dist / 6371) * (180 / Math.PI);
+  if (params.lng && params.lat) {
     search.location = {
       $near: [params.lng, params.lat],
-      $maxDistance: maxDistRadians,
     };
+    if (params.dist) {
+      const maxDistDeg = (params.dist / 6371) * (180 / Math.PI);
+      search.location.$maxDistance = maxDistDeg;
+    }
   }
 
   return SpotModel.find(search)
     .select('name location description _id isSponsored owner')
-    .sort('-isSponsored')
-    .sort(sortBy)
     .collation({ locale: 'en', strength: 2 })
     .populate('owner', '-password -__v')
     .exec(callback);
