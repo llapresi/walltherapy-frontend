@@ -82,9 +82,10 @@ SpotSchema.statics.query = (params, callback, sortBy = '-createdData') => {
 
   // Location stuff
   if (params.lng && params.lat && params.dist) {
+    const maxDistRadians = (params.dist / 6371) * (180 / Math.PI);
     search.location = {
       $near: [params.lng, params.lat],
-      $maxDistance: params.dist / 6371,
+      $maxDistance: maxDistRadians,
     };
   }
 

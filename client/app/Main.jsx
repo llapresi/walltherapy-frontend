@@ -16,7 +16,7 @@ import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
 import SpotForm from './addspot';
 import AccountMenu from './AccountMenu';
-import { sendAjax } from '../helper/helper';
+import { sendAjax, distance } from '../helper/helper';
 import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
@@ -25,8 +25,8 @@ import history from './History';
 import GeolocationFAB from './Widgets/GeolocationFab';
 
 const makePublicSpotsURL = (latlng = null) => {
-  const maxDistanceKm = 400;
-  const locCenter = latlng !== null ? `lat=${latlng.lat}&lng=${latlng.lng}&dist=${maxDistanceKm}` : '';
+  const maxDistanceKM = 3; // Width of rit
+  const locCenter = latlng !== null ? `lng=${latlng.lng}&lat=${latlng.lat}&dist=${maxDistanceKM}` : '';
   return `/spots?${locCenter}`;
 };
 
@@ -34,7 +34,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: { lat: 43.084727, lng: -77.674423 },
+      center: { lat: 43.082854, lng: -77.686937 },
+      lastFetchedCenter: { lat: 43.082854, lng: -77.686937 },
       newSpotLocation: {},
       zoom: 17,
       spots: [], // New main spot list, have skatespotlist send state to this
@@ -154,12 +155,16 @@ class App extends React.Component {
   }
 
   updateSpots() {
-    const { center } = this.state;
-    const toFetch = makePublicSpotsURL(center);
-    sendAjax('GET', toFetch, null, (data) => {
-      console.log('fetching ajax spots');
-      this.setState({ spots: data.spots });
-    });
+    // current search dist is 1700 m
+    const { center, lastFetchedCenter } = this.state;
+    console.log(distance(center, lastFetchedCenter));
+    if (distance(center, lastFetchedCenter) > 1.5) {
+      const toFetch = makePublicSpotsURL(center);
+      sendAjax('GET', toFetch, null, (data) => {
+        console.log('fetching ajax spots');
+        this.setState({ spots: data.spots, lastFetchedCenter: center });
+      });
+    }
   }
 
   render() {
