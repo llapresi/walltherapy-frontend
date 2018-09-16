@@ -42,6 +42,7 @@ class App extends React.Component {
       addingNewSpot: 0, // 0 = not adding spot, 1 = current center, 2 = spot location set
       csrf: '',
       showSnackbar: false,
+      snackbarMessage: '',
       toolbarTitle: '',
       locationWatchId: null,
       watchingLocation: false,
@@ -55,6 +56,7 @@ class App extends React.Component {
     this.onZoomChange = this.onZoomChange.bind(this);
     this.hideSpotCard = this.hideSpotCard.bind(this);
     this.setSpotCard = this.setSpotCard.bind(this);
+    this.setSnackbar = this.setSnackbar.bind(this);
   }
 
   componentDidMount() {
@@ -85,9 +87,12 @@ class App extends React.Component {
   }
 
   onNewSpot() {
-    console.log('on new spot called');
     this.updateSpots(true);
-    this.setState({ showSnackbar: true });
+    this.setSnackbar('New Spot Added');
+  }
+
+  setSnackbar(message) {
+    this.setState({ showSnackbar: true, snackbarMessage: message });
   }
 
   getUserGeolocation() {
@@ -175,6 +180,7 @@ class App extends React.Component {
       addingNewSpot,
       csrf,
       showSnackbar,
+      snackbarMessage,
       toolbarTitle,
       watchingLocation,
       newSpotLocation,
@@ -251,6 +257,7 @@ class App extends React.Component {
                                 this.updateSpots(true);
                               });
                             }}
+                            onReviewAdd={this.setSnackbar}
                             {...props}
                           />
                         </React.Fragment>
@@ -357,7 +364,7 @@ class App extends React.Component {
         <Snackbar
           show={showSnackbar}
           onShow={() => this.setState({ showSnackbar: false })}
-          message="New Spot Created"
+          message={snackbarMessage}
           timeout={3000}
         />
       </ThemeProvider>

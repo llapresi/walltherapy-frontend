@@ -1,7 +1,6 @@
 import React from 'react';
 import { List } from 'rmwc/List';
 import { TextField } from 'rmwc/TextField';
-import { Snackbar } from 'rmwc/Snackbar';
 import StarRatingComponent from 'react-star-rating-component';
 import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'prop-types';
@@ -33,8 +32,6 @@ export class ReviewList extends React.Component {
     super(props);
     this.state = {
       reviews: [],
-      showSnackbar: false,
-      snackbarMsg: '',
       reviewListAnim: false,
     };
     this.updateReviews = this.updateReviews.bind(this);
@@ -56,7 +53,7 @@ export class ReviewList extends React.Component {
   }
 
   submitReview() {
-    const { spotId } = this.props;
+    const { spotId, onReviewAdd } = this.props;
     $.ajax({
       cache: false,
       type: 'POST',
@@ -64,18 +61,17 @@ export class ReviewList extends React.Component {
       data: $('#reviewForm').serialize(),
       dataType: 'json',
       error: (xhr) => {
-        const messageObj = JSON.parse(xhr.responseText);
-        this.setState({ snackbarMsg: messageObj.error, showSnackbar: true });
+        onReviewAdd(xhr.responseText);
       },
     }).done(() => {
       this.updateReviews(spotId);
-      this.setState({ snackbarMsg: 'Review Submitted', showSnackbar: true });
+      onReviewAdd('Review Submitted');
     });
   }
 
   render() {
     const {
-      reviewListAnim, reviews, showSnackbar, snackbarMsg,
+      reviewListAnim, reviews,
     } = this.state;
     const { spotId, csrf } = this.props;
     return (
@@ -100,4 +96,5 @@ export class ReviewList extends React.Component {
 ReviewList.propTypes = {
   spotId: PropTypes.string.isRequired,
   csrf: PropTypes.string.isRequired,
+  onReviewAdd: PropTypes.func.isRequired,
 };

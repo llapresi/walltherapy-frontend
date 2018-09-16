@@ -2,7 +2,6 @@ import React from 'react';
 import { Button } from 'rmwc/Button';
 import { TextField } from 'rmwc/TextField';
 import { Snackbar } from 'rmwc/Snackbar';
-import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import history from './History';
 import AddSpotBottomSheet from './Widgets/AddSpotBottomSheet';
