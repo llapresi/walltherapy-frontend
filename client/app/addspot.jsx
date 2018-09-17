@@ -2,8 +2,8 @@ import React from 'react';
 import { Button } from 'rmwc/Button';
 import { TextField } from 'rmwc/TextField';
 import { Snackbar } from 'rmwc/Snackbar';
-import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import history from './History';
 import AddSpotBottomSheet from './Widgets/AddSpotBottomSheet';
 
 class SpotForm extends React.Component {
@@ -19,6 +19,14 @@ class SpotForm extends React.Component {
     this.setSpotLocation = this.setSpotLocation.bind(this);
   }
 
+  componentWillUnmount() {
+    const { submitCallback } = this.props;
+    const { spotAdded } = this.state;
+    if (spotAdded === true) {
+      submitCallback();
+    }
+  }
+
   setSpotLocation() {
     const { loc, setSpotCallback } = this.props;
     this.setState({ spotHasBeenSet: true, newSpotLocation: loc });
@@ -26,7 +34,6 @@ class SpotForm extends React.Component {
   }
 
   createSpot(e) {
-    const { submitCallback } = this.props;
     e.preventDefault();
     $.ajax({
       cache: false,
@@ -40,15 +47,16 @@ class SpotForm extends React.Component {
         console.log(`Review Error: ${messageObj}`);
       },
     }).done(() => {
-      submitCallback();
-      this.setState({ spotAdded: true });
+      this.setState({ spotAdded: true }, () => {
+        history.push('/');
+      });
     });
   }
 
   render() {
     const { csrf } = this.props;
     const {
-      errorSnackbar, errorMessage, spotAdded, spotHasBeenSet, newSpotLocation,
+      errorSnackbar, errorMessage, spotHasBeenSet, newSpotLocation,
     } = this.state;
     let styleClasses = 'AddSpotBox';
     if (spotHasBeenSet) {
@@ -85,12 +93,7 @@ class SpotForm extends React.Component {
           onHide={() => this.setState({ errorSnackbar: false })}
           message={errorMessage}
           actionText="Close"
-          actionHandler={() => {}}
         />
-
-        {spotAdded === true
-        && <Redirect to="/" />
-        }
       </div>
     );
   }

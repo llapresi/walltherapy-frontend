@@ -25,7 +25,7 @@ import history from './History';
 import GeolocationFAB from './Widgets/GeolocationFab';
 
 const makePublicSpotsURL = (latlng = null) => {
-  const maxDistanceKM = 3; // Width of rit
+  const maxDistanceKM = 6; // Width of rit
   const locCenter = latlng !== null ? `lng=${latlng.lng}&lat=${latlng.lat}&dist=${maxDistanceKM}` : '';
   return `/spots?${locCenter}`;
 };
@@ -42,6 +42,7 @@ class App extends React.Component {
       addingNewSpot: 0, // 0 = not adding spot, 1 = current center, 2 = spot location set
       csrf: '',
       showSnackbar: false,
+      snackbarMessage: '',
       toolbarTitle: '',
       locationWatchId: null,
       watchingLocation: false,
@@ -55,6 +56,7 @@ class App extends React.Component {
     this.onZoomChange = this.onZoomChange.bind(this);
     this.hideSpotCard = this.hideSpotCard.bind(this);
     this.setSpotCard = this.setSpotCard.bind(this);
+    this.setSnackbar = this.setSnackbar.bind(this);
   }
 
   componentDidMount() {
@@ -85,8 +87,12 @@ class App extends React.Component {
   }
 
   onNewSpot() {
-    this.updateSpots();
-    this.setState({ showSnackbar: true });
+    this.updateSpots(true);
+    this.setSnackbar('New Spot Added');
+  }
+
+  setSnackbar(message) {
+    this.setState({ showSnackbar: true, snackbarMessage: message });
   }
 
   getUserGeolocation() {
@@ -154,11 +160,10 @@ class App extends React.Component {
     }
   }
 
-  updateSpots() {
+  updateSpots(forceUpate = false) {
     // current search dist is 1700 m
     const { center, lastFetchedCenter } = this.state;
-    console.log(distance(center, lastFetchedCenter));
-    if (distance(center, lastFetchedCenter) > 1.5) {
+    if (distance(center, lastFetchedCenter) > 0.8 || forceUpate === true) {
       const toFetch = makePublicSpotsURL(center);
       sendAjax('GET', toFetch, null, (data) => {
         console.log('fetching ajax spots');
@@ -175,6 +180,7 @@ class App extends React.Component {
       addingNewSpot,
       csrf,
       showSnackbar,
+      snackbarMessage,
       toolbarTitle,
       watchingLocation,
       newSpotLocation,
@@ -229,7 +235,7 @@ class App extends React.Component {
                             this.setState({ addingNewSpot: 0, toolbarTitle: '' });
                           }}
                           />
-                          <SpotSearchParent />
+                          <SpotSearchParent center={center} />
                         </React.Fragment>
                       )}
                     />
@@ -248,9 +254,10 @@ class App extends React.Component {
                             csrf={csrf}
                             onOpen={(newCenter, title) => {
                               this.setState({ center: newCenter, toolbarTitle: title }, () => {
-                                this.updateSpots();
+                                this.updateSpots(true);
                               });
                             }}
+                            onReviewAdd={this.setSnackbar}
                             {...props}
                           />
                         </React.Fragment>
@@ -356,10 +363,9 @@ class App extends React.Component {
         </div>
         <Snackbar
           show={showSnackbar}
-          onHide={() => this.setState({ showSnackbar: false })}
-          message="New Spot Created"
-          actionText="Close"
-          actionHandler={() => {}}
+          onShow={() => this.setState({ showSnackbar: false })}
+          message={snackbarMessage}
+          timeout={3000}
         />
       </ThemeProvider>
     );

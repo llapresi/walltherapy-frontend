@@ -5,16 +5,19 @@ import { sendAjax } from '../helper/helper';
 import { ReviewList } from './reviews';
 import ObjectPropTypes from './ObjectShapes';
 
-const SpotView = ({ spot, id, csrf }) => (
+const SpotView = ({
+  spot, id, csrf, onReviewAdd,
+}) => (
   <div className="spot_infobox desktop-400 horizontal__desktop">
     <div className="spotDescription">{spot.description}</div>
-    <ReviewList spotId={id} csrf={csrf} />
+    <ReviewList onReviewAdd={onReviewAdd} spotId={id} csrf={csrf} />
   </div>
 );
 SpotView.propTypes = {
   spot: ObjectPropTypes.Spot,
   id: PropTypes.string.isRequired,
   csrf: PropTypes.string.isRequired,
+  onReviewAdd: PropTypes.func.isRequired,
 };
 SpotView.defaultProps = {
   spot: {},
@@ -56,10 +59,10 @@ class SpotViewParent extends React.Component {
   }
 
   render() {
-    const { match, csrf } = this.props;
+    const { match, csrf, onReviewAdd } = this.props;
     const { spot } = this.state;
     return (
-      <SpotView spot={spot} id={match.params.id} csrf={csrf} />
+      <SpotView onReviewAdd={onReviewAdd} spot={spot} id={match.params.id} csrf={csrf} />
     );
   }
 }
@@ -68,6 +71,7 @@ SpotViewParent.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   csrf: PropTypes.string.isRequired,
   onOpen: PropTypes.func.isRequired,
+  onReviewAdd: PropTypes.func.isRequired,
 };
 
 export default SpotViewParent;
