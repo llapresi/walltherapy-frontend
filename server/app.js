@@ -34,6 +34,11 @@ if (process.env.REDISCLOUD_URL) {
   [, redisPASS] = redisURL.auth.split(':');
 }
 
+let sessionSecret = 'So here I am...';
+if (process.env.COOKIE_SECRET) {
+  sessionSecret = process.env.COOKIE_SECRET;
+}
+
 const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
@@ -48,7 +53,7 @@ app.use(session({
     port: redisURL.port,
     pass: redisPASS,
   }),
-  secret: 'So here I am...',
+  secret: sessionSecret,
   resave: true,
   saveUninitialized: true,
   cookie: {
