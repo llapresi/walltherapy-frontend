@@ -40,9 +40,9 @@ if (process.env.COOKIE_SECRET) {
 }
 
 const app = express();
+app.use(compression());
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
-app.use(compression());
 app.use(bodyParser.urlencoded({
   extended: true,
 }));
@@ -60,7 +60,7 @@ app.use(session({
     httpOnly: true,
   },
 }));
-app.engine('handlebars', expressHandlebars({ defaultLayout: 'main' }));
+app.engine('handlebars', expressHandlebars());
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);
 app.use(cookieParser());
