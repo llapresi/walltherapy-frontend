@@ -336,7 +336,7 @@ class App extends React.Component {
                 path="/"
                 render={() => (
                   <React.Fragment>
-                    <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab className="skatespot-map__fab">add_location</Fab></Link>
+                    <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab className="skatespot-map__fab" icon="add_location" /></Link>
                     <GeolocationFAB
                       watchingLocation={watchingLocation}
                       onClick={() => this.getUserGeolocation()}

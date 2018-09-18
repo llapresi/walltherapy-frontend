@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const GeolocationFAB = ({ exited, watchingLocation, onClick }) => {
   const cssClassNames = watchingLocation ? 'skatespot-map__fab skatespot-map__location skatespot-map__location-active' : 'skatespot-map__fab skatespot-map__location';
   return (
-    <Fab exited={exited} className={cssClassNames} onClick={onClick}>gps_fixed</Fab>
+    <Fab exited={exited} className={cssClassNames} onClick={onClick} icon="gps_fixed" />
   );
 };
 GeolocationFAB.propTypes = {
