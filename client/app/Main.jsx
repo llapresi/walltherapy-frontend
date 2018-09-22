@@ -197,8 +197,12 @@ class App extends React.Component {
         <div className="appGrid">
           <Route render={({ location }) => {
             // Use default if animation vales are not provided by the Link
-            const transitionToUse = CardSlide.transition;
-            const timeoutToUse = CardSlide.duration;
+            const transitionToUse = (location.state !== undefined
+              && location.state.transition !== undefined)
+              ? location.state.transition : CardSlide.transition;
+            const timeoutToUse = (location.state !== undefined
+              && location.state.duration !== undefined)
+              ? location.state.duration : CardSlide.duration;
 
             return (
               <TransitionGroup

@@ -10,6 +10,7 @@ import {
 } from 'rmwc/TopAppBar';
 import PropTypes from 'prop-types';
 import HideAddSpot from './Transitions/HideAddSpot';
+import NoTransition from './Transitions/NoTransition';
 
 
 const AppToolbar = ({ title }) => {
@@ -52,7 +53,8 @@ const AppToolbar = ({ title }) => {
           />
           <SimpleMenu handle={<TopAppBarActionItem use="account_circle" />}>
             <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
-            <a href="/logout"><MenuItem>Log out</MenuItem></a>
+            <MenuItem><Link to={{ pathname: '/login', state: NoTransition }}>Log-in / Sign-up</Link></MenuItem>
+            <MenuItem><a href="/logout">Log out</a></MenuItem>
           </SimpleMenu>
         </TopAppBarSection>
       </TopAppBarRow>
