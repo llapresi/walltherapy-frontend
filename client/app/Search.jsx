@@ -1,6 +1,5 @@
 import React from 'react';
 import { List, SimpleListItem } from 'rmwc/List';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { TextField } from 'rmwc/TextField';

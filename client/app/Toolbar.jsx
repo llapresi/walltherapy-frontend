@@ -30,7 +30,7 @@ const AppToolbar = ({ title }) => {
         <TopAppBarSection alignStart>
           <Switch>
             <Route
-              path="/(spot|profile|add|search)/"
+              path="/(spot|profile|add|search|login)/"
               render={() => (
                 <Link to={{ pathname: '/', state: HideAddSpot }} className="remove-link-styling">
                   <TopAppBarActionItem use="arrow_back" />

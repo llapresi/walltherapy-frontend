@@ -23,6 +23,7 @@ import AppToolbar from './Toolbar';
 import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
 import GeolocationFAB from './Widgets/GeolocationFab';
+import LoginWindow from './Login';
 
 const makePublicSpotsURL = (latlng = null) => {
   const maxDistanceKM = 6; // Width of rit
@@ -226,7 +227,22 @@ class App extends React.Component {
                         </React.Fragment>
                       )}
                     />
-
+                    <Route
+                      exact
+                      path="/login"
+                      render={() => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 0, toolbarTitle: 'Login' });
+                          }}
+                          />
+                          {selectedSpot !== null
+                          && <SpotCard spot={selectedSpot} />
+                          }
+                          <LoginWindow csrf={csrf} />
+                        </React.Fragment>
+                      )}
+                    />
                     <Route
                       path="/search"
                       render={() => (

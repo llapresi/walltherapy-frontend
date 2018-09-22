@@ -62,6 +62,7 @@ export class ReviewList extends React.Component {
       dataType: 'json',
       error: (xhr) => {
         onReviewAdd(xhr.responseText);
+        console.log(xhr.responseText);
       },
     }).done(() => {
       this.updateReviews(spotId);
