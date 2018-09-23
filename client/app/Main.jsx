@@ -48,6 +48,8 @@ class App extends React.Component {
       locationWatchId: null,
       watchingLocation: false,
       selectedSpot: null, // Spot to show card of in base route
+      userAuthed: false, // Stores local state regarding if we're logged in or not
+      userAuthedName: '', // Username of the authed user
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -58,6 +60,7 @@ class App extends React.Component {
     this.hideSpotCard = this.hideSpotCard.bind(this);
     this.setSpotCard = this.setSpotCard.bind(this);
     this.setSnackbar = this.setSnackbar.bind(this);
+    this.checkUserAuth = this.checkUserAuth.bind(this);
   }
 
   componentDidMount() {
@@ -70,6 +73,8 @@ class App extends React.Component {
       console.log('fetching ajax spots');
       this.onFetchSpots(data.spots);
     });
+
+    this.checkUserAuth();
   }
 
   onFetchSpots(newSpots) {
@@ -145,6 +150,12 @@ class App extends React.Component {
     }
   }
 
+  checkUserAuth() {
+    sendAjax('GET', '/isUserAuthed', null, (data) => {
+      this.setState({ userAuthed: true, userAuthedName: data.account.username });
+    });
+  }
+
   hideSpotCard() {
     this.setState({ selectedSpot: null });
     if (history.location.pathname.includes('/spot/')) {
@@ -186,6 +197,8 @@ class App extends React.Component {
       watchingLocation,
       newSpotLocation,
       selectedSpot,
+      userAuthed,
+      userAuthedName,
     } = this.state;
     return (
       <ThemeProvider options={{
@@ -193,7 +206,7 @@ class App extends React.Component {
         secondary: '#d50000',
       }}
       >
-        <AppToolbar title={toolbarTitle} />
+        <AppToolbar title={toolbarTitle} userAuthed={userAuthed} username={userAuthedName} />
         <div className="appGrid">
           <Route render={({ location }) => {
             // Use default if animation vales are not provided by the Link
@@ -240,10 +253,13 @@ class App extends React.Component {
                             this.setState({ addingNewSpot: 0, toolbarTitle: 'Login' });
                           }}
                           />
-                          {selectedSpot !== null
-                          && <SpotCard spot={selectedSpot} />
-                          }
-                          <LoginWindow csrf={csrf} />
+                          <LoginWindow
+                            csrf={csrf}
+                            onLogin={() => {
+                              this.checkUserAuth();
+                              this.setSnackbar('Logged In');
+                            }}
+                          />
                         </React.Fragment>
                       )}
                     />

@@ -13,7 +13,7 @@ import HideAddSpot from './Transitions/HideAddSpot';
 import NoTransition from './Transitions/NoTransition';
 
 
-const AppToolbar = ({ title }) => {
+const AppToolbar = ({ title, userAuthed, username }) => {
   let titleElement;
   if (title === '') {
     titleElement = (
@@ -24,6 +24,21 @@ const AppToolbar = ({ title }) => {
     );
   } else {
     titleElement = <TopAppBarTitle>{title}</TopAppBarTitle>;
+  }
+
+  let toolbarMenu;
+  if (userAuthed) {
+    toolbarMenu = (
+      <React.Fragment>
+        <MenuItem style={{borderBottom: '1px solid #BBBBBB' }}>{username}</MenuItem>
+        <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
+        <MenuItem><a href="/logout">Log out</a></MenuItem>
+      </React.Fragment>
+    );
+  } else {
+    toolbarMenu = (
+      <MenuItem><Link to={{ pathname: '/login', state: NoTransition }}>Log-in / Sign-up</Link></MenuItem>
+    );
   }
   return (
     <TopAppBar fixed className="mdc-elevation--z4">
@@ -52,9 +67,7 @@ const AppToolbar = ({ title }) => {
             )}
           />
           <SimpleMenu handle={<TopAppBarActionItem use="account_circle" />}>
-            <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
-            <MenuItem><Link to={{ pathname: '/login', state: NoTransition }}>Log-in / Sign-up</Link></MenuItem>
-            <MenuItem><a href="/logout">Log out</a></MenuItem>
+            {toolbarMenu}
           </SimpleMenu>
         </TopAppBarSection>
       </TopAppBarRow>

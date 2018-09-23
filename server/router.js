@@ -16,6 +16,7 @@ const router = (app) => {
   app.post('/reviews', mid.requiresLogin, controllers.Review.addReview);
   app.get('/reviews', controllers.Review.getReviews);
   app.get('/getUsernameForId', mid.requiresLogin, controllers.Account.getUsernameForId);
+  app.get('/isUserAuthed', controllers.Account.isUserAuthed);
 };
 
 module.exports = router;

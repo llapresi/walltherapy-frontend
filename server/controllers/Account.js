@@ -142,10 +142,21 @@ const getUsernameForId = (request, response) => {
   });
 };
 
+const isUserAuthed = (request, response) => {
+  const req = request;
+  const res = response;
+
+  if (!req.session.account) {
+    return res.status(401).json({ message: 'user not currently authed' });
+  }
+  return res.json({ account: req.session.account });
+};
+
 module.exports.loginPage = loginPage;
 module.exports.logout = logout;
 module.exports.login = login;
 module.exports.signup = signup;
+module.exports.isUserAuthed = isUserAuthed;
 module.exports.changePassword = changePassword;
 module.exports.getToken = getToken;
 module.exports.getUsernameForId = getUsernameForId;

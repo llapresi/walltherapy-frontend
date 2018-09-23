@@ -40,27 +40,32 @@ class LoginWindow extends React.Component {
   }
 
   submitLogin() {
+    const { csrf, onLogin } = this.props;
     const username = this.usernameRef.current.value;
     const password = this.passwordRef.current.value;
-    console.log(`${username}, ${password}`);
+    const seralized = `username=${username}&pass=${password}&_csrf=${csrf}`;
+    // replace this Jquery with something else eventually
+    $.ajax({
+      cache: false,
+      type: 'POST',
+      url: '/login',
+      data: seralized,
+      dataType: 'json',
+      success: () => {
+        console.log('logged in I guess');
+        onLogin();
+      },
+      error: (xhr) => {
+        const messageObj = JSON.parse(xhr.responseText);
+        console.log(`Login Error: ${messageObj.error}`);
+      },
+    });
   }
 
   render() {
     const { csrf } = this.props;
     const { dialogOpen } = this.state;
     return (
-      // <Dialog
-      //   title="Login"
-      //   open={dialogOpen}
-      //   onClose={this.onDialogClose}
-      //   onAccept={this.submitLogin}
-      //   onCancel={this.onDialogClose}
-      // >
-      //   <div style={{ padding: '12px', display: 'flex', flexDirection: 'column' }}>
-      //     <TextField ref={this.usernameRef} label="Username" />
-      //     <TextField type="password" ref={this.passwordRef} label="Password" />
-      //   </div>
-      // </Dialog>
       <Dialog
         open={dialogOpen}
         onClose={this.onDialogClose}
@@ -72,10 +77,11 @@ class LoginWindow extends React.Component {
             <DialogHeaderTitle>Login</DialogHeaderTitle>
           </DialogHeader>
           <DialogBody>
-            <div style={{ padding: '12px', display: 'flex', flexDirection: 'column' }}>
-              <TextField ref={this.usernameRef} label="Username" />
-              <TextField type="password" ref={this.passwordRef} label="Password" />
-            </div>
+            <form id="loginForm" style={{ padding: '12px', display: 'flex', flexDirection: 'column' }}>
+              <TextField ref={this.usernameRef} id="user" name="username" label="Username" />
+              <TextField type="password" ref={this.passwordRef} name="pass" label="Password" />
+              <input type="hidden" name="_csrf" value={csrf} />
+            </form>
           </DialogBody>
           <DialogFooter>
             <DialogFooterButton cancel>Cancel</DialogFooterButton>
