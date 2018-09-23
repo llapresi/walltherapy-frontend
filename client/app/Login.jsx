@@ -10,6 +10,7 @@ import {
   DialogFooterButton,
   DialogBackdrop,
 } from 'rmwc/Dialog';
+import PropTypes from 'prop-types';
 import history from './History';
 import NoTransition from './Transitions/NoTransition';
 
@@ -25,22 +26,35 @@ class LoginWindow extends React.Component {
 
     this.onDialogClose = this.onDialogClose.bind(this);
     this.submitLogin = this.submitLogin.bind(this);
+    this.loginThenClose = this.loginThenClose.bind(this);
   }
 
   componentDidMount() {
     setTimeout(() => {
       this.setState({ dialogOpen: true });
-    }, 50);
+    }, 100);
   }
 
   onDialogClose() {
     this.setState({ dialogOpen: false }, () => {
-      history.push('/', { state: NoTransition });
+      setTimeout(() => {
+        console.log('going back');
+        history.goBack({ state: NoTransition });
+      }, 500);
     });
   }
 
-  submitLogin() {
-    const { csrf, onLogin } = this.props;
+  loginThenClose() {
+    this.submitLogin(() => {
+      this.setState({ dialogOpen: false }, () => {
+        console.log('going back');
+        history.goBack({ state: NoTransition });
+      });
+    });
+  }
+
+  submitLogin(callback) {
+    const { csrf, onLogin, onError } = this.props;
     const username = this.usernameRef.current.value;
     const password = this.passwordRef.current.value;
     const seralized = `username=${username}&pass=${password}&_csrf=${csrf}`;
@@ -54,10 +68,13 @@ class LoginWindow extends React.Component {
       success: () => {
         console.log('logged in I guess');
         onLogin();
+        if (callback) {
+          callback();
+        }
       },
       error: (xhr) => {
         const messageObj = JSON.parse(xhr.responseText);
-        console.log(`Login Error: ${messageObj.error}`);
+        onError(`Login Error: ${messageObj.error}`);
       },
     });
   }
@@ -77,16 +94,24 @@ class LoginWindow extends React.Component {
             <DialogHeaderTitle>Login</DialogHeaderTitle>
           </DialogHeader>
           <DialogBody>
-            <form id="loginForm" style={{ padding: '12px', display: 'flex', flexDirection: 'column' }}>
+            <form
+              id="loginForm"
+              style={{ padding: '12px', display: 'flex', flexDirection: 'column' }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                this.loginThenClose();
+              }}
+            >
               <TextField ref={this.usernameRef} id="user" name="username" label="Username" />
               <TextField type="password" ref={this.passwordRef} name="pass" label="Password" />
               <input type="hidden" name="_csrf" value={csrf} />
+              <input type="submit" style={{ display: 'none' }} />
             </form>
           </DialogBody>
           <DialogFooter>
             <DialogFooterButton cancel>Cancel</DialogFooterButton>
             <DialogFooterButton>Sign Up</DialogFooterButton>
-            <DialogFooterButton accept>Login</DialogFooterButton>
+            <DialogFooterButton onClick={this.loginThenClose}>Login</DialogFooterButton>
           </DialogFooter>
         </DialogSurface>
         <DialogBackdrop />
@@ -94,5 +119,11 @@ class LoginWindow extends React.Component {
     );
   }
 }
+
+LoginWindow.propTypes = {
+  csrf: PropTypes.string.isRequired,
+  onLogin: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+};
 
 export default LoginWindow;

@@ -3,6 +3,8 @@ import React from 'react';
 import { Fab } from 'rmwc/Fab';
 import { SimpleDialog } from 'rmwc/Dialog';
 import PropTypes from 'prop-types';
+import history from '../History';
+import NoTransition from '../Transitions/NoTransition';
 
 
 class Folder extends React.Component {
@@ -11,6 +13,16 @@ class Folder extends React.Component {
     this.state = {
       showContent: false,
     };
+    this.openReviewDialog = this.openReviewDialog.bind(this);
+  }
+
+  openReviewDialog() {
+    const { userAuthed } = this.props;
+    if (userAuthed) {
+      this.setState({ showContent: true });
+    } else {
+      history.push('/login', { state: NoTransition });
+    }
   }
 
   render() {
@@ -22,7 +34,7 @@ class Folder extends React.Component {
           icon="add"
           className="fab__review"
           label={folderName}
-          onClick={() => this.setState({ showContent: true })}
+          onClick={this.openReviewDialog}
         />
         <SimpleDialog
           title={folderName}

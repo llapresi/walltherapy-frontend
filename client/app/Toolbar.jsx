@@ -30,14 +30,14 @@ const AppToolbar = ({ title, userAuthed, username }) => {
   if (userAuthed) {
     toolbarMenu = (
       <React.Fragment>
-        <MenuItem style={{borderBottom: '1px solid #BBBBBB' }}>{username}</MenuItem>
-        <MenuItem><Link to="/profile"> Change Password</Link></MenuItem>
-        <MenuItem><a href="/logout">Log out</a></MenuItem>
+        <MenuItem style={{ borderBottom: '1px solid #BBBBBB' }}>{username}</MenuItem>
+        <Link to="/profile"><MenuItem>Change Password</MenuItem></Link>
+        <a href="/logout"><MenuItem>Log out</MenuItem></a>
       </React.Fragment>
     );
   } else {
     toolbarMenu = (
-      <MenuItem><Link to={{ pathname: '/login', state: NoTransition }}>Log-in / Sign-up</Link></MenuItem>
+      <Link to={{ pathname: '/login', state: NoTransition }}><MenuItem>Log-in / Sign-up</MenuItem></Link>
     );
   }
   return (
@@ -61,9 +61,9 @@ const AppToolbar = ({ title, userAuthed, username }) => {
             exact
             path="/"
             render={() => (
-              <TopAppBarActionItem>
-                <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">search</Link>
-              </TopAppBarActionItem>
+              <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">
+                <TopAppBarActionItem>search</TopAppBarActionItem>
+              </Link>
             )}
           />
           <SimpleMenu handle={<TopAppBarActionItem use="account_circle" />}>
@@ -76,6 +76,8 @@ const AppToolbar = ({ title, userAuthed, username }) => {
 };
 AppToolbar.propTypes = {
   title: PropTypes.string.isRequired,
+  userAuthed: PropTypes.bool.isRequired,
+  username: PropTypes.string.isRequired,
 };
 
 export default AppToolbar;

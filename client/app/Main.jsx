@@ -1,6 +1,4 @@
-// TODO: We need to refactor a bunch of stuff + clean up legacy callbacks
-// to stuff from the pre-material web components UI
-// Also, move toolbar to it's own file
+// TODO: We need to refactor a bunch of stuff
 
 import { hot } from 'react-hot-loader';
 import React from 'react';
@@ -24,6 +22,7 @@ import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
 import GeolocationFAB from './Widgets/GeolocationFab';
 import LoginWindow from './Login';
+import AuthRoute from './AuthRoute';
 
 const makePublicSpotsURL = (latlng = null) => {
   const maxDistanceKM = 6; // Width of rit
@@ -83,7 +82,6 @@ class App extends React.Component {
 
   onChange(e) {
     this.setState({ center: e.target.getCenter(), selectedSpot: null });
-    console.log(e.target.getBounds());
     this.stopWatchingGeolocation();
     this.updateSpots();
   }
@@ -259,6 +257,7 @@ class App extends React.Component {
                               this.checkUserAuth();
                               this.setSnackbar('Logged In');
                             }}
+                            onError={this.setSnackbar}
                           />
                         </React.Fragment>
                       )}
@@ -310,8 +309,9 @@ class App extends React.Component {
                       )}
                     />
 
-                    <Route
+                    <AuthRoute
                       path="/add"
+                      userAuthed={userAuthed}
                       render={() => (
                         <React.Fragment>
                           <RunOnMount func={() => {
