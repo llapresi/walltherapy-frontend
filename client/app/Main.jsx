@@ -22,6 +22,7 @@ import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
 import GeolocationFAB from './Widgets/GeolocationFab';
 import LoginWindow from './Login';
+import Logout from './Logout';
 import AuthRoute from './AuthRoute';
 
 const makePublicSpotsURL = (latlng = null) => {
@@ -133,6 +134,13 @@ class App extends React.Component {
 
   setNewSpotLocation(loc) {
     this.setState({ newSpotLocation: loc, addingNewSpot: 2 });
+  }
+
+  getCSRFToken() {
+    sendAjax('GET', '/getToken', null, (result) => {
+      console.log(result.csrfToken);
+      this.setState({ csrf: result.csrfToken });
+    });
   }
 
   setSpotCard(spot) {
@@ -262,6 +270,30 @@ class App extends React.Component {
                         </React.Fragment>
                       )}
                     />
+
+                    <Route
+                      exact
+                      path="/logout"
+                      render={() => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 0, toolbarTitle: '' });
+                          }}
+                          />
+                          <Logout
+                            onLogout={() => {
+                              this.setState({ userAuthed: false, userAuthedName: '' }, () => {
+                                this.setSnackbar('Logged Out');
+                                this.getCSRFToken();
+                                history.goBack();
+                              });
+                            }}
+                            onError={this.setSnackbar}
+                          />
+                        </React.Fragment>
+                      )}
+                    />
+
                     <Route
                       path="/search"
                       render={() => (

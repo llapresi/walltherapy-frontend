@@ -32,7 +32,7 @@ const AppToolbar = ({ title, userAuthed, username }) => {
       <React.Fragment>
         <MenuItem style={{ borderBottom: '1px solid #BBBBBB' }}>{username}</MenuItem>
         <Link to="/profile"><MenuItem>Change Password</MenuItem></Link>
-        <a href="/logout"><MenuItem>Log out</MenuItem></a>
+        <Link to="/logout"><MenuItem>Log out</MenuItem></Link>
       </React.Fragment>
     );
   } else {

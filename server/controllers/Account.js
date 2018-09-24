@@ -8,7 +8,7 @@ const loginPage = (req, res) => {
 
 const logout = (req, res) => {
   req.session.destroy();
-  res.redirect('/');
+  res.json({ status: 'logged out' });
 };
 
 const login = (request, response) => {
