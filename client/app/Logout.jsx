@@ -14,7 +14,7 @@ class Logout extends React.Component {
       },
       error: (xhr) => {
         const messageObj = JSON.parse(xhr.responseText);
-        onError(`Login Error: ${messageObj.error}`);
+        onError(`Logout Error: ${messageObj.error}`);
       },
     });
   }

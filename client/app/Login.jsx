@@ -4,12 +4,12 @@ import {
   Dialog,
   DialogSurface,
   DialogHeader,
-  DialogHeaderTitle,
   DialogBody,
   DialogFooter,
   DialogFooterButton,
   DialogBackdrop,
 } from 'rmwc/Dialog';
+import { TabBar, Tab } from 'rmwc/Tabs';
 import PropTypes from 'prop-types';
 import history from './History';
 import NoTransition from './Transitions/NoTransition';
@@ -19,10 +19,12 @@ class LoginWindow extends React.Component {
     super(props);
     this.state = {
       dialogOpen: false,
+      openTab: 0,
     };
 
     this.usernameRef = React.createRef();
     this.passwordRef = React.createRef();
+    this.password2Ref = React.createRef();
 
     this.onDialogClose = this.onDialogClose.bind(this);
     this.submitLogin = this.submitLogin.bind(this);
@@ -55,14 +57,22 @@ class LoginWindow extends React.Component {
 
   submitLogin(callback) {
     const { csrf, onLogin, onError } = this.props;
+    const { openTab } = this.state;
     const username = this.usernameRef.current.value;
     const password = this.passwordRef.current.value;
-    const seralized = `username=${username}&pass=${password}&_csrf=${csrf}`;
+    let seralized = `username=${username}&pass=${password}&_csrf=${csrf}`;
+    let formAction = '/login';
+
+    if (openTab === 1) {
+      const password2 = this.password2Ref.current.value;
+      formAction = '/signup';
+      seralized = `username=${username}&pass=${password}&pass2=${password2}&_csrf=${csrf}`;
+    }
     // replace this Jquery with something else eventually
     $.ajax({
       cache: false,
       type: 'POST',
-      url: '/login',
+      url: formAction,
       data: seralized,
       dataType: 'json',
       success: () => {
@@ -74,14 +84,18 @@ class LoginWindow extends React.Component {
       },
       error: (xhr) => {
         const messageObj = JSON.parse(xhr.responseText);
-        onError(`Login Error: ${messageObj.error}`);
+        let errorType = 'Login'
+        if (formAction === '/signup') {
+          errorType = 'Signup';
+        }
+        onError(`${errorType} Error: ${messageObj.error}`);
       },
     });
   }
 
   render() {
     const { csrf } = this.props;
-    const { dialogOpen } = this.state;
+    const { dialogOpen, openTab } = this.state;
     return (
       <Dialog
         open={dialogOpen}
@@ -90,7 +104,17 @@ class LoginWindow extends React.Component {
       >
         <DialogSurface>
           <DialogHeader>
-            <DialogHeaderTitle>Login</DialogHeaderTitle>
+            <TabBar
+              activeTabIndex={openTab}
+              onChange={(evt) => {
+                this.setState({ openTab: evt.detail.activeTabIndex });
+                console.log(evt.detail.activeTabIndex);
+              }}
+              style={{ width: '100%' }}
+            >
+              <Tab>Login</Tab>
+              <Tab>Sign-up</Tab>
+            </TabBar>
           </DialogHeader>
           <DialogBody>
             <form
@@ -103,13 +127,15 @@ class LoginWindow extends React.Component {
             >
               <TextField ref={this.usernameRef} id="user" name="username" label="Username" />
               <TextField type="password" ref={this.passwordRef} name="pass" label="Password" />
+              {openTab === 1
+              && <TextField type="password" ref={this.password2Ref} name="pass2" label="Confirm Password" />
+              }
               <input type="hidden" name="_csrf" value={csrf} />
               <input type="submit" style={{ display: 'none' }} />
             </form>
           </DialogBody>
           <DialogFooter>
             <DialogFooterButton cancel>Cancel</DialogFooterButton>
-            <DialogFooterButton>Sign Up</DialogFooterButton>
             <DialogFooterButton onClick={this.loginThenClose}>Login</DialogFooterButton>
           </DialogFooter>
         </DialogSurface>
