@@ -52,6 +52,7 @@ Folder.propTypes = {
   folderName: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
   acceptCallback: PropTypes.func.isRequired,
+  userAuthed: PropTypes.bool.isRequired,
 };
 
 export default Folder;

@@ -6,7 +6,7 @@ import { ReviewList } from './reviews';
 import ObjectPropTypes from './ObjectShapes';
 
 const SpotView = ({
-  spot, id, csrf, onReviewAdd, userAuthed
+  spot, id, csrf, onReviewAdd, userAuthed,
 }) => (
   <div className="spot_infobox desktop-400 horizontal__desktop">
     <div className="spotDescription">{spot.description}</div>
@@ -18,6 +18,7 @@ SpotView.propTypes = {
   id: PropTypes.string.isRequired,
   csrf: PropTypes.string.isRequired,
   onReviewAdd: PropTypes.func.isRequired,
+  userAuthed: PropTypes.bool.isRequired,
 };
 SpotView.defaultProps = {
   spot: {},
@@ -59,10 +60,18 @@ class SpotViewParent extends React.Component {
   }
 
   render() {
-    const { match, csrf, onReviewAdd, userAuthed } = this.props;
+    const {
+      match, csrf, onReviewAdd, userAuthed,
+    } = this.props;
     const { spot } = this.state;
     return (
-      <SpotView userAuthed={userAuthed} onReviewAdd={onReviewAdd} spot={spot} id={match.params.id} csrf={csrf} />
+      <SpotView
+        userAuthed={userAuthed}
+        onReviewAdd={onReviewAdd}
+        spot={spot}
+        id={match.params.id}
+        csrf={csrf}
+      />
     );
   }
 }
@@ -72,6 +81,7 @@ SpotViewParent.propTypes = {
   csrf: PropTypes.string.isRequired,
   onOpen: PropTypes.func.isRequired,
   onReviewAdd: PropTypes.func.isRequired,
+  userAuthed: PropTypes.bool.isRequired,
 };
 
 export default SpotViewParent;

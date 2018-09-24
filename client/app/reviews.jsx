@@ -97,4 +97,5 @@ ReviewList.propTypes = {
   spotId: PropTypes.string.isRequired,
   csrf: PropTypes.string.isRequired,
   onReviewAdd: PropTypes.func.isRequired,
+  userAuthed: PropTypes.bool.isRequired,
 };
