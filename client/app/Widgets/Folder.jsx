@@ -21,7 +21,7 @@ class Folder extends React.Component {
     if (userAuthed) {
       this.setState({ showContent: true });
     } else {
-      history.push('/login', { state: NoTransition });
+      history.push('/login', { NoTransition });
     }
   }
 

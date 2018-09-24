@@ -292,6 +292,7 @@ class App extends React.Component {
                                 this.updateSpots(true);
                               });
                             }}
+                            userAuthed={userAuthed}
                             onReviewAdd={this.setSnackbar}
                             {...props}
                           />

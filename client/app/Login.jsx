@@ -38,16 +38,16 @@ class LoginWindow extends React.Component {
   onDialogClose() {
     this.setState({ dialogOpen: false }, () => {
       setTimeout(() => {
-        console.log('going back');
+        console.log('onDialogClose going back');
         history.goBack({ state: NoTransition });
-      }, 500);
+      }, 100);
     });
   }
 
   loginThenClose() {
     this.submitLogin(() => {
       this.setState({ dialogOpen: false }, () => {
-        console.log('going back');
+        console.log('loginThenClose going back');
         history.goBack({ state: NoTransition });
       });
     });
@@ -87,7 +87,6 @@ class LoginWindow extends React.Component {
         open={dialogOpen}
         onClose={this.onDialogClose}
         onAccept={this.submitLogin}
-        onCancel={this.onDialogClose}
       >
         <DialogSurface>
           <DialogHeader>

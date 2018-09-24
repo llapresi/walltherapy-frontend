@@ -6,11 +6,11 @@ import { ReviewList } from './reviews';
 import ObjectPropTypes from './ObjectShapes';
 
 const SpotView = ({
-  spot, id, csrf, onReviewAdd,
+  spot, id, csrf, onReviewAdd, userAuthed
 }) => (
   <div className="spot_infobox desktop-400 horizontal__desktop">
     <div className="spotDescription">{spot.description}</div>
-    <ReviewList onReviewAdd={onReviewAdd} spotId={id} csrf={csrf} />
+    <ReviewList userAuthed={userAuthed} onReviewAdd={onReviewAdd} spotId={id} csrf={csrf} />
   </div>
 );
 SpotView.propTypes = {
@@ -59,10 +59,10 @@ class SpotViewParent extends React.Component {
   }
 
   render() {
-    const { match, csrf, onReviewAdd } = this.props;
+    const { match, csrf, onReviewAdd, userAuthed } = this.props;
     const { spot } = this.state;
     return (
-      <SpotView onReviewAdd={onReviewAdd} spot={spot} id={match.params.id} csrf={csrf} />
+      <SpotView userAuthed={userAuthed} onReviewAdd={onReviewAdd} spot={spot} id={match.params.id} csrf={csrf} />
     );
   }
 }

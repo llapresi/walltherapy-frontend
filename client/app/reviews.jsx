@@ -8,9 +8,9 @@ import Folder from './Widgets/Folder';
 import ReviewListItem from './ReviewListItem';
 
 
-export const ReviewForm = ({ submitAction, csrf, spotId }) => (
+export const ReviewForm = ({ csrf, spotId }) => (
   <div>
-    <form id="reviewForm" className="reviewForm" action="/reviews" method="POST" onSubmit={submitAction}>
+    <form id="reviewForm" className="reviewForm" action="/reviews" method="POST">
       <div className="reviewform-rating">
         <span>Rating:</span>
         <StarRatingComponent name="rating" starCount={5} emptyStarColor="rgba(0,0,0,.54)" />
@@ -22,7 +22,6 @@ export const ReviewForm = ({ submitAction, csrf, spotId }) => (
   </div>
 );
 ReviewForm.propTypes = {
-  submitAction: PropTypes.func.isRequired,
   csrf: PropTypes.string.isRequired,
   spotId: PropTypes.string.isRequired,
 };
@@ -74,11 +73,11 @@ export class ReviewList extends React.Component {
     const {
       reviewListAnim, reviews,
     } = this.state;
-    const { spotId, csrf } = this.props;
+    const { spotId, csrf, userAuthed } = this.props;
     return (
       <React.Fragment>
         <h3 className="reviews-header">Reviews:</h3>
-        <Folder folderName="Add Review" acceptCallback={this.submitReview}>
+        <Folder folderName="Add Review" acceptCallback={this.submitReview} userAuthed={userAuthed}>
           <ReviewForm spotId={spotId} csrf={csrf} />
         </Folder>
         <div className="review_section">
