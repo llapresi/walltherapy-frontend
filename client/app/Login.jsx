@@ -84,7 +84,7 @@ class LoginWindow extends React.Component {
       },
       error: (xhr) => {
         const messageObj = JSON.parse(xhr.responseText);
-        let errorType = 'Login'
+        let errorType = 'Login';
         if (formAction === '/signup') {
           errorType = 'Signup';
         }
