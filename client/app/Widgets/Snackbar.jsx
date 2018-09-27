@@ -25,7 +25,7 @@ class Snackbar extends React.Component {
       this.setState({ showSnackbar: false }, () => {
         setTimeout(() => {
           this.setSnackbar(message);
-        }, 200);
+        }, 600);
       });
     }
   }

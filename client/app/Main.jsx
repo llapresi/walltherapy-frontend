@@ -59,6 +59,7 @@ class App extends React.Component {
     this.setSpotCard = this.setSpotCard.bind(this);
     this.setSnackbar = this.setSnackbar.bind(this);
     this.checkUserAuth = this.checkUserAuth.bind(this);
+    this.getUserGeolocation = this.getUserGeolocation.bind(this);
     this.snackbar = React.createRef();
   }
 
@@ -405,7 +406,7 @@ class App extends React.Component {
                     <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab className="skatespot-map__fab" icon="add_location" /></Link>
                     <GeolocationFAB
                       watchingLocation={watchingLocation}
-                      onClick={() => this.getUserGeolocation()}
+                      onClick={this.getUserGeolocation}
                     />
                   </React.Fragment>
                 )}
@@ -419,7 +420,7 @@ class App extends React.Component {
                     <GeolocationFAB
                       exited
                       watchingLocation={watchingLocation}
-                      onClick={() => this.getUserGeolocation()}
+                      onClick={this.getUserGeolocation}
                     />
                   </React.Fragment>
                 )}
