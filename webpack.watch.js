@@ -1,5 +1,4 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
   plugins: [
@@ -7,7 +6,6 @@ module.exports = {
       title: 'skatespot.io',
       template: 'client/helper/template.html',
     }),
-    new BundleAnalyzerPlugin(),
   ],
   entry: [
     './client/app/App.jsx',
@@ -39,6 +37,6 @@ module.exports = {
       context: ['/**', '!/bundle.js', '!/index.html', '!/style.css'],
       target: 'http://localhost:3000',
     }],
-    contentBase: '/assets/',
+    contentBase: '/app/',
   },
 };

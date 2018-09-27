@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
@@ -19,6 +20,7 @@ module.exports = {
       title: 'skatespot.io',
       template: 'client/helper/template.html',
     }),
+    new GenerateSW(),
   ],
   entry: [
     './client/app/App.jsx',
@@ -58,6 +60,6 @@ module.exports = {
       context: ['/**', '!/bundle.js'],
       target: 'http://localhost:3000',
     }],
-    contentBase: '/assets/',
+    contentBase: '/app/',
   },
 };
