@@ -42,15 +42,12 @@ class App extends React.Component {
       spots: [], // New main spot list, have skatespotlist send state to this
       addingNewSpot: 0, // 0 = not adding spot, 1 = current center, 2 = spot location set
       csrf: '',
-      showSnackbar: false,
-      snackbarMessage: '',
       toolbarTitle: '',
       locationWatchId: null,
       watchingLocation: false,
       selectedSpot: null, // Spot to show card of in base route
       userAuthed: false, // Stores local state regarding if we're logged in or not
       userAuthedName: '', // Username of the authed user
-      snackbarTimerID: undefined,
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -62,6 +59,7 @@ class App extends React.Component {
     this.setSpotCard = this.setSpotCard.bind(this);
     this.setSnackbar = this.setSnackbar.bind(this);
     this.checkUserAuth = this.checkUserAuth.bind(this);
+    this.snackbar = React.createRef();
   }
 
   componentDidMount() {
@@ -98,24 +96,7 @@ class App extends React.Component {
   }
 
   setSnackbar(message) {
-    const { showSnackbar, snackbarTimerID } = this.state;
-    if (showSnackbar === false) {
-      console.log('snackbar not up');
-      this.setState({ showSnackbar: true, snackbarMessage: message }, () => {
-        const newTimerID = setTimeout(() => {
-          this.setState({ showSnackbar: false });
-        }, 2000);
-        this.setState({ snackbarTimerID: newTimerID });
-      });
-    } else {
-      console.log('snackbar is up');
-      clearTimeout(snackbarTimerID);
-      this.setState({ showSnackbar: false }, () => {
-        setTimeout(() => {
-          this.setSnackbar(message);
-        }, 200);
-      });
-    }
+    this.snackbar.current.setSnackbar(message);
   }
 
   getUserGeolocation() {
@@ -215,8 +196,6 @@ class App extends React.Component {
       spots,
       addingNewSpot,
       csrf,
-      showSnackbar,
-      snackbarMessage,
       toolbarTitle,
       watchingLocation,
       newSpotLocation,
@@ -448,7 +427,7 @@ class App extends React.Component {
             </Switch>
           </div>
         </div>
-        <NewSnackbar message={snackbarMessage} show={showSnackbar} />
+        <NewSnackbar ref={this.snackbar} />
       </ThemeProvider>
     );
   }

@@ -1,20 +1,53 @@
 import React from 'react';
 
-const NewSnackbar = ({message, show}) => {
-  let style = 'mdc-snackbar';
-  if (show === true) {
-    style = `${style} mdc-snackbar--active`;
+class NewSnackbar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showSnackbar: false,
+      message: '',
+      timerID: undefined,
+    };
+    this.setSnackbar = this.setSnackbar.bind(this);
   }
-  return (
-    <div
-      className={style}
-      aria-live="assertive"
-      aria-atomic="true"
-      aria-hidden="true"
-    >
-      <div className="mdc-snackbar__text">{message}</div>
-    </div>
-  );
+
+  setSnackbar(message) {
+    const { showSnackbar, timerID } = this.state;
+    if (showSnackbar === false) {
+      this.setState({ showSnackbar: true, message }, () => {
+        const newTimerID = setTimeout(() => {
+          this.setState({ showSnackbar: false });
+        }, 2000);
+        this.setState({ timerID: newTimerID });
+      });
+    } else {
+      clearTimeout(timerID);
+      this.setState({ showSnackbar: false }, () => {
+        setTimeout(() => {
+          this.setSnackbar(message);
+        }, 200);
+      });
+    }
+  }
+
+  render() {
+    const { message, showSnackbar } = this.state;
+
+    let style = 'mdc-snackbar';
+    if (showSnackbar === true) {
+      style = `${style} mdc-snackbar--active`;
+    }
+    return (
+      <div
+        className={style}
+        aria-live="assertive"
+        aria-atomic="true"
+        aria-hidden="true"
+      >
+        <div className="mdc-snackbar__text">{message}</div>
+      </div>
+    );
+  }
 }
 
 export default NewSnackbar;
