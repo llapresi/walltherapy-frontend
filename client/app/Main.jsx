@@ -23,7 +23,7 @@ import GeolocationFAB from './Widgets/GeolocationFab';
 import LoginWindow from './Login';
 import Logout from './Logout';
 import AuthRoute from './AuthRoute';
-import NewSnackbar from './Widgets/NewSnackbar';
+import Snackbar from './Widgets/Snackbar';
 
 const makePublicSpotsURL = (latlng = null) => {
   const maxDistanceKM = 6; // Width of rit
@@ -427,7 +427,7 @@ class App extends React.Component {
             </Switch>
           </div>
         </div>
-        <NewSnackbar ref={this.snackbar} />
+        <Snackbar ref={this.snackbar} />
       </ThemeProvider>
     );
   }
