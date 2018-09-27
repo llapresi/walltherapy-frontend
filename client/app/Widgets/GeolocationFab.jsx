@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fab } from 'rmwc';
+import { Fab } from '@rmwc/fab';
 import PropTypes from 'prop-types';
 
 const GeolocationFAB = ({ exited, watchingLocation, onClick }) => {

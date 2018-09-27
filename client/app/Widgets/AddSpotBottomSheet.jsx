@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'rmwc/Button';
-import { Typography } from 'rmwc/Typography';
+import { Button } from '@rmwc/button';
+import { Typography } from '@rmwc/typography';
 import PropTypes from 'prop-types';
 
 const AddSpotBottomSheet = ({ callback }) => (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleMenu, MenuItem } from 'rmwc/Menu';
+import { SimpleMenuSurface, MenuItem } from '@rmwc/menu';
 import { Switch, Route, Link } from 'react-router-dom';
 import {
   TopAppBar,
@@ -7,11 +7,10 @@ import {
   TopAppBarSection,
   TopAppBarActionItem,
   TopAppBarTitle,
-} from 'rmwc/TopAppBar';
+} from '@rmwc/top-app-bar';
 import PropTypes from 'prop-types';
 import HideAddSpot from './Transitions/HideAddSpot';
 import NoTransition from './Transitions/NoTransition';
-
 
 const AppToolbar = ({ title, userAuthed, username }) => {
   let titleElement;
@@ -31,13 +30,15 @@ const AppToolbar = ({ title, userAuthed, username }) => {
     toolbarMenu = (
       <React.Fragment>
         <MenuItem style={{ borderBottom: '1px solid #BBBBBB' }}>{username}</MenuItem>
-        <Link to="/profile"><MenuItem>Change Password</MenuItem></Link>
-        <Link to="/logout"><MenuItem>Log out</MenuItem></Link>
+        <MenuItem><Link to="/profile">Change Password</Link></MenuItem>
+        <MenuItem><Link to="/logout">Log out</Link></MenuItem>
       </React.Fragment>
     );
   } else {
     toolbarMenu = (
-      <Link to={{ pathname: '/login', state: NoTransition }}><MenuItem>Log-in / Sign-up</MenuItem></Link>
+      <MenuItem>
+        <Link to={{ pathname: '/login', state: NoTransition }}>Log-in / Sign-up</Link>
+      </MenuItem>
     );
   }
   return (
@@ -49,7 +50,7 @@ const AppToolbar = ({ title, userAuthed, username }) => {
               path="/(spot|profile|add|search|login)/"
               render={() => (
                 <Link to={{ pathname: '/', state: HideAddSpot }} className="remove-link-styling">
-                  <TopAppBarActionItem use="arrow_back" />
+                  <TopAppBarActionItem icon="arrow_back" />
                 </Link>
               )}
             />
@@ -62,13 +63,13 @@ const AppToolbar = ({ title, userAuthed, username }) => {
             path="/"
             render={() => (
               <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">
-                <TopAppBarActionItem>search</TopAppBarActionItem>
+                <TopAppBarActionItem icon="search" />
               </Link>
             )}
           />
-          <SimpleMenu handle={<TopAppBarActionItem use="account_circle" />}>
+          <SimpleMenuSurface style={{ width: '10rem' }} handle={<TopAppBarActionItem icon="account_circle" />}>
             {toolbarMenu}
-          </SimpleMenu>
+          </SimpleMenuSurface>
         </TopAppBarSection>
       </TopAppBarRow>
     </TopAppBar>

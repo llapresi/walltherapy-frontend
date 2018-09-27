@@ -1,4 +1,14 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
 module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'skatespot.io',
+      template: 'client/helper/template.html',
+    }),
+    new BundleAnalyzerPlugin(),
+  ],
   entry: [
     './client/app/App.jsx',
   ],
@@ -19,14 +29,14 @@ module.exports = {
     extensions: ['*', '.js', '.jsx', '.css'],
   },
   output: {
-    path: `${__dirname}/hosted`,
-    publicPath: '/assets/',
+    path: `${__dirname}/dist`,
+    publicPath: '/app',
     filename: 'bundle.js',
   },
   devServer: {
-    publicPath: '/assets/',
+    publicPath: '/app',
     proxy: [{
-      context: ['/**', '!/assets/bundle.js'],
+      context: ['/**', '!/bundle.js', '!/index.html', '!/style.css'],
       target: 'http://localhost:3000',
     }],
     contentBase: '/assets/',

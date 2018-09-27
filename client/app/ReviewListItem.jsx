@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleListItem } from 'rmwc/List';
+import { SimpleListItem } from '@rmwc/list';
 import ObjectPropTypes from './ObjectShapes';
 
 export default class ReviewListItem extends React.Component {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField } from 'rmwc/TextField';
+import { TextField } from '@rmwc/textfield';
 import {
   Dialog,
   DialogSurface,
@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogFooterButton,
   DialogBackdrop,
-} from 'rmwc/Dialog';
-import { TabBar, Tab } from 'rmwc/Tabs';
+} from '@rmwc/dialog';
+import { TabBar, Tab } from '@rmwc/tabs';
 import PropTypes from 'prop-types';
 import history from './History';
 import NoTransition from './Transitions/NoTransition';
@@ -106,7 +106,7 @@ class LoginWindow extends React.Component {
           <DialogHeader>
             <TabBar
               activeTabIndex={openTab}
-              onChange={(evt) => {
+              onActivate={(evt) => {
                 this.setState({ openTab: evt.detail.activeTabIndex });
                 console.log(evt.detail.activeTabIndex);
               }}

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button } from 'rmwc/Button';
-import { TextField } from 'rmwc/TextField';
-import { Snackbar } from 'rmwc/Snackbar';
+import { Button } from '@rmwc/button';
+import { TextField } from '@rmwc/textfield';
+import { Snackbar } from '@rmwc/snackbar';
 import PropTypes from 'prop-types';
 import history from './History';
 import AddSpotBottomSheet from './Widgets/AddSpotBottomSheet';

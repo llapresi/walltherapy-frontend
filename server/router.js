@@ -1,3 +1,4 @@
+const path = require('path');
 const controllers = require('./controllers');
 const mid = require('./middleware');
 
@@ -10,7 +11,9 @@ const router = (app) => {
   app.post('/changePassword', mid.requiresLogin, mid.requiresSecure,
     controllers.Account.changePassword);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
-  app.get('/app*', mid.requiresSecure, controllers.App.appPage);
+  app.get('/app/*', mid.requiresSecure, (req, res) => {
+    res.sendFile(path.join(`${__dirname}/../dist/index.html`));
+  });
   app.get('/', mid.requiresSecure, mid.requiresLogout, (req, res) => {
     res.redirect('/app');
   });

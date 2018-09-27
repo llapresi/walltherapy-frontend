@@ -166,9 +166,14 @@ html,body {
     padding-top: 14px;
     padding-bottom: 14px;
 }
-.review-list-item.review-list-item__active > * {
-   overflow: visible !important;
-   white-space: normal  !important;
+
+.review-list-item__active > .mdc-list-item__text {
+    white-space: normal !important;
+}
+
+ .review-list-item__active > .mdc-list-item__text > .mdc-list-item__primary-text {
+    text-overflow: unset;
+    white-space: normal !important;
 }
 
 /* Map Marker */

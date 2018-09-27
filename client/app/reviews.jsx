@@ -1,6 +1,6 @@
 import React from 'react';
-import { List } from 'rmwc/List';
-import { TextField } from 'rmwc/TextField';
+import { List } from '@rmwc/list';
+import { TextField } from '@rmwc/textfield';
 import StarRatingComponent from 'react-star-rating-component';
 import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'prop-types';

@@ -1,4 +1,4 @@
 /hosted
+/dist
 /node_modules
 /client/helper
-/client/login

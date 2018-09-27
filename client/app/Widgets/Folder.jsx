@@ -1,7 +1,7 @@
 // This isn't actually a folder anymore, just a self-contained class for a dialog
 import React from 'react';
-import { Fab } from 'rmwc/Fab';
-import { SimpleDialog } from 'rmwc/Dialog';
+import { Fab } from '@rmwc/fab';
+import { SimpleDialog } from '@rmwc/dialog';
 import PropTypes from 'prop-types';
 import history from '../History';
 import NoTransition from '../Transitions/NoTransition';

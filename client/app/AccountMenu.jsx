@@ -1,5 +1,5 @@
 import React from 'react';
-import { Snackbar } from 'rmwc/Snackbar';
+import { Snackbar } from '@rmwc/snackbar';
 import PropTypes from 'prop-types';
 import ChangePasswordForm from './Widgets/ChangePasswordForm';
 

@@ -2,9 +2,9 @@
 
 import { hot } from 'react-hot-loader';
 import React from 'react';
-import { Fab } from 'rmwc/Fab';
+import { Fab } from '@rmwc/fab';
 import { Route, Link, Switch } from 'react-router-dom';
-import { ThemeProvider } from 'rmwc/Theme';
+import { ThemeProvider } from '@rmwc/theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
 import SpotSearchParent from './Search';

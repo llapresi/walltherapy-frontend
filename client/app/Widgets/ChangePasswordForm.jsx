@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button } from 'rmwc/Button';
-import { TextField } from 'rmwc/TextField';
-import { Typography } from 'rmwc/Typography';
+import { Button } from '@rmwc/button';
+import { TextField } from '@rmwc/textfield';
+import { Typography } from '@rmwc/typography';
 import PropTypes from 'prop-types';
 
 class ChangePasswordForm extends React.Component {

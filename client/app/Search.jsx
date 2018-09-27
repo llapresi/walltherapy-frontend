@@ -1,8 +1,8 @@
 import React from 'react';
-import { List, SimpleListItem } from 'rmwc/List';
+import { List, SimpleListItem } from '@rmwc/list';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { TextField } from 'rmwc/TextField';
+import { TextField } from '@rmwc/textfield';
 import { sendAjax } from '../helper/helper';
 
 const makePublicSpotsURL = (name = '', latlng = null) => {
@@ -59,7 +59,7 @@ const SpotSearch = ({ spots }) => (
         descriptionAppend += 'Sponsored: ';
       }
       return (
-        <Link className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
+        <Link key={spot._id} className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
           <SimpleListItem className={classNameString} text={spot.name} secondaryText={descriptionAppend + spot.description} meta="info" />
         </Link>
       );

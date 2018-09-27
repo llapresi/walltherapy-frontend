@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Card,
   CardPrimaryAction,
-} from 'rmwc/Card';
-import { Typography } from 'rmwc/Typography';
+} from '@rmwc/card';
+import { Typography } from '@rmwc/typography';
 import ObjectPropTypes from '../ObjectShapes';
 import history from '../History';
 
