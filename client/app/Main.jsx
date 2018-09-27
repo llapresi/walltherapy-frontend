@@ -3,7 +3,6 @@
 import { hot } from 'react-hot-loader';
 import React from 'react';
 import { Fab } from 'rmwc/Fab';
-import { Snackbar } from 'rmwc/Snackbar';
 import { Route, Link, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'rmwc/Theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -24,6 +23,7 @@ import GeolocationFAB from './Widgets/GeolocationFab';
 import LoginWindow from './Login';
 import Logout from './Logout';
 import AuthRoute from './AuthRoute';
+import NewSnackbar from './Widgets/NewSnackbar';
 
 const makePublicSpotsURL = (latlng = null) => {
   const maxDistanceKM = 6; // Width of rit
@@ -50,6 +50,7 @@ class App extends React.Component {
       selectedSpot: null, // Spot to show card of in base route
       userAuthed: false, // Stores local state regarding if we're logged in or not
       userAuthedName: '', // Username of the authed user
+      snackbarTimerID: undefined,
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -97,7 +98,24 @@ class App extends React.Component {
   }
 
   setSnackbar(message) {
-    this.setState({ showSnackbar: true, snackbarMessage: message });
+    const { showSnackbar, snackbarTimerID } = this.state;
+    if (showSnackbar === false) {
+      console.log('snackbar not up');
+      this.setState({ showSnackbar: true, snackbarMessage: message }, () => {
+        const newTimerID = setTimeout(() => {
+          this.setState({ showSnackbar: false });
+        }, 2000);
+        this.setState({ snackbarTimerID: newTimerID });
+      });
+    } else {
+      console.log('snackbar is up');
+      clearTimeout(snackbarTimerID);
+      this.setState({ showSnackbar: false }, () => {
+        setTimeout(() => {
+          this.setSnackbar(message);
+        }, 200);
+      });
+    }
   }
 
   getUserGeolocation() {
@@ -430,12 +448,7 @@ class App extends React.Component {
             </Switch>
           </div>
         </div>
-        <Snackbar
-          show={showSnackbar}
-          onShow={() => this.setState({ showSnackbar: false })}
-          message={snackbarMessage}
-          timeout={3000}
-        />
+        <NewSnackbar message={snackbarMessage} show={showSnackbar} />
       </ThemeProvider>
     );
   }

@@ -9,10 +9,9 @@
   "main": "./server/app.js",
   "scripts": {
     "buildAppBundle": "webpack --mode production",
+    "watchAppBundle": "webpack-dev-server --hot --mode development",
     "build": "npm run buildAppBundle",
     "postinstall": "npm run buildAppBundle",
-    "watchAppBundle": "webpack-dev-server --hot --mode development",
-    "watchLoginBundle": "webpack --config login.config.js --watch --mode development --info-verbosity verbose",
     "nodemon": "nodemon --watch ./server ./server/app.js",
     "start": "node ./server/app.js",
     "dev": "start npm run watchAppBundle && start npm run nodemon",
