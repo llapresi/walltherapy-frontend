@@ -1,7 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin'); //installed via npm
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
