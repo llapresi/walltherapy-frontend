@@ -96,6 +96,10 @@ class LoginWindow extends React.Component {
   render() {
     const { csrf } = this.props;
     const { dialogOpen, openTab } = this.state;
+    let submitButtonLabel = "Log-In";
+    if (openTab === 1) {
+      submitButtonLabel = "Sign-Up";
+    }
     return (
       <Dialog
         open={dialogOpen}
@@ -107,8 +111,8 @@ class LoginWindow extends React.Component {
             <TabBar
               activeTabIndex={openTab}
               onActivate={(evt) => {
-                this.setState({ openTab: evt.detail.activeTabIndex });
-                console.log(evt.detail.activeTabIndex);
+                this.setState({ openTab: evt.detail.index });
+                console.log(evt.detail);
               }}
               style={{ width: '100%' }}
             >
@@ -136,7 +140,7 @@ class LoginWindow extends React.Component {
           </DialogBody>
           <DialogFooter>
             <DialogFooterButton cancel>Cancel</DialogFooterButton>
-            <DialogFooterButton onClick={this.loginThenClose}>Login</DialogFooterButton>
+            <DialogFooterButton onClick={this.loginThenClose}>{submitButtonLabel}</DialogFooterButton>
           </DialogFooter>
         </DialogSurface>
         <DialogBackdrop />

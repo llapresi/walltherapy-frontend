@@ -34,9 +34,10 @@ module.exports = {
   devServer: {
     publicPath: '/app',
     proxy: [{
-      context: ['/**', '!/bundle.js', '!/index.html', '!/style.css'],
+      context: ['/**', '!/app', '!/app/**'],
       target: 'http://localhost:3000',
     }],
+    historyApiFallback: { index: '/app' },
     contentBase: '/app/',
   },
 };
