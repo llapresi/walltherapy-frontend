@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import {
   TopAppBar,
   TopAppBarRow,
@@ -8,8 +8,8 @@ import {
   TopAppBarTitle,
 } from '@rmwc/top-app-bar';
 import PropTypes from 'prop-types';
-import HideAddSpot from './Transitions/HideAddSpot';
-import ToolbarMenuParent from './Widgets/ToolbarMenu';
+import ToolbarMenuParent from './Widgets/Toolbar/ToolbarMenu';
+import ToolbarBackButton from './Widgets/Toolbar/ToolbarBackButton';
 
 const AppToolbar = ({ title, userAuthed, username }) => {
   let titleElement;
@@ -28,16 +28,7 @@ const AppToolbar = ({ title, userAuthed, username }) => {
     <TopAppBar fixed className="mdc-elevation--z4">
       <TopAppBarRow>
         <TopAppBarSection alignStart>
-          <Switch>
-            <Route
-              path="/(spot|profile|add|search|login)/"
-              render={() => (
-                <Link to={{ pathname: '/', state: HideAddSpot }} className="remove-link-styling">
-                  <TopAppBarActionItem icon="arrow_back" />
-                </Link>
-              )}
-            />
-          </Switch>
+          <ToolbarBackButton />
           {titleElement}
         </TopAppBarSection>
         <TopAppBarSection alignEnd>

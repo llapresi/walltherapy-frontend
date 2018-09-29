@@ -6,7 +6,7 @@ import {
   TopAppBarActionItem,
 } from '@rmwc/top-app-bar';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import NoTransition from '../Transitions/NoTransition';
+import NoTransition from '../../Transitions/NoTransition';
 
 class ToolbarMenuParent extends React.Component {
   constructor(props) {
@@ -101,7 +101,10 @@ const ToolbarLink = ({ to, children }) => (
 );
 
 ToolbarLink.propTypes = {
-  to: ReactRouterPropTypes.location.isRequired,
+  to: PropTypes.oneOfType([
+    ReactRouterPropTypes.location,
+    PropTypes.string,
+  ]).isRequired,
   children: PropTypes.node.isRequired,
 };
 
