@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const fs = require('fs');
 
 module.exports = {
   plugins: [
@@ -21,6 +22,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'skatespot.io',
       template: 'client/helper/template.html',
+      inline: fs.readFileSync('client/helper/serviceWorkerBody.js', 'utf8'),
     }),
     new GenerateSW(),
   ],

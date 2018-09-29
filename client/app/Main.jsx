@@ -157,7 +157,9 @@ class App extends React.Component {
 
   checkUserAuth() {
     sendAjax('GET', '/isUserAuthed', null, (data) => {
-      this.setState({ userAuthed: true, userAuthedName: data.account.username });
+      if (data.account !== undefined) {
+        this.setState({ userAuthed: true, userAuthedName: data.account.username });
+      }
     });
   }
 

@@ -147,7 +147,7 @@ const isUserAuthed = (request, response) => {
   const res = response;
 
   if (!req.session.account) {
-    return res.status(401).json({ message: 'user not currently authed' });
+    return res.json({ message: 'user not currently authed' });
   }
   return res.json({ account: req.session.account });
 };
