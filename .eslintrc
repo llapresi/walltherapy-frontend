@@ -4,6 +4,6 @@
     "no-underscore-dangle" : "off",
     "no-plusplus": "off",
     "linebreak-style": 0,
-    "import/no-extraneous-dependencies": false
+    "import/no-extraneous-dependencies": 0
   }
 }

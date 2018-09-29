@@ -1,5 +1,4 @@
 import React from 'react';
-import { SimpleMenuSurface, MenuItem } from '@rmwc/menu';
 import { Switch, Route, Link } from 'react-router-dom';
 import {
   TopAppBar,
@@ -10,7 +9,7 @@ import {
 } from '@rmwc/top-app-bar';
 import PropTypes from 'prop-types';
 import HideAddSpot from './Transitions/HideAddSpot';
-import NoTransition from './Transitions/NoTransition';
+import ToolbarMenuParent from './Widgets/ToolbarMenu';
 
 const AppToolbar = ({ title, userAuthed, username }) => {
   let titleElement;
@@ -25,22 +24,6 @@ const AppToolbar = ({ title, userAuthed, username }) => {
     titleElement = <TopAppBarTitle>{title}</TopAppBarTitle>;
   }
 
-  let toolbarMenu;
-  if (userAuthed) {
-    toolbarMenu = (
-      <React.Fragment>
-        <MenuItem style={{ borderBottom: '1px solid #BBBBBB' }}>{username}</MenuItem>
-        <MenuItem><Link to="/profile">Change Password</Link></MenuItem>
-        <MenuItem><Link to="/logout">Log out</Link></MenuItem>
-      </React.Fragment>
-    );
-  } else {
-    toolbarMenu = (
-      <MenuItem>
-        <Link to={{ pathname: '/login', state: NoTransition }}>Log-in / Sign-up</Link>
-      </MenuItem>
-    );
-  }
   return (
     <TopAppBar fixed className="mdc-elevation--z4">
       <TopAppBarRow>
@@ -67,9 +50,7 @@ const AppToolbar = ({ title, userAuthed, username }) => {
               </Link>
             )}
           />
-          <SimpleMenuSurface style={{ width: '10rem' }} handle={<TopAppBarActionItem icon="account_circle" />}>
-            {toolbarMenu}
-          </SimpleMenuSurface>
+          <ToolbarMenuParent userAuthed={userAuthed} username={username} />
         </TopAppBarSection>
       </TopAppBarRow>
     </TopAppBar>

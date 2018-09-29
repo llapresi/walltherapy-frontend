@@ -2,8 +2,7 @@
 
 import { hot } from 'react-hot-loader';
 import React from 'react';
-import { Fab } from '@rmwc/fab';
-import { Route, Link, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@rmwc/theme';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Map, TileLayer, AttributionControl } from 'react-leaflet';
@@ -19,11 +18,11 @@ import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
 import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
-import GeolocationFAB from './Widgets/GeolocationFab';
 import LoginWindow from './Login';
 import Logout from './Logout';
 import AuthRoute from './AuthRoute';
 import Snackbar from './Widgets/Snackbar';
+import MapFABs from './Widgets/MapFABs';
 
 const makePublicSpotsURL = (latlng = null) => {
   const maxDistanceKM = 6; // Width of rit
@@ -397,35 +396,11 @@ class App extends React.Component {
               && <AddSpotMarker position={[newSpotLocation.lat, newSpotLocation.lng]} />
               }
             </Map>
-            <Switch>
-              <Route
-                exact
-                path="/"
-                render={() => (
-                  <React.Fragment>
-                    <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab className="skatespot-map__fab" icon="add_location" /></Link>
-                    <GeolocationFAB
-                      watchingLocation={watchingLocation}
-                      onClick={this.getUserGeolocation}
-                    />
-                  </React.Fragment>
-                )}
-              />
-              <Route
-                exact
-                path="/*"
-                render={() => (
-                  <React.Fragment>
-                    <Link to={{ pathname: '/add', state: ShowAddSpotBottomBar }}><Fab exited className="skatespot-map__fab" icon="add_location" /></Link>
-                    <GeolocationFAB
-                      exited
-                      watchingLocation={watchingLocation}
-                      onClick={this.getUserGeolocation}
-                    />
-                  </React.Fragment>
-                )}
-              />
-            </Switch>
+            <MapFABs
+              ShowAddSpotBottomBar={ShowAddSpotBottomBar}
+              watchingLocation={watchingLocation}
+              getUserGeolocation={this.getUserGeolocation}
+            />
           </div>
         </div>
         <Snackbar ref={this.snackbar} />

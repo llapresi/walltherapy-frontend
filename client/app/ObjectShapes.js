@@ -17,6 +17,10 @@ const ObjectPropTypes = {
     reviewText: PropTypes.string,
     spot: PropTypes.string,
   }),
+  Transition: PropTypes.shape({
+    transition: PropTypes.string,
+    duration: PropTypes.number,
+  }),
 };
 
 export default ObjectPropTypes;
