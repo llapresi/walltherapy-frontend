@@ -1,9 +1,12 @@
 import React from 'react';
 import { List, SimpleListItem } from '@rmwc/list';
 import { Link } from 'react-router-dom';
+import { IconButton } from '@rmwc/icon-button';
 import PropTypes from 'prop-types';
-import { TextField } from '@rmwc/textfield';
+import { TextField, TextFieldIcon } from '@rmwc/textfield';
 import { sendAjax } from '../helper/helper';
+import HideAddSpot from './Transitions/HideAddSpot';
+import history from './History';
 
 const makePublicSpotsURL = (name = '', latlng = null) => {
   const maxDistanceKm = 6;
@@ -42,7 +45,20 @@ class SpotSearchParent extends React.Component {
     const { spots } = this.state;
     return (
       <div className="skateSpotListParent desktop-400 horizontal__desktop">
-        <TextField className="newSearchBar" onChange={this.updateSpotList} label="Search" box withLeadingIcon="search" />
+        <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#f2f2f2' }}>
+          <TextField
+            className="newSearchBar"
+            onChange={this.updateSpotList}
+            label="Search"
+            withLeadingIcon={(
+              <TextFieldIcon
+                tabIndex="0"
+                icon="arrow_back"
+                onClick={() => history.push('/', { HideAddSpot })}
+              />
+            )}
+          />
+        </div>
         <SpotSearch spots={spots} />
       </div>
     );

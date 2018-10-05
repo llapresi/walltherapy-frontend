@@ -63,6 +63,19 @@ html,body {
     height: 64px;
 }
 
+.apptoolbar {
+    opacity: 1;
+    transition: opacity 100ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@media(max-width: 800px) {
+    .apptoolbar-hidden {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 200ms cubic-bezier(0.4, 0.0, 0.2, 1) 250ms;
+    }
+}
+
 .skatespot-map__parent {
     position: absolute;
     top:0;
@@ -447,12 +460,23 @@ html,body {
 }
 
 .skateSpotListParent {
-    position:absolute;
+    position:fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1;
     background-color: white;
+}
+
+@media(min-width: 800px) {
+    .skateSpotListParent {
+        position:absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        background-color: white;
+    }
 }
 
 /* New Card Slide Transition */
@@ -497,6 +521,13 @@ html,body {
 
 .newSearchBar {
     margin-top: 0px;
+    flex: 1;
+}
+
+@media(min-width: 800px) {
+    .newSearchBar-icon {
+        display: none;
+    }
 }
 
 .leaflet-top.leaflet-right {

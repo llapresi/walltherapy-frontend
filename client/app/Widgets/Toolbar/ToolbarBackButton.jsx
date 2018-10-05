@@ -5,7 +5,7 @@ import HideAddSpot from '../../Transitions/HideAddSpot';
 
 const ToolbarBackButton = () => (
   <Route
-    path="/(spot|profile|add|search|login)/"
+    path="/(spot|profile|add|login)/"
     render={() => (
       <Link to={{ pathname: '/', state: HideAddSpot }} className="remove-link-styling">
         <TopAppBarActionItem icon="arrow_back" />

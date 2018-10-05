@@ -25,26 +25,37 @@ const AppToolbar = ({ title, userAuthed, username }) => {
   }
 
   return (
-    <TopAppBar fixed className="mdc-elevation--z4">
-      <TopAppBarRow>
-        <TopAppBarSection alignStart>
-          <ToolbarBackButton />
-          {titleElement}
-        </TopAppBarSection>
-        <TopAppBarSection alignEnd>
-          <Route
-            exact
-            path="/"
-            render={() => (
-              <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">
-                <TopAppBarActionItem icon="search" />
-              </Link>
-            )}
-          />
-          <ToolbarMenuParent userAuthed={userAuthed} username={username} />
-        </TopAppBarSection>
-      </TopAppBarRow>
-    </TopAppBar>
+    <Route
+      path="/*"
+      render={(route) => {
+        let toolbarClassName = 'apptoolbar mdc-elevation--z4';
+        if (route.match.url.match(/^\/search$/)) {
+          toolbarClassName = `${toolbarClassName} apptoolbar-hidden`;
+        }
+        return (
+          <TopAppBar fixed className={toolbarClassName}>
+            <TopAppBarRow>
+              <TopAppBarSection alignStart>
+                <ToolbarBackButton />
+                {titleElement}
+              </TopAppBarSection>
+              <TopAppBarSection alignEnd>
+                <Route
+                  exact
+                  path="/"
+                  render={() => (
+                    <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">
+                      <TopAppBarActionItem icon="search" />
+                    </Link>
+                  )}
+                />
+                <ToolbarMenuParent userAuthed={userAuthed} username={username} />
+              </TopAppBarSection>
+            </TopAppBarRow>
+          </TopAppBar>
+        );
+      }}
+    />
   );
 };
 AppToolbar.propTypes = {
