@@ -2,6 +2,9 @@ import React from 'react';
 import {
   Card,
   CardPrimaryAction,
+  CardAction,
+  CardActions,
+  CardActionButtons,
 } from '@rmwc/card';
 import { Typography } from '@rmwc/typography';
 import ObjectPropTypes from '../ObjectShapes';
@@ -53,6 +56,11 @@ const SpotCard = ({ spot }) => {
           </Typography>
         </div>
       </CardPrimaryAction>
+      <CardActions>
+        <CardActionButtons>
+          <CardAction onClick={() => history.push(onClickLink)}>Show</CardAction>
+        </CardActionButtons>
+      </CardActions>
     </Card>
   );
 };
