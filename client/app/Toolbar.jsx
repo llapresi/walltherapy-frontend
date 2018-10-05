@@ -11,7 +11,9 @@ import PropTypes from 'prop-types';
 import ToolbarMenuParent from './Widgets/Toolbar/ToolbarMenu';
 import ToolbarBackButton from './Widgets/Toolbar/ToolbarBackButton';
 
-const AppToolbar = ({ title, userAuthed, username }) => {
+const AppToolbar = ({
+  title, userAuthed, username, refreshAction,
+}) => {
   let titleElement;
   if (title === '') {
     titleElement = (
@@ -44,9 +46,12 @@ const AppToolbar = ({ title, userAuthed, username }) => {
                   exact
                   path="/"
                   render={() => (
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">
-                      <TopAppBarActionItem icon="search" />
-                    </Link>
+                    <React.Fragment>
+                      <Link style={{ color: 'white', textDecoration: 'none' }} to="/search">
+                        <TopAppBarActionItem icon="search" />
+                      </Link>
+                      <TopAppBarActionItem icon="refresh" onClick={refreshAction} />
+                    </React.Fragment>
                   )}
                 />
                 <ToolbarMenuParent userAuthed={userAuthed} username={username} />
@@ -62,6 +67,7 @@ AppToolbar.propTypes = {
   title: PropTypes.string.isRequired,
   userAuthed: PropTypes.bool.isRequired,
   username: PropTypes.string.isRequired,
+  refreshAction: PropTypes.func.isRequired,
 };
 
 export default AppToolbar;

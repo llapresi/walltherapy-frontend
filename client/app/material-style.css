@@ -120,6 +120,7 @@ html,body {
 .spotList {
     flex: 1;
     overflow-y: scroll;
+    padding-top: 0rem;
 }
 
 .spot_menu_tabs {

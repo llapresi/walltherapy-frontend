@@ -211,7 +211,12 @@ class App extends React.Component {
         secondary: '#d50000',
       }}
       >
-        <AppToolbar title={toolbarTitle} userAuthed={userAuthed} username={userAuthedName} />
+        <AppToolbar
+          title={toolbarTitle}
+          userAuthed={userAuthed}
+          username={userAuthedName}
+          refreshAction={() => this.updateSpots(true)}
+        />
         <div className="appGrid">
           <Route render={({ location }) => {
             // Use default if animation vales are not provided by the Link
