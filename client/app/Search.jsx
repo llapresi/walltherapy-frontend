@@ -1,7 +1,6 @@
 import React from 'react';
 import { List, SimpleListItem } from '@rmwc/list';
 import { Link } from 'react-router-dom';
-import { IconButton } from '@rmwc/icon-button';
 import PropTypes from 'prop-types';
 import { TextField, TextFieldIcon } from '@rmwc/textfield';
 import { sendAjax } from '../helper/helper';
@@ -64,6 +63,12 @@ class SpotSearchParent extends React.Component {
     );
   }
 }
+SpotSearchParent.propTypes = {
+  center: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+  }).isRequired,
+};
 
 const SpotSearch = ({ spots }) => (
   <List twoLine className="spotList">
