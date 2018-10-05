@@ -14,6 +14,16 @@ const SpotCard = ({ spot }) => {
       spot,
     },
   };
+  const { owner, name, description } = spot;
+  let username = '[invalid user]';
+  const spotname = name || '[invalid spotname]';
+  const descriptionBody = description || '[invalid description]';
+
+  if (owner && owner.username) {
+    const { username: spotUsername } = owner;
+    username = spotUsername;
+  }
+
   return (
     <Card style={{
       position: 'absolute',
@@ -28,7 +38,7 @@ const SpotCard = ({ spot }) => {
       <CardPrimaryAction onClick={() => history.push(onClickLink)}>
         <div style={{ padding: '0 1rem 1rem 1rem' }}>
           <Typography use="headline6" tag="h2">
-            {spot.name}
+            {spotname}
           </Typography>
           <Typography
             use="subtitle2"
@@ -36,10 +46,10 @@ const SpotCard = ({ spot }) => {
             theme="text-secondary-on-background"
             style={{ marginTop: '-1rem' }}
           >
-            {spot.owner.username}
+            {username}
           </Typography>
           <Typography style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} use="body1" tag="div" theme="text-secondary-on-background">
-            {spot.description}
+            {descriptionBody}
           </Typography>
         </div>
       </CardPrimaryAction>

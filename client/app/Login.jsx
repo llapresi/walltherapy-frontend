@@ -96,9 +96,9 @@ class LoginWindow extends React.Component {
   render() {
     const { csrf } = this.props;
     const { dialogOpen, openTab } = this.state;
-    let submitButtonLabel = "Log-In";
+    let submitButtonLabel = 'Log-In';
     if (openTab === 1) {
-      submitButtonLabel = "Sign-Up";
+      submitButtonLabel = 'Sign-Up';
     }
     return (
       <Dialog
@@ -140,7 +140,9 @@ class LoginWindow extends React.Component {
           </DialogBody>
           <DialogFooter>
             <DialogFooterButton cancel>Cancel</DialogFooterButton>
-            <DialogFooterButton onClick={this.loginThenClose}>{submitButtonLabel}</DialogFooterButton>
+            <DialogFooterButton onClick={this.loginThenClose}>
+              {submitButtonLabel}
+            </DialogFooterButton>
           </DialogFooter>
         </DialogSurface>
         <DialogBackdrop />

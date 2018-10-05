@@ -23,12 +23,27 @@ export default class ReviewListItem extends React.Component {
       className += ' review-list-item__active';
     }
 
-    const usernameRating = `${review.author.username} - ${review.rating}`;
+    const { author, rating: reviewRating, reviewText } = review;
+
+    let username = '[invalid username]';
+    if (author && author.username) {
+      const { username: reviewUsername } = author;
+      username = reviewUsername;
+    }
+
+    let reviewBody = '[invalid review text]';
+    if (reviewText) {
+      reviewBody = reviewText;
+    }
+
+    const rating = reviewRating || '[invalid rating]';
+
+    const usernameRating = `${username} - ${rating}`;
     return (
       <SimpleListItem
         onClick={() => this.toggleFullText()}
         className={className}
-        text={review.reviewText}
+        text={reviewBody}
         secondaryText={usernameRating}
       />
     );
