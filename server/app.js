@@ -28,8 +28,8 @@ let redisURL = {
 
 let redisPASS;
 
-if (process.env.REDISCLOUD_URL) {
-  redisURL = url.parse(process.env.REDISCLOUD_URL);
+if (process.env.REDIS_URL) {
+  redisURL = url.parse(process.env.REDIS_URL);
   [, redisPASS] = redisURL.auth.split(':');
 }
 
