@@ -14,6 +14,8 @@ const makeSpot = (req, res) => {
     description: req.body.description,
     artist: req.body.artist,
     owner: req.session.account._id,
+    year: req.body.year,
+    locationName: req.body.locationName,
   };
 
   const newSpot = new Spot.SpotModel(spotData);

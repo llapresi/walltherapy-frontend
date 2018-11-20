@@ -3,6 +3,7 @@ import {
   Card,
   CardPrimaryAction,
   CardAction,
+  CardMedia,
   CardActions,
   CardActionButtons,
 } from '@rmwc/card';
@@ -17,9 +18,8 @@ const SpotCard = ({ spot }) => {
       spot,
     },
   };
-  const { artist, name, description } = spot;
+  const { artist, name, locationName } = spot;
   const spotname = name || '[invalid spotname]';
-  const descriptionBody = description || '[invalid description]';
 
   return (
     <Card style={{
@@ -28,12 +28,12 @@ const SpotCard = ({ spot }) => {
       zIndex: '2',
       left: '8px',
       right: '8px',
-      maxWidth: '800px',
+      maxWidth: '600px',
       margin: 'auto',
     }}
     >
       <CardPrimaryAction onClick={() => history.push(onClickLink)}>
-        <div style={{ padding: '0 1rem 1rem 1rem' }}>
+        <div style={{ padding: '0 1rem 0rem 1rem' }}>
           <Typography use="headline6" tag="h2">
             {spotname}
           </Typography>
@@ -45,8 +45,13 @@ const SpotCard = ({ spot }) => {
           >
             {artist}
           </Typography>
-          <Typography style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} use="body1" tag="div" theme="text-secondary-on-background">
-            {descriptionBody}
+          <Typography
+            use="subtitle2"
+            tag="h3"
+            theme="text-secondary-on-background"
+            style={{ marginTop: '-1rem' }}
+          >
+            {locationName}
           </Typography>
         </div>
       </CardPrimaryAction>

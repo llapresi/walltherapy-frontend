@@ -18,6 +18,11 @@ const SpotSchema = new mongoose.Schema({
     index: '2d',
   },
 
+  // Wall Thearpy Year this piece was part of
+  year: {
+    type: Number,
+  },
+
   description: {
     type: String,
     required: true,
@@ -40,13 +45,19 @@ const SpotSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  locationName: {
+    type: String,
+    trim: true,
+  },
 });
 
 SpotSchema.statics.toAPI = doc => ({
   name: doc.name,
-  latitude: doc.latitude,
   location: doc.location,
   artist: doc.artist,
+  year: doc.year,
+  locationName: doc.locationName,
 });
 
 SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => {
@@ -54,7 +65,7 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
     owner: convertId(ownerId),
   };
 
-  return SpotModel.find(search).select('name location description _id artist').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id artist year locationName').sort(sortBy)
     .collation({ locale: 'en', strength: 2 })
     .exec(callback);
 };
@@ -77,8 +88,14 @@ SpotSchema.statics.query = (params, callback) => {
   if (params.description) {
     search.description = new RegExp(params.description, 'i');
   }
+  if (params.artist) {
+    search.artist = new RegExp(params.artist, 'i');
+  }
   if (params._id) {
     search._id = params._id;
+  }
+  if (params.year) {
+    search.year = params.year;
   }
 
   // Location stuff
@@ -93,7 +110,7 @@ SpotSchema.statics.query = (params, callback) => {
   }
 
   return SpotModel.find(search)
-    .select('name location description artist _id owner')
+    .select('name location description artist year _id owner locationName')
     .collation({ locale: 'en', strength: 2 })
     .populate('owner', '-password -__v')
     .exec(callback);

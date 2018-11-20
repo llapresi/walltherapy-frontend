@@ -7,9 +7,15 @@ import ObjectPropTypes from './ObjectShapes';
 const SpotView = ({
   spot,
 }) => (
-  <div className="spot_infobox">
-    <div className="spotDescription" dangerouslySetInnerHTML={{ __html: spot.description }} />
-  </div>
+  <article className="spot_infobox">
+    <h2>{spot.name}</h2>
+    <h3>{spot.artist}</h3>
+    <h3>{spot.locationName}</h3>
+    <div
+      className="spotDescription"
+      dangerouslySetInnerHTML={{ __html: spot.description }}
+    />
+  </article>
 );
 SpotView.propTypes = {
   spot: ObjectPropTypes.Spot,

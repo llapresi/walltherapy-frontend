@@ -76,16 +76,21 @@ class SpotForm extends React.Component {
           method="POST"
           className="spotForm"
         >
-          <TextField className="spot_artist" label="Spot Artist" name="artist" />
+          <TextField className="spot_artist" label="Artist" name="artist" />
           <br />
-          <TextField className="spot_name" label="Spot Name" name="name" />
+          <TextField className="spot_name" label="Name" name="name" />
           <br />
-          <TextField textarea fullwidth label="Spot Description" rows="4" name="description" />
+          <TextField textarea fullwidth label="Description" rows="4" name="description" />
+          <br />
+          <TextField className="spot_year" label="Year" name="year" />
+          <br />
+          <TextField className="spot_year" label="Street Name" name="locationName" />
+          <br />
+          <TextField className="spot_long" label="Longitude" name="longitude" />
+          <br />
+          <TextField className="spot_lat" label="Latitude" name="latitude" />
           <br />
           <Button raised theme={['secondary-bg', 'text-primary-on-secondary']}>Submit</Button>
-
-          <input id="spotLong" type="hidden" name="longitude" value={newSpotLocation.lng} />
-          <input id="spotLat" type="hidden" name="latitude" value={newSpotLocation.lat} />
           <input type="hidden" name="_csrf" value={csrf} />
         </form>
         )

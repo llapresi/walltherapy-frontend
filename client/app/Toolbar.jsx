@@ -18,8 +18,7 @@ const AppToolbar = ({
   if (title === '') {
     titleElement = (
       <TopAppBarTitle>
-        <span className="toolbar-logo" />
-        <span>skatespot.io</span>
+        <span>WallThearpy</span>
       </TopAppBarTitle>
     );
   } else {

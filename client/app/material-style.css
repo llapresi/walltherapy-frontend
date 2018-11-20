@@ -27,10 +27,26 @@ html,body {
     z-index:1;
     display:flex;
     flex-direction: column;
-    max-width: 1200px;
+    max-width: 900px;
     left: 0;
     right: 0;
     margin: 0 auto;
+    overflow-y: scroll;
+}
+
+.spot_infobox > h2 {
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    margin-top: 12px;
+}
+
+.spot_infobox > h3 {
+    font-size: 24px;
+    font-weight: 400;
+    color: #4f5b62;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 @media(min-width: 800px) {
@@ -572,4 +588,40 @@ html,body {
         transition: transform 200ms cubic-bezier(0.4, 0.0, 1, 1);
         transform: translate3d(-100%, 0px, 0px);
     }
+}
+
+.responsive-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 24px;
+    padding-top: 24px;
+}
+
+.spotDescription > iframe {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.spotDescription {
+    font-size: 16px;
+    line-height: 1.63;
+    padding-bottom: 24px;
+}
+
+.video-responsive{
+    overflow:hidden;
+    padding-bottom:56.25%;
+    position:relative;
+    height:0;
+}
+.video-responsive iframe{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
 }
