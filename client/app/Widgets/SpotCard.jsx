@@ -17,15 +17,9 @@ const SpotCard = ({ spot }) => {
       spot,
     },
   };
-  const { owner, name, description } = spot;
-  let username = '[invalid user]';
+  const { artist, name, description } = spot;
   const spotname = name || '[invalid spotname]';
   const descriptionBody = description || '[invalid description]';
-
-  if (owner && owner.username) {
-    const { username: spotUsername } = owner;
-    username = spotUsername;
-  }
 
   return (
     <Card style={{
@@ -49,7 +43,7 @@ const SpotCard = ({ spot }) => {
             theme="text-secondary-on-background"
             style={{ marginTop: '-1rem' }}
           >
-            {username}
+            {artist}
           </Typography>
           <Typography style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} use="body1" tag="div" theme="text-secondary-on-background">
             {descriptionBody}

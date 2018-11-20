@@ -12,7 +12,7 @@ const csrf = require('csurf');
 const router = require('./router.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
-const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/Skatespotio_BCrypt';
+const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/wallthearpy';
 
 mongoose.connect(dbURL, (err) => {
   if (err) {

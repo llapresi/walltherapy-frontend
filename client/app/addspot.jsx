@@ -76,6 +76,8 @@ class SpotForm extends React.Component {
           method="POST"
           className="spotForm"
         >
+          <TextField className="spot_artist" label="Spot Artist" name="artist" />
+          <br />
           <TextField className="spot_name" label="Spot Name" name="name" />
           <br />
           <TextField textarea fullwidth label="Spot Description" rows="4" name="description" />

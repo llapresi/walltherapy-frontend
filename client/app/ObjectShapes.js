@@ -4,10 +4,10 @@ const ObjectPropTypes = {
   Spot: PropTypes.shape({
     _id: PropTypes.string,
     description: PropTypes.string,
-    isSponsored: PropTypes.bool,
     location: PropTypes.array,
     name: PropTypes.string,
     owner: PropTypes.object,
+    artist: PropTypes.string,
   }),
   Review: PropTypes.shape({
     _id: PropTypes.string,

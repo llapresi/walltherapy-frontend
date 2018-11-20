@@ -2,23 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import { sendAjax } from '../helper/helper';
-import { ReviewList } from './reviews';
 import ObjectPropTypes from './ObjectShapes';
 
 const SpotView = ({
-  spot, id, csrf, onReviewAdd, userAuthed,
+  spot,
 }) => (
-  <div className="spot_infobox desktop-400 horizontal__desktop">
-    <div className="spotDescription">{spot.description}</div>
-    <ReviewList userAuthed={userAuthed} onReviewAdd={onReviewAdd} spotId={id} csrf={csrf} />
+  <div className="spot_infobox">
+    <div className="spotDescription" dangerouslySetInnerHTML={{ __html: spot.description }} />
   </div>
 );
 SpotView.propTypes = {
   spot: ObjectPropTypes.Spot,
-  id: PropTypes.string.isRequired,
-  csrf: PropTypes.string.isRequired,
-  onReviewAdd: PropTypes.func.isRequired,
-  userAuthed: PropTypes.bool.isRequired,
 };
 SpotView.defaultProps = {
   spot: {},
@@ -60,17 +54,10 @@ class SpotViewParent extends React.Component {
   }
 
   render() {
-    const {
-      match, csrf, onReviewAdd, userAuthed,
-    } = this.props;
     const { spot } = this.state;
     return (
       <SpotView
-        userAuthed={userAuthed}
-        onReviewAdd={onReviewAdd}
         spot={spot}
-        id={match.params.id}
-        csrf={csrf}
       />
     );
   }
@@ -78,10 +65,7 @@ class SpotViewParent extends React.Component {
 SpotViewParent.propTypes = {
   location: ReactRouterPropTypes.location.isRequired,
   match: ReactRouterPropTypes.match.isRequired,
-  csrf: PropTypes.string.isRequired,
   onOpen: PropTypes.func.isRequired,
-  onReviewAdd: PropTypes.func.isRequired,
-  userAuthed: PropTypes.bool.isRequired,
 };
 
 export default SpotViewParent;

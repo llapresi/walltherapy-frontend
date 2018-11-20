@@ -3,7 +3,8 @@ const models = require('../models');
 const { Spot } = models;
 
 const makeSpot = (req, res) => {
-  if (!req.body.name || !req.body.longitude || !req.body.latitude || !req.body.description) {
+  if (!req.body.name || !req.body.longitude || !req.body.latitude
+    || !req.body.description || !req.body.artist) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
@@ -11,7 +12,7 @@ const makeSpot = (req, res) => {
     name: req.body.name,
     location: [req.body.longitude, req.body.latitude],
     description: req.body.description,
-    isSponsored: req.body.isSponsored,
+    artist: req.body.artist,
     owner: req.session.account._id,
   };
 

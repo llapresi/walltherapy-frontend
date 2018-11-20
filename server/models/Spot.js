@@ -11,7 +11,6 @@ const SpotSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
   },
 
   location: {
@@ -30,15 +29,16 @@ const SpotSchema = new mongoose.Schema({
     ref: 'Account',
   },
 
+  // Artist is just name field right now, implement an actual artist object in the final
+  artist: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+
   createdData: {
     type: Date,
     default: Date.now,
-  },
-
-  isSponsored: {
-    type: Boolean,
-    default: false,
-    required: true,
   },
 });
 
@@ -46,6 +46,7 @@ SpotSchema.statics.toAPI = doc => ({
   name: doc.name,
   latitude: doc.latitude,
   location: doc.location,
+  artist: doc.artist,
 });
 
 SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => {
@@ -53,7 +54,7 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
     owner: convertId(ownerId),
   };
 
-  return SpotModel.find(search).select('name location description _id isSponsored').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id artist').sort(sortBy)
     .collation({ locale: 'en', strength: 2 })
     .exec(callback);
 };
@@ -92,7 +93,7 @@ SpotSchema.statics.query = (params, callback) => {
   }
 
   return SpotModel.find(search)
-    .select('name location description _id isSponsored owner')
+    .select('name location description artist _id owner')
     .collation({ locale: 'en', strength: 2 })
     .populate('owner', '-password -__v')
     .exec(callback);
