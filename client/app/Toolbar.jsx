@@ -18,7 +18,7 @@ const AppToolbar = ({
   if (title === '') {
     titleElement = (
       <TopAppBarTitle>
-        <span>WallThearpy</span>
+        <span>WallTherapy</span>
       </TopAppBarTitle>
     );
   } else {

@@ -3,7 +3,6 @@ import {
   Card,
   CardPrimaryAction,
   CardAction,
-  CardMedia,
   CardActions,
   CardActionButtons,
 } from '@rmwc/card';
@@ -18,7 +17,7 @@ const SpotCard = ({ spot }) => {
       spot,
     },
   };
-  const { artist, name, locationName } = spot;
+  const { artist, name, address } = spot;
   const spotname = name || '[invalid spotname]';
 
   return (
@@ -51,7 +50,7 @@ const SpotCard = ({ spot }) => {
             theme="text-secondary-on-background"
             style={{ marginTop: '-1rem' }}
           >
-            {locationName}
+            {address}
           </Typography>
         </div>
       </CardPrimaryAction>

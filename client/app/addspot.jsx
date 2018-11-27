@@ -84,7 +84,7 @@ class SpotForm extends React.Component {
           <br />
           <TextField className="spot_year" label="Year" name="year" />
           <br />
-          <TextField className="spot_year" label="Street Name" name="locationName" />
+          <TextField className="spot_year" label="Address" name="address" />
           <br />
           <TextField className="spot_long" label="Longitude" name="longitude" />
           <br />

@@ -46,7 +46,7 @@ const SpotSchema = new mongoose.Schema({
     default: Date.now,
   },
 
-  locationName: {
+  address: {
     type: String,
     trim: true,
   },
@@ -57,7 +57,7 @@ SpotSchema.statics.toAPI = doc => ({
   location: doc.location,
   artist: doc.artist,
   year: doc.year,
-  locationName: doc.locationName,
+  address: doc.address,
 });
 
 SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => {
@@ -65,7 +65,7 @@ SpotSchema.statics.findByOwner = (ownerId, callback, sortBy = 'createdData') => 
     owner: convertId(ownerId),
   };
 
-  return SpotModel.find(search).select('name location description _id artist year locationName').sort(sortBy)
+  return SpotModel.find(search).select('name location description _id artist year address').sort(sortBy)
     .collation({ locale: 'en', strength: 2 })
     .exec(callback);
 };
@@ -80,6 +80,8 @@ SpotSchema.statics.query = (params, callback) => {
     search.$or = [
       { name: { $regex: params.filter, $options: 'i' } },
       { description: { $regex: params.filter, $options: 'i' } },
+      { artist: { $regex: params.filter, $options: 'i' } },
+      { address: { $regex: params.filter, $options: 'i' } },
     ];
   }
   if (params.name) {
@@ -110,7 +112,7 @@ SpotSchema.statics.query = (params, callback) => {
   }
 
   return SpotModel.find(search)
-    .select('name location description artist year _id owner locationName')
+    .select('name location description artist year _id owner address')
     .collation({ locale: 'en', strength: 2 })
     .populate('owner', '-password -__v')
     .exec(callback);

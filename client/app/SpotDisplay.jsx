@@ -10,7 +10,7 @@ const SpotView = ({
   <article className="spot_infobox">
     <h2>{spot.name}</h2>
     <h3>{spot.artist}</h3>
-    <h3>{spot.locationName}</h3>
+    <h3>{spot.address}</h3>
     <div
       className="spotDescription"
       dangerouslySetInnerHTML={{ __html: spot.description }}

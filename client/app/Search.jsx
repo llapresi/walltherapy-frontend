@@ -122,19 +122,16 @@ SpotNearbyControl.propTypes = {
 
 const SpotSearch = ({ spots }) => (
   <List twoLine className="spotList">
-    {spots.map((spot) => {
-      let classNameString = '';
-      let descriptionAppend = '';
-      if (spot.isSponsored === true) {
-        classNameString += 'spot__sponsored';
-        descriptionAppend += 'Sponsored: ';
-      }
-      return (
-        <Link key={spot._id} className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
-          <SimpleListItem className={classNameString} text={spot.name} secondaryText={descriptionAppend + spot.description} meta="info" />
-        </Link>
-      );
-    })}
+    {spots.map(spot => (
+      <Link key={spot._id} className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
+        <SimpleListItem
+          text={spot.name}
+          secondaryText={`${spot.artist} | ${spot.address}`}
+          meta="info"
+        />
+      </Link>
+    ))
+    }
   </List>
 );
 SpotSearch.propTypes = {
