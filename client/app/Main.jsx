@@ -23,11 +23,10 @@ import Logout from './Logout';
 import AuthRoute from './AuthRoute';
 import Snackbar from './Widgets/Snackbar';
 import MapFABs from './Widgets/MapFABs';
+import ArtistViewParent from './ArtistDisplay';
 
-const makePublicSpotsURL = (latlng = null) => {
-  const maxDistanceKM = 6; // Width of rit
-  const locCenter = latlng !== null ? `lng=${latlng.lng}&lat=${latlng.lat}&dist=${maxDistanceKM}` : '';
-  return `/spots?${locCenter}`;
+const makePublicSpotsURL = () => {
+  return '/murals';
 };
 
 class App extends React.Component {
@@ -63,17 +62,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    sendAjax('GET', '/getToken', null, (result) => {
-      console.log(result.csrfToken);
-      this.setState({ csrf: result.csrfToken });
-    });
-
-    sendAjax('GET', '/spots', null, (data) => {
+    sendAjax('GET', '/murals', null, (data) => {
       console.log('fetching ajax spots');
-      this.onFetchSpots(data.spots);
+      this.onFetchSpots(data);
     });
-
-    this.checkUserAuth();
   }
 
   onFetchSpots(newSpots) {
@@ -146,8 +138,8 @@ class App extends React.Component {
     this.setState({
       selectedSpot: spot,
       center: {
-        lat: spot.location[1],
-        lng: spot.location[0],
+        lat: spot.location.coordinates[1],
+        lng: spot.location.coordinates[0],
       },
     });
     if (history.location.pathname.includes('/spot/')) {
@@ -183,10 +175,11 @@ class App extends React.Component {
     // current search dist is 1700 m
     const { center, lastFetchedCenter } = this.state;
     if (distance(center, lastFetchedCenter) > 0.8 || forceUpate === true) {
-      const toFetch = makePublicSpotsURL(center);
+      const toFetch = makePublicSpotsURL();
       sendAjax('GET', toFetch, null, (data) => {
+        console.log(data);
         console.log('fetching ajax spots');
-        this.setState({ spots: data.spots, lastFetchedCenter: center });
+        this.setState({ spots: data, lastFetchedCenter: center });
       });
     }
   }
@@ -249,7 +242,7 @@ class App extends React.Component {
                           }}
                           />
                           {selectedSpot !== null
-                          && <SpotCard spot={selectedSpot} />
+                          && <SpotCard spot={selectedSpot} bottomCard />
                           }
                         </React.Fragment>
                       )}
@@ -337,6 +330,29 @@ class App extends React.Component {
                     />
 
                     <Route
+                      path="/artist/:id"
+                      render={props => (
+                        <React.Fragment>
+                          <RunOnMount func={() => {
+                            this.setState({ addingNewSpot: 0 });
+                            this.stopWatchingGeolocation();
+                          }}
+                          />
+                          <ArtistViewParent
+                            key={props.match.params.id}
+                            csrf={csrf}
+                            onOpen={(title) => {
+                              this.setState({ toolbarTitle: title });
+                            }}
+                            userAuthed={userAuthed}
+                            onReviewAdd={this.setSnackbar}
+                            {...props}
+                          />
+                        </React.Fragment>
+                      )}
+                    />
+
+                    <Route
                       path="/profile"
                       render={() => (
                         <React.Fragment>
@@ -391,7 +407,6 @@ class App extends React.Component {
                   <SkateSpotMarker
                     key={spot._id}
                     spot={spot}
-                    position={[spot.location[1], spot.location[0]]}
                     onClick={this.setSpotCard}
                   />
                 ))

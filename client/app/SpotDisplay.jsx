@@ -1,22 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import { Link } from 'react-router-dom';
 import { sendAjax } from '../helper/helper';
 import ObjectPropTypes from './ObjectShapes';
 
 const SpotView = ({
   spot,
-}) => (
-  <article className="spot_infobox">
-    <h2>{spot.name}</h2>
-    <h3>{spot.artist}</h3>
-    <h3>{spot.address}</h3>
-    <div
-      className="spotDescription"
-      dangerouslySetInnerHTML={{ __html: spot.description }}
-    />
-  </article>
-);
+}) => {
+  let artist = '';
+  let artistId = '';
+  if (spot.artists !== undefined) {
+    artist = spot.artists[0].name;
+    artistId = spot.artists[0]._id;
+  }
+  let images = '';
+  if (spot.images !== undefined) {
+    images = spot.images.map(image => <img src={image.url} alt={image.name} className="responsive-image" />);
+  }
+  return (
+    <article className="spot_infobox">
+      <h2>{spot.name}</h2>
+      <h3>
+        <Link to={{ pathname: `/artist/${artistId}` }}>
+          <span>{artist}</span>
+        </Link>
+      </h3>
+      <h3>{spot.streetname}</h3>
+      <div>
+        {images}
+      </div>
+      <div
+        className="spotDescription"
+        dangerouslySetInnerHTML={{ __html: spot.description }}
+      />
+    </article>
+  );
+};
 SpotView.propTypes = {
   spot: ObjectPropTypes.Spot,
 };
@@ -34,27 +54,21 @@ class SpotViewParent extends React.Component {
   }
 
   componentDidMount() {
-    const { location, match } = this.props;
-    if (location.state !== undefined && location.state.spot !== undefined) {
-      // Re-using existing spot data
-      console.log('Re-using existing spot data');
-      this.setState({ spot: location.state.spot });
-      this.onNewSpotData(location.state.spot);
-    } else {
-      // Fetching new spot data
-      console.log(`Fetching new spot data: /spots?id=${match.params.id}`);
-      sendAjax('GET', `/spots?id=${match.params.id}`, null, (data) => {
-        this.setState({ spot: data.spots[0] });
-        this.onNewSpotData(data.spots[0]);
-      });
-    }
+    const { match } = this.props;
+    // Fetching new spot data
+    console.log(`Fetching new spot data: /murals?id=${match.params.id}`);
+    sendAjax('GET', `/murals?id=${match.params.id}`, null, (data) => {
+      this.setState({ spot: data[0] });
+      this.onNewSpotData(data[0]);
+      console.log(data[0]);
+    });
   }
 
   onNewSpotData(spot) {
     const { onOpen } = this.props;
     const newCenter = {
-      lat: spot.location[1],
-      lng: spot.location[0],
+      lat: spot.location.coordinates[1],
+      lng: spot.location.coordinates[0],
     };
     onOpen(newCenter, spot.name);
   }

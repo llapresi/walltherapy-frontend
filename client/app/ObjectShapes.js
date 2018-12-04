@@ -4,7 +4,7 @@ const ObjectPropTypes = {
   Spot: PropTypes.shape({
     _id: PropTypes.string,
     description: PropTypes.string,
-    location: PropTypes.array,
+    location: PropTypes.object,
     name: PropTypes.string,
     owner: PropTypes.object,
     artist: PropTypes.string,

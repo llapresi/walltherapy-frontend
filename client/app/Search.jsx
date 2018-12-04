@@ -9,13 +9,8 @@ import { sendAjax } from '../helper/helper';
 import HideAddSpot from './Transitions/HideAddSpot';
 import history from './History';
 
-const makePublicSpotsURL = (name = '', latlng = null, showAll = false) => {
-  const maxDistanceKm = 6;
-  let locCenter = latlng !== null ? `&lat=${latlng.lat}&lng=${latlng.lng}` : '';
-  if (showAll === false) {
-    locCenter = `${locCenter}&dist=${maxDistanceKm}`;
-  }
-  return `/spots?filter=${name}${locCenter}`;
+const makePublicSpotsURL = () => {
+  return '/murals';
 };
 
 class SpotSearchParent extends React.Component {
@@ -23,7 +18,6 @@ class SpotSearchParent extends React.Component {
     super(props);
     this.state = {
       spots: [],
-      showAll: false,
     };
     this.searchField = React.createRef();
     this.updateSpotList = this.updateSpotList.bind(this);
@@ -42,15 +36,11 @@ class SpotSearchParent extends React.Component {
     }
     const toFetch = makePublicSpotsURL(filterValue, center, showAll);
     sendAjax('GET', toFetch, null, (data) => {
-      this.setState({ spots: data.spots });
+      this.setState({ spots: data });
     });
   }
 
   render() {
-    const showLocalControl = (
-      this.searchField !== null && this.searchField.current !== null
-      && this.searchField.current.value === ''
-    );
     const { spots, showAll } = this.state;
     return (
       <div className="skateSpotListParent desktop-400 horizontal__desktop">
@@ -69,17 +59,6 @@ class SpotSearchParent extends React.Component {
             )}
           />
         </div>
-        {showLocalControl
-        && (
-        <SpotNearbyControl
-          onClick={() => {
-            this.setState({ showAll: !showAll }, () => {
-              this.updateSpotList();
-            });
-          }}
-          showAll={showAll}
-        />
-        )}
         <SpotSearch spots={spots} />
       </div>
     );
@@ -126,7 +105,7 @@ const SpotSearch = ({ spots }) => (
       <Link key={spot._id} className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
         <SimpleListItem
           text={spot.name}
-          secondaryText={`${spot.artist} | ${spot.address}`}
+          secondaryText={`${spot.artists[0].name} | ${spot.streetname}`}
           meta="info"
         />
       </Link>

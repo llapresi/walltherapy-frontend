@@ -112,7 +112,7 @@ html,body {
 }
 
 .skatespot-map__location {
-    bottom: 5.5rem;
+    bottom: 1.5rem;
     background-color: white;
     z-index: 1;
 }
@@ -124,8 +124,8 @@ html,body {
     }
 
     .skatespot-map__location {
-        bottom: 6rem;
-        right: 1.5rem;
+        bottom: 1.5rem;
+        right: 1.5rem
     }
  }
 
@@ -604,24 +604,11 @@ html,body {
     display: block;
     margin-left: auto;
     margin-right: auto;
+    width:100%;
 }
 
 .spotDescription {
     font-size: 16px;
     line-height: 1.63;
     padding-bottom: 24px;
-}
-
-.video-responsive{
-    overflow:hidden;
-    padding-bottom:56.25%;
-    position:relative;
-    height:0;
-}
-.video-responsive iframe{
-    left:0;
-    top:0;
-    height:100%;
-    width:100%;
-    position:absolute;
 }

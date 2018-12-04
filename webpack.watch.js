@@ -35,7 +35,7 @@ module.exports = {
     publicPath: '/app',
     proxy: [{
       context: ['/**', '!/app', '!/app/**'],
-      target: 'http://localhost:3000',
+      target: 'http://localhost:1337',
     }],
     historyApiFallback: { index: '/app' },
     contentBase: '/app/',

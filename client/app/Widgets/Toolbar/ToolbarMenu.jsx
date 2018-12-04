@@ -77,7 +77,6 @@ const ToolbarMenu = ({
     >
       {children}
     </MenuSurface>
-    <TopAppBarActionItem icon="account_circle" onClick={showMenuFunc} />
   </MenuSurfaceAnchor>
 );
 
