@@ -9,7 +9,10 @@ import { sendAjax } from '../helper/helper';
 import HideAddSpot from './Transitions/HideAddSpot';
 import history from './History';
 
-const makePublicSpotsURL = () => {
+const makePublicSpotsURL = (filterValue) => {
+  if (filterValue !== '') {
+    return `/murals?_q=${filterValue}`;
+  }
   return '/murals';
 };
 
@@ -34,7 +37,7 @@ class SpotSearchParent extends React.Component {
     if (filterValue !== '') {
       showAll = true;
     }
-    const toFetch = makePublicSpotsURL(filterValue, center, showAll);
+    const toFetch = makePublicSpotsURL(filterValue);
     sendAjax('GET', toFetch, null, (data) => {
       this.setState({ spots: data });
     });
