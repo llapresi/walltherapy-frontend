@@ -8,15 +8,8 @@
   "description": "A Simple Login Example using Node.js, Mongo and Redis",
   "main": "./server/app.js",
   "scripts": {
-    "buildAppBundle": "webpack --config webpack.prod.js --mode=production --optimize-minimize --optimize-occurrence-order",
-    "watchAppBundle": "webpack-dev-server --config webpack.watch.js --hot --mode=development",
-    "build": "npm run buildAppBundle",
-    "postinstall": "npm run buildAppBundle",
-    "nodemon": "nodemon --watch ./server ./server/app.js",
-    "start": "node ./server/app.js",
-    "dev": "start npm run watchAppBundle && start npm run nodemon",
-    "pretest": "eslint ./server",
-    "test": "echo \"Tests complete\""
+    "build": "webpack --config webpack.prod.js --mode=production --optimize-minimize --optimize-occurrence-order",
+    "watch": "webpack-dev-server --config webpack.watch.js --hot --mode=development"
   },
   "keywords": [
     "Node",
@@ -27,22 +20,9 @@
   "author": "Luke Lapresi",
   "license": "Apache 2.0",
   "dependencies": {
-    "bcrypt": "^2.0.1",
-    "body-parser": "^1.18.3",
-    "compression": "^1.7.3",
-    "connect-redis": "^3.4.0",
-    "cookie-parser": "^1.3.3",
-    "csurf": "^1.8.3",
-    "express": "^4.16.4",
-    "express-handlebars": "^3.0.0",
-    "express-session": "^1.13.0",
-    "helmet": "^1.3.0",
     "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "leaflet": "^1.3.4",
-    "mongoose": "^4.13.17",
-    "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
@@ -55,7 +35,6 @@
     "react-star-rating-component": "^1.4.1",
     "react-transition-group": "^2.5.0",
     "rmwc": "^2.2.3",
-    "serve-favicon": "^2.5.0",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
@@ -72,7 +51,6 @@
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "mini-css-extract-plugin": "^0.4.4",
-    "nodemon": "^1.18.6",
     "style-loader": "^0.23.1",
     "webpack": "^4.26.0",
     "webpack-cli": "^3.1.2",
