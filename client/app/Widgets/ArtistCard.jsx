@@ -5,33 +5,43 @@ import {
   CardAction,
   CardActions,
   CardActionButtons,
+  CardMedia,
 } from '@rmwc/card';
 import { Typography } from '@rmwc/typography';
 import ObjectPropTypes from '../ObjectShapes';
 import history from '../History';
 
-const SpotCard = ({ spot }) => {
+// Card that displays on artist pages. Fetches images and is formatted for
+// CSS grid
+const ArtistCard = ({ spot }) => {
   const onClickLink = {
     pathname: `/mural/${spot._id}`,
     state: {
       spot,
     },
   };
-  console.log(spot);
   const { artists, name, streetname } = spot;
   const spotname = name || '[invalid spotname]';
-  const cardStyle = {
-    position: 'absolute',
-    bottom: '8px',
-    zIndex: '2',
-    left: '8px',
-    right: '8px',
-    maxWidth: '600px',
-    margin: 'auto',
-  };
+  let cardImage = '';
+  // If we don't check to see if the image array is not undefined we crash
+  if (spot.images !== undefined) {
+    let cardURL = spot.images[0].url;
+    const lastIndex = spot.images[0].url.lastIndexOf('/upload/');
+    // Get thumbnail of the image
+    cardURL = `${cardURL.slice(0, lastIndex + 8)}/w_300,c_fit,ar_16:9/${cardURL.slice(lastIndex + 8, cardURL.length)}`;
+    cardImage = (
+      <CardMedia
+        sixteenByNine
+        style={{
+          backgroundImage: `url(${cardURL})`,
+        }}
+      />
+    );
+  }
   return (
-    <Card style={cardStyle}>
+    <Card>
       <CardPrimaryAction onClick={() => history.push(onClickLink)}>
+        {cardImage}
         <div style={{ padding: '0 1rem 0rem 1rem' }}>
           <Typography use="headline6" tag="h2">
             {spotname}
@@ -63,8 +73,8 @@ const SpotCard = ({ spot }) => {
   );
 };
 
-SpotCard.propTypes = {
+ArtistCard.propTypes = {
   spot: ObjectPropTypes.Spot.isRequired,
 };
 
-export default SpotCard;
+export default ArtistCard;

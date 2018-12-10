@@ -17,7 +17,6 @@ import AppToolbar from './Toolbar';
 import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
 import LoginWindow from './Login';
-import Logout from './Logout';
 import MapFABs from './Widgets/MapFABs';
 import ArtistViewParent from './ArtistDisplay';
 

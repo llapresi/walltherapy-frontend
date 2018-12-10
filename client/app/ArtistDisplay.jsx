@@ -1,13 +1,13 @@
 import React from 'react';
 import { sendAjax } from '../helper/helper';
-import SpotCard from './Widgets/SpotCard';
+import ArtistCard from './Widgets/ArtistCard';
 
 const ArtistView = ({
   artist,
 }) => {
   let spotCards = '';
   if (artist.mural !== undefined) {
-    spotCards = artist.mural.map(mural => <SpotCard spot={mural} key={mural.id} showImg />);
+    spotCards = artist.mural.map(mural => <ArtistCard spot={mural} key={mural.id} />);
   }
   return (
     <article className="spot_infobox">

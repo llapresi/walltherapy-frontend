@@ -3,10 +3,11 @@ import { Marker } from 'react-leaflet';
 import PropTypes from 'prop-types';
 import * as L from 'leaflet';
 import ObjectPropTypes from '../ObjectShapes';
+import Icon from '../img/skatespot_icon.png';
 
 export const SkateSpotMarker = ({ spot, onClick }) => {
   const customMarker = L.icon({
-    iconUrl: '/../assets/img/skatespot_icon.png',
+    iconUrl: Icon,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     className: 'skatespotmarker',
