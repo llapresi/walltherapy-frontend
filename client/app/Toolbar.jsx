@@ -8,17 +8,16 @@ import {
   TopAppBarTitle,
 } from '@rmwc/top-app-bar';
 import PropTypes from 'prop-types';
-import ToolbarMenuParent from './Widgets/Toolbar/ToolbarMenu';
 import ToolbarBackButton from './Widgets/Toolbar/ToolbarBackButton';
 
 const AppToolbar = ({
-  title, userAuthed, username, refreshAction,
+  title, refreshAction,
 }) => {
   let titleElement;
   if (title === '') {
     titleElement = (
       <TopAppBarTitle>
-        <span>WallTherapy</span>
+        <span>WALL\THERAPY</span>
       </TopAppBarTitle>
     );
   } else {
@@ -53,7 +52,6 @@ const AppToolbar = ({
                     </React.Fragment>
                   )}
                 />
-                <ToolbarMenuParent userAuthed={userAuthed} username={username} />
               </TopAppBarSection>
             </TopAppBarRow>
           </TopAppBar>

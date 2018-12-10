@@ -3,17 +3,20 @@ import { List, SimpleListItem } from '@rmwc/list';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { TextField, TextFieldIcon } from '@rmwc/textfield';
-import { Typography } from '@rmwc/typography';
-import { Button } from '@rmwc/button';
+import { TabBar, Tab } from '@rmwc/tabs';
 import { sendAjax } from '../helper/helper';
 import HideAddSpot from './Transitions/HideAddSpot';
 import history from './History';
 
-const makePublicSpotsURL = (filterValue) => {
-  if (filterValue !== '') {
-    return `/murals?_q=${filterValue}`;
+const makePublicSpotsURL = (filterValue, artists) => {
+  let searchTerm = 'murals';
+  if (artists === 1) {
+    searchTerm = 'artists';
   }
-  return '/murals';
+  if (filterValue !== '') {
+    return `/${searchTerm}?_q=${filterValue}`;
+  }
+  return `/${searchTerm}`;
 };
 
 class SpotSearchParent extends React.Component {
@@ -21,9 +24,11 @@ class SpotSearchParent extends React.Component {
     super(props);
     this.state = {
       spots: [],
+      activeTab: 0, // 0 is murals, 1 is artists
     };
     this.searchField = React.createRef();
     this.updateSpotList = this.updateSpotList.bind(this);
+    this.switchSearchTab = this.switchSearchTab.bind(this);
   }
 
   componentDidMount() {
@@ -31,20 +36,20 @@ class SpotSearchParent extends React.Component {
   }
 
   updateSpotList() {
-    const { center } = this.props;
-    let { showAll } = this.state;
+    const { activeTab } = this.state;
     const filterValue = this.searchField.current.value === undefined ? '' : this.searchField.current.value;
-    if (filterValue !== '') {
-      showAll = true;
-    }
-    const toFetch = makePublicSpotsURL(filterValue);
+    const toFetch = makePublicSpotsURL(filterValue, activeTab);
     sendAjax('GET', toFetch, null, (data) => {
       this.setState({ spots: data });
     });
   }
 
+  switchSearchTab(tabIndex) {
+    this.setState({ activeTab: tabIndex }, this.updateSpotList);
+  }
+
   render() {
-    const { spots, showAll } = this.state;
+    const { spots, activeTab } = this.state;
     return (
       <div className="skateSpotListParent desktop-400 horizontal__desktop">
         <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#f2f2f2' }}>
@@ -52,7 +57,7 @@ class SpotSearchParent extends React.Component {
             inputRef={this.searchField}
             className="newSearchBar"
             onChange={this.updateSpotList}
-            label="Search all spots"
+            label={activeTab === 0 ? 'Search murals' : 'Search artists'}
             withLeadingIcon={(
               <TextFieldIcon
                 tabIndex="0"
@@ -62,57 +67,43 @@ class SpotSearchParent extends React.Component {
             )}
           />
         </div>
+        <TabBar
+          activeTabIndex={activeTab}
+          onActivate={evt => this.switchSearchTab(evt.detail.index)}
+        >
+          <Tab>Murals</Tab>
+          <Tab>Artists</Tab>
+        </TabBar>
         <SpotSearch spots={spots} />
       </div>
     );
   }
 }
-SpotSearchParent.propTypes = {
-  center: PropTypes.shape({
-    lat: PropTypes.number,
-    lng: PropTypes.number,
-  }).isRequired,
-};
-
-const SpotNearbyControl = ({ onClick, showAll }) => {
-  console.log(showAll);
-  const labelText = showAll === true ? 'Showing All Spots' : 'Showing Nearby Spots';
-  const buttonText = showAll === true ? 'Show Nearby' : 'Show All';
-  return (
-    <div style={{
-      padding: '.5em 1em .5em 1em',
-      display: 'flex',
-      alignItems: 'center',
-      backgroundColor: 'rgb(240, 240, 240)',
-    }}
-    >
-      <Typography use="body2">{labelText}</Typography>
-      <Button
-        style={{ marginLeft: 'auto' }}
-        onClick={onClick}
-      >
-        <span>{buttonText}</span>
-      </Button>
-    </div>
-  );
-};
-
-SpotNearbyControl.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  showAll: PropTypes.bool.isRequired,
-};
 
 const SpotSearch = ({ spots }) => (
   <List twoLine className="spotList">
-    {spots.map(spot => (
-      <Link key={spot._id} className="remove-link-styling force-block" to={{ pathname: `/spot/${spot._id}`, state: { spot } }}>
-        <SimpleListItem
-          text={spot.name}
-          secondaryText={`${spot.artists[0].name} | ${spot.streetname}`}
-          meta="info"
-        />
-      </Link>
-    ))
+    {spots.map((spot) => {
+      let secondaryText = '';
+      let path = {};
+      // If artists field exists this is a mural
+      if (spot.artists !== undefined) {
+        secondaryText = `${spot.artists[0].name} | ${spot.streetname}`;
+        path = { pathname: `/mural/${spot._id}`, state: { spot } };
+      } else {
+        // this is a list of artists
+        secondaryText = `${spot.description}`;
+        path = { pathname: `/artist/${spot._id}` };
+      }
+      return (
+        <Link key={spot._id} className="remove-link-styling force-block" to={path}>
+          <SimpleListItem
+            text={spot.name}
+            secondaryText={secondaryText}
+            meta="info"
+          />
+        </Link>
+      );
+    })
     }
   </List>
 );

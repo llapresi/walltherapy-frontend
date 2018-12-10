@@ -13,7 +13,7 @@ import history from '../History';
 
 const SpotCard = ({ spot, bottomCard, showImg }) => {
   const onClickLink = {
-    pathname: `/spot/${spot._id}`,
+    pathname: `/mural/${spot._id}`,
     state: {
       spot,
     },
@@ -27,7 +27,7 @@ const SpotCard = ({ spot, bottomCard, showImg }) => {
     let cardURL = spot.images[0].url;
     const lastIndex = spot.images[0].url.lastIndexOf('/upload/');
     // Get thumbnail of the image
-    cardURL = cardURL.slice(0, lastIndex + 8) + '/w_300,c_fit,ar_16:9/' + cardURL.slice(lastIndex + 8, cardURL.length);
+    cardURL = `${cardURL.slice(0, lastIndex + 8)}/w_300,c_fit,ar_16:9/${cardURL.slice(lastIndex + 8, cardURL.length)}`;
     cardImage = (
       <CardMedia
         sixteenByNine
@@ -47,7 +47,7 @@ const SpotCard = ({ spot, bottomCard, showImg }) => {
       maxWidth: '600px',
       margin: 'auto',
     };
-  };
+  }
   return (
     <Card style={cardStyle}>
       <CardPrimaryAction onClick={() => history.push(onClickLink)}>

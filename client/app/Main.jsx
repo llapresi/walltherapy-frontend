@@ -10,8 +10,6 @@ import SpotSearchParent from './Search';
 import SpotCard from './Widgets/SpotCard';
 import CardSlide from './Transitions/CardSlide';
 import ShowAddSpotBottomBar from './Transitions/ShowAddSpotBottomBar';
-import SpotForm from './addspot';
-import AccountMenu from './AccountMenu';
 import { sendAjax, distance } from '../helper/helper';
 import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
@@ -20,23 +18,17 @@ import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
 import history from './History';
 import LoginWindow from './Login';
 import Logout from './Logout';
-import AuthRoute from './AuthRoute';
-import Snackbar from './Widgets/Snackbar';
 import MapFABs from './Widgets/MapFABs';
 import ArtistViewParent from './ArtistDisplay';
-
-const makePublicSpotsURL = () => {
-  return '/murals';
-};
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: { lat: 43.082854, lng: -77.686937 },
-      lastFetchedCenter: { lat: 43.082854, lng: -77.686937 },
+      center: { lat: 43.152614, lng: -77.606773 },
+      lastFetchedCenter: { lat: 43.152614, lng: -77.606773 },
       newSpotLocation: {},
-      zoom: 17,
+      zoom: 14,
       spots: [], // New main spot list, have skatespotlist send state to this
       addingNewSpot: 0, // 0 = not adding spot, 1 = current center, 2 = spot location set
       csrf: '',
@@ -44,21 +36,16 @@ class App extends React.Component {
       locationWatchId: null,
       watchingLocation: false,
       selectedSpot: null, // Spot to show card of in base route
-      userAuthed: false, // Stores local state regarding if we're logged in or not
-      userAuthedName: '', // Username of the authed user
     };
     this.onFetchSpots = this.onFetchSpots.bind(this);
     this.onChange = this.onChange.bind(this);
     this.updateSpots = this.updateSpots.bind(this);
-    this.onNewSpot = this.onNewSpot.bind(this);
     this.setNewSpotLocation = this.setNewSpotLocation.bind(this);
     this.onZoomChange = this.onZoomChange.bind(this);
     this.hideSpotCard = this.hideSpotCard.bind(this);
     this.setSpotCard = this.setSpotCard.bind(this);
-    this.setSnackbar = this.setSnackbar.bind(this);
     this.checkUserAuth = this.checkUserAuth.bind(this);
     this.getUserGeolocation = this.getUserGeolocation.bind(this);
-    this.snackbar = React.createRef();
   }
 
   componentDidMount() {
@@ -80,11 +67,6 @@ class App extends React.Component {
 
   onZoomChange(e) {
     this.setState({ zoom: e.target.getZoom() });
-  }
-
-  onNewSpot() {
-    this.updateSpots(true);
-    this.setSnackbar('New Spot Added');
   }
 
   setSnackbar(message) {
@@ -142,7 +124,7 @@ class App extends React.Component {
         lng: spot.location.coordinates[0],
       },
     });
-    if (history.location.pathname.includes('/spot/')) {
+    if (history.location.pathname.includes('/mural/')) {
       history.push('/');
     }
   }
@@ -157,7 +139,7 @@ class App extends React.Component {
 
   hideSpotCard() {
     this.setState({ selectedSpot: null });
-    if (history.location.pathname.includes('/spot/')) {
+    if (history.location.pathname.includes('/mural/')) {
       history.push('/');
     }
   }
@@ -175,8 +157,7 @@ class App extends React.Component {
     // current search dist is 1700 m
     const { center, lastFetchedCenter } = this.state;
     if (distance(center, lastFetchedCenter) > 0.8 || forceUpate === true) {
-      const toFetch = makePublicSpotsURL();
-      sendAjax('GET', toFetch, null, (data) => {
+      sendAjax('GET', '/murals', null, (data) => {
         console.log(data);
         console.log('fetching ajax spots');
         this.setState({ spots: data, lastFetchedCenter: center });
@@ -195,8 +176,6 @@ class App extends React.Component {
       watchingLocation,
       newSpotLocation,
       selectedSpot,
-      userAuthed,
-      userAuthedName,
     } = this.state;
     return (
       <ThemeProvider options={{
@@ -206,8 +185,6 @@ class App extends React.Component {
       >
         <AppToolbar
           title={toolbarTitle}
-          userAuthed={userAuthed}
-          username={userAuthedName}
           refreshAction={() => this.updateSpots(true)}
         />
         <div className="appGrid">
@@ -269,29 +246,6 @@ class App extends React.Component {
                     />
 
                     <Route
-                      exact
-                      path="/logout"
-                      render={() => (
-                        <React.Fragment>
-                          <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 0, toolbarTitle: '' });
-                          }}
-                          />
-                          <Logout
-                            onLogout={() => {
-                              this.setState({ userAuthed: false, userAuthedName: '' }, () => {
-                                this.setSnackbar('Logged Out');
-                                this.getCSRFToken();
-                                history.goBack();
-                              });
-                            }}
-                            onError={this.setSnackbar}
-                          />
-                        </React.Fragment>
-                      )}
-                    />
-
-                    <Route
                       path="/search"
                       render={() => (
                         <React.Fragment>
@@ -305,7 +259,7 @@ class App extends React.Component {
                     />
 
                     <Route
-                      path="/spot/:id"
+                      path="/mural/:id"
                       render={props => (
                         <React.Fragment>
                           <RunOnMount func={() => {
@@ -321,7 +275,6 @@ class App extends React.Component {
                                 this.updateSpots(true);
                               });
                             }}
-                            userAuthed={userAuthed}
                             onReviewAdd={this.setSnackbar}
                             {...props}
                           />
@@ -344,39 +297,8 @@ class App extends React.Component {
                             onOpen={(title) => {
                               this.setState({ toolbarTitle: title });
                             }}
-                            userAuthed={userAuthed}
                             onReviewAdd={this.setSnackbar}
                             {...props}
-                          />
-                        </React.Fragment>
-                      )}
-                    />
-
-                    <Route
-                      path="/profile"
-                      render={() => (
-                        <React.Fragment>
-                          <RunOnMount func={() => this.setState({ addingNewSpot: 0, toolbarTitle: 'Change Password' })} />
-                          <AccountMenu csrf={csrf} />
-                        </React.Fragment>
-                      )}
-                    />
-
-                    <AuthRoute
-                      path="/add"
-                      userAuthed={userAuthed}
-                      render={() => (
-                        <React.Fragment>
-                          <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 1, toolbarTitle: 'Add Spot' });
-                            this.stopWatchingGeolocation();
-                          }}
-                          />
-                          <SpotForm
-                            csrf={csrf}
-                            loc={center}
-                            submitCallback={this.onNewSpot}
-                            setSpotCallback={this.setNewSpotLocation}
                           />
                         </React.Fragment>
                       )}
@@ -425,7 +347,6 @@ class App extends React.Component {
             />
           </div>
         </div>
-        <Snackbar ref={this.snackbar} />
       </ThemeProvider>
     );
   }

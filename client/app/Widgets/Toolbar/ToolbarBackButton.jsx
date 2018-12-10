@@ -1,13 +1,12 @@
 import React from 'react';
 import { Route, Link } from 'react-router-dom';
 import { TopAppBarActionItem } from '@rmwc/top-app-bar';
-import HideAddSpot from '../../Transitions/HideAddSpot';
 
 const ToolbarBackButton = () => (
   <Route
-    path="/(spot|profile|add|login|artist)/"
+    path="/(mural|profile|add|login|artist)/"
     render={() => (
-      <Link to={{ pathname: '/', state: HideAddSpot }} className="remove-link-styling">
+      <Link to={{ pathname: '/' }} className="remove-link-styling">
         <TopAppBarActionItem icon="arrow_back" />
       </Link>
     )}
