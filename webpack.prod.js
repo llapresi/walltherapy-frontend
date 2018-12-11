@@ -11,6 +11,7 @@ module.exports = {
     new webpack.DefinePlugin({ // <-- key to reducing React's size
       'process.env': {
         NODE_ENV: JSON.stringify('production'),
+        API_URL: JSON.stringify('https://walltherapy-strapi.herokuapp.com'),
       },
     }),
     new MiniCssExtractPlugin({

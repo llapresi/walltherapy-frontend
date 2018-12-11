@@ -57,7 +57,7 @@ class SpotViewParent extends React.Component {
     const { match } = this.props;
     // Fetching new spot data
     console.log(`Fetching new spot data: /murals?id=${match.params.id}`);
-    sendAjax('GET', `/murals?id=${match.params.id}`, null, (data) => {
+    sendAjax('GET', `${process.env.API_URL}/murals?id=${match.params.id}`, null, (data) => {
       this.setState({ spot: data[0] });
       this.onNewSpotData(data[0]);
       console.log(data[0]);

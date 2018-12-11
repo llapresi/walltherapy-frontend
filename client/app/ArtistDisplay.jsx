@@ -35,7 +35,7 @@ class ArtistViewParent extends React.Component {
   componentDidMount() {
     const { match } = this.props;
     // Fetching new artist data
-    sendAjax('GET', `/artists/${match.params.id}`, null, (data) => {
+    sendAjax('GET', `${process.env.API_URL}/artists/${match.params.id}`, null, (data) => {
       this.setState({ artist: data });
       this.onNewSpotData(data);
     });

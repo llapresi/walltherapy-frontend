@@ -14,9 +14,9 @@ const makePublicSpotsURL = (filterValue, artists) => {
     searchTerm = 'artists';
   }
   if (filterValue !== '') {
-    return `/${searchTerm}?_q=${filterValue}`;
+    return `${process.env.API_URL}/${searchTerm}?_q=${filterValue}`;
   }
-  return `/${searchTerm}`;
+  return `${process.env.API_URL}/${searchTerm}`;
 };
 
 class SpotSearchParent extends React.Component {

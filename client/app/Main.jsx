@@ -43,12 +43,11 @@ class App extends React.Component {
     this.onZoomChange = this.onZoomChange.bind(this);
     this.hideSpotCard = this.hideSpotCard.bind(this);
     this.setSpotCard = this.setSpotCard.bind(this);
-    this.checkUserAuth = this.checkUserAuth.bind(this);
     this.getUserGeolocation = this.getUserGeolocation.bind(this);
   }
 
   componentDidMount() {
-    sendAjax('GET', '/murals', null, (data) => {
+    sendAjax('GET', `${process.env.API_URL}/murals`, null, (data) => {
       console.log('fetching ajax spots');
       this.onFetchSpots(data);
     });
@@ -109,7 +108,7 @@ class App extends React.Component {
   }
 
   getCSRFToken() {
-    sendAjax('GET', '/getToken', null, (result) => {
+    sendAjax('GET', `${process.env.API_URL}/getToken`, null, (result) => {
       console.log(result.csrfToken);
       this.setState({ csrf: result.csrfToken });
     });
@@ -126,14 +125,6 @@ class App extends React.Component {
     if (history.location.pathname.includes('/mural/')) {
       history.push('/');
     }
-  }
-
-  checkUserAuth() {
-    sendAjax('GET', '/isUserAuthed', null, (data) => {
-      if (data.account !== undefined) {
-        this.setState({ userAuthed: true, userAuthedName: data.account.username });
-      }
-    });
   }
 
   hideSpotCard() {
@@ -156,7 +147,7 @@ class App extends React.Component {
     // current search dist is 1700 m
     const { center, lastFetchedCenter } = this.state;
     if (distance(center, lastFetchedCenter) > 0.8 || forceUpate === true) {
-      sendAjax('GET', '/murals', null, (data) => {
+      sendAjax('GET', `${process.env.API_URL}/murals`, null, (data) => {
         console.log(data);
         console.log('fetching ajax spots');
         this.setState({ spots: data, lastFetchedCenter: center });
@@ -220,26 +211,6 @@ class App extends React.Component {
                           {selectedSpot !== null
                           && <SpotCard spot={selectedSpot} bottomCard />
                           }
-                        </React.Fragment>
-                      )}
-                    />
-                    <Route
-                      exact
-                      path="/login"
-                      render={() => (
-                        <React.Fragment>
-                          <RunOnMount func={() => {
-                            this.setState({ addingNewSpot: 0, toolbarTitle: 'Login' });
-                          }}
-                          />
-                          <LoginWindow
-                            csrf={csrf}
-                            onLogin={() => {
-                              this.checkUserAuth();
-                              this.setSnackbar('Logged In');
-                            }}
-                            onError={this.setSnackbar}
-                          />
                         </React.Fragment>
                       )}
                     />

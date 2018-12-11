@@ -8,7 +8,7 @@
   "description": "A Simple Login Example using Node.js, Mongo and Redis",
   "main": "./server/app.js",
   "scripts": {
-    "build": "webpack --config webpack.prod.js --mode=production --optimize-minimize --optimize-occurrence-order",
+    "build": "webpack --env.API_URL=https://walltherapy-strapi.herokuapp.com --config webpack.prod.js --mode=production --optimize-minimize --optimize-occurrence-order",
     "watch": "webpack-dev-server --config webpack.watch.js --hot --mode=development"
   },
   "keywords": [
