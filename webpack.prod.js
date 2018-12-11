@@ -62,15 +62,11 @@ module.exports = {
   },
   output: {
     path: `${__dirname}/dist`,
-    publicPath: '/app/',
+    publicPath: '/',
     filename: 'bundle.[contenthash].js',
   },
   devServer: {
-    publicPath: '/app/',
-    proxy: [{
-      context: ['/**', '!/bundle.js'],
-      target: 'http://localhost:3000',
-    }],
-    contentBase: '/app/',
+    publicPath: '/',
+    contentBase: '/',
   },
 };

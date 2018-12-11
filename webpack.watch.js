@@ -40,12 +40,12 @@ module.exports = {
   },
   output: {
     path: `${__dirname}/dist`,
-    publicPath: '/app',
+    publicPath: '/',
     filename: 'bundle.js',
   },
   devServer: {
-    publicPath: '/app',
-    historyApiFallback: { index: '/app' },
-    contentBase: '/app/',
+    publicPath: '/',
+    historyApiFallback: { index: '/' },
+    contentBase: '/',
   },
 };
