@@ -14,7 +14,7 @@ import { sendAjax, distance } from '../helper/helper';
 import SpotViewParent from './SpotDisplay';
 import RunOnMount from './Widgets/RunOnMount';
 import AppToolbar from './Toolbar';
-import { SkateSpotMarker, AddSpotMarker } from './Widgets/SkateSpotMarker';
+import { MuralMarker, AddSpotMarker } from './Widgets/MuralMarker';
 import history from './History';
 import LoginWindow from './Login';
 import MapFABs from './Widgets/MapFABs';
@@ -325,7 +325,7 @@ class App extends React.Component {
               <AttributionControl position="topright" />
               {
                 spots.map(spot => (
-                  <SkateSpotMarker
+                  <MuralMarker
                     key={spot._id}
                     spot={spot}
                     onClick={this.setSpotCard}

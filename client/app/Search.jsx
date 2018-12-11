@@ -87,7 +87,7 @@ const SpotSearch = ({ spots }) => (
       let path = {};
       // If artists field exists this is a mural
       if (spot.artists !== undefined) {
-        secondaryText = `${spot.artists[0].name} | ${spot.streetname}`;
+        secondaryText = `${spot.artists[0].name} | ${spot.year}`;
         path = { pathname: `/mural/${spot._id}`, state: { spot } };
       } else {
         // this is a list of artists
