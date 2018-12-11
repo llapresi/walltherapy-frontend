@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack');
 const fs = require('fs');
 
@@ -26,6 +27,11 @@ module.exports = {
       inline: fs.readFileSync('client/helper/serviceWorkerBody.js', 'utf8'),
     }),
     new GenerateSW(),
+    new CopyWebpackPlugin([
+      {
+        from: `${__dirname}/static`,
+      },
+    ]),
   ],
   entry: [
     './client/app/App.jsx',
